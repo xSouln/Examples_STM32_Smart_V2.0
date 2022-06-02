@@ -48,7 +48,7 @@
             <NotGenerated>0</NotGenerated>
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
-          <OutputDirectory>Board_STM32_Smart_V2.0\</OutputDirectory>
+          <OutputDirectory>.\build\</OutputDirectory>
           <OutputName>Board_STM32_Smart_V2.0</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
