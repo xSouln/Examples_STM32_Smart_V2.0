@@ -7,4 +7,4 @@ There are two versions with different STM32F1 chips:
 
 ![board](Documents/STM32_Smart_V2.0.jpg)
 
-[datasheet](Documents/original-schematic-STM32F103C8T6-STM32_Smart_V2.0.pdf)
+* [datasheet](Documents/original-schematic-STM32F103C8T6-STM32_Smart_V2.0.pdf)
