@@ -32,7 +32,7 @@ EWARM/**/List
 
 #For KEIL
 MDK-ARM/DebugConfig
-MDK-ARM/out
+MDK-ARM/build
 MDK-ARM/JLinkLog.txt
 #*.htm
 #*.axf
@@ -40,13 +40,6 @@ MDK-ARM/JLinkLog.txt
 #*.sct
 #*.__i
 #*.crf
-
-Middlewares/Third_Party/MbedTLS/programs
-Middlewares/Third_Party/MbedTLS/scripts
-Middlewares/Third_Party/MbedTLS/tests
-Middlewares/Third_Party/MbedTLS/visualc
-Middlewares/Third_Party/MbedTLS/3rdparty
-Middlewares/Third_Party/MbedTLS/configs
 
 # IAR Settings
 **/settings/*.crun
