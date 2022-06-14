@@ -399,13 +399,13 @@ SysTick_Handler:
 ; {
 ;
     PUSH    {r0, lr}
-#ifdef TX_ENABLE_EXECUTION_CHANGE_NOTIFY
-    BL      _tx_execution_isr_enter             ; Call the ISR enter function
-#endif
-    BL      _tx_timer_interrupt
-#ifdef TX_ENABLE_EXECUTION_CHANGE_NOTIFY
-    BL      _tx_execution_isr_exit              ; Call the ISR exit function
-#endif
+//#ifdef TX_ENABLE_EXECUTION_CHANGE_NOTIFY
+//    BL      _tx_execution_isr_enter             ; Call the ISR enter function
+//#endif
+//    BL      _tx_timer_interrupt
+//#ifdef TX_ENABLE_EXECUTION_CHANGE_NOTIFY
+//    BL      _tx_execution_isr_exit              ; Call the ISR exit function
+//#endif
     POP     {r0, lr}
     BX      LR
 ; }
