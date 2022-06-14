@@ -33,6 +33,7 @@ EWARM/**/List
 #For KEIL
 MDK-ARM/DebugConfig
 MDK-ARM/build
+MDK-ARM/out
 MDK-ARM/JLinkLog.txt
 #*.htm
 #*.axf
