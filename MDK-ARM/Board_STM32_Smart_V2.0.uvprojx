@@ -651,6 +651,21 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>Libs/L298</GroupName>
+          <Files>
+            <File>
+              <FileName>L298.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libs\L298\L298.c</FilePath>
+            </File>
+            <File>
+              <FileName>L298.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Libs\L298\L298.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>::CMSIS</GroupName>
         </Group>
       </Groups>
