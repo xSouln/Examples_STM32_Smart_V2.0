@@ -120,7 +120,8 @@ void StartDefaultTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+		LED1_GPIO_Port->ODR ^= LED1_Pin;
+    osDelay(500);
   }
   /* USER CODE END StartDefaultTask */
 }
