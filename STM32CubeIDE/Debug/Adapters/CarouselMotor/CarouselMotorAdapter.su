@@ -1,0 +1,12 @@
+CarouselMotorAdapter.c:11:28:SetMoveState	16	static
+CarouselMotorAdapter.c:37:28:SetDriverState	16	static
+CarouselMotorAdapter.c:47:21:SetPWMHandlerState	16	static
+CarouselMotorAdapter.c:57:28:SetLockState	16	static
+CarouselMotorAdapter.c:63:28:Delay	16	static
+CarouselMotorAdapter.c:69:28:SetSpeed	16	static
+CarouselMotorAdapter.c:77:7:GetSpeed	16	static
+CarouselMotorAdapter.c:82:21:SetFrequency	16	static
+CarouselMotorAdapter.c:87:7:GetFrequency	16	static
+CarouselMotorAdapter.c:92:21:SetEncoderPosition	16	static
+CarouselMotorAdapter.c:98:5:GetEncoderPosition	16	static
+CarouselMotorAdapter.c:117:21:CarouselMotorAdapterInit	16	static

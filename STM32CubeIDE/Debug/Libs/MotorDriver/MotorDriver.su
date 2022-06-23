@@ -1,0 +1,9 @@
+MotorDriver.c:6:19:MotorDriverSetLockeState	24	static
+MotorDriver.c:16:19:MotorDriverDriverEnable	16	static
+MotorDriver.c:26:19:MotorDriverDriverDisable	16	static
+MotorDriver.c:32:19:MotorDriverStop	16	static
+MotorDriver.c:38:6:MotorDriverHandler	16	static
+MotorDriver.c:122:6:MotorDriverPWMHandler	16	static
+MotorDriver.c:135:19:MotorDriverInit	24	static
+MotorDriver.c:162:26:CalculationRacingFallingForSteps	40	static
+MotorDriver.c:217:19:MotorDriverSetPosition	40	static
