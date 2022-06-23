@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "L298/L298_Adapter.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,24 +45,24 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-
+extern L298_DeviceT L298_Device1;
+extern L298_DeviceT L298_Device2;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .stack_size = 256 * 4,
+  .stack_size = 512 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-
+static int position = 600;
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
 
-extern void MX_USB_DEVICE_Init(void);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /**
@@ -114,14 +114,26 @@ void MX_FREERTOS_Init(void) {
 /* USER CODE END Header_StartDefaultTask */
 void StartDefaultTask(void *argument)
 {
-  /* init code for USB_DEVICE */
-  MX_USB_DEVICE_Init();
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
   for(;;)
   {
 		LED1_GPIO_Port->ODR ^= LED1_Pin;
-    osDelay(500);
+		//L298_MoveTime(&L298_Device1.Driver, 0, L298_MoveDiractionForward, 1000, 3000);
+		L298_SetPosition(&L298_Device1.Driver, 0, L298_FORWARD_MAX_VALUE, 1, 3000);
+		
+		while (L298_Device1.Driver.Status.DriverState != L298_DriverStateDisable)
+		{
+			osDelay(1);
+		}
+		
+		LED1_GPIO_Port->ODR ^= LED1_Pin;
+		L298_SetPosition(&L298_Device1.Driver, 0, 0, 1, 10000);
+		
+		while (L298_Device1.Driver.Status.DriverState != L298_DriverStateDisable)
+		{
+			osDelay(1);
+		}
   }
   /* USER CODE END StartDefaultTask */
 }
