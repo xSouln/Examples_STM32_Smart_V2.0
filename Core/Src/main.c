@@ -27,7 +27,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "L298/L298_Adapter.h"
+#include "CarouselMotor/CarouselMotorAdapter.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,8 +47,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-L298_DeviceT L298_Device1;
-L298_DeviceT L298_Device2;
+CarouselMotorAdapterT CarouselMotor;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -98,7 +97,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
-	L298_DeviceInit(&L298_Device1, 0);
+	CarouselMotorAdapterInit(&CarouselMotor, 0);
 	
 	HAL_TIM_Base_Start_IT(&htim4);
   /* USER CODE END 2 */

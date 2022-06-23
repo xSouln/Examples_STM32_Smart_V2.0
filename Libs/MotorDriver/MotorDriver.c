@@ -1,51 +1,51 @@
 //==============================================================================
 #include <string.h>
 #include <stdbool.h>
-#include "L298.h"
+#include "MotorDriver.h"
 //==============================================================================
-L298_Result L298_SetLockeState(L298_DriverT* driver, L298_State state)
+MotorDriverResult MotorDriverSetLockeState(MotorDriverT* driver, MotorDriverState state)
 {
-	L298_Result result = driver->Control->SetLockState(driver, state);
-	if (result == L298_ResultAccept)
+	MotorDriverResult result = driver->Control->SetLockState(driver, state);
+	if (result == MotorDriverResultAccept)
 	{
 		driver->Status.IsLocked = state;
 	}
 	return result;
 }
 //==============================================================================
-L298_Result L298_DriverEnable(L298_DriverT* driver)
+MotorDriverResult MotorDriverDriverEnable(MotorDriverT* driver)
 {
-	if (driver->Status.DriverState == L298_DriverStateDisable)
+	if (driver->Status.DriverState == MotorDriverDriverStateDisable)
 	{
 		driver->EnableDelay = driver->Options.EnableDelay;
-		driver->Status.DriverState = L298_DriverStateEnabling;
+		driver->Status.DriverState = MotorDriverDriverStateEnabling;
 	}
-	return L298_ResultAccept;
+	return MotorDriverResultAccept;
 }
 //==============================================================================
-L298_Result L298_DriverDisable(L298_DriverT* driver)
+MotorDriverResult MotorDriverDriverDisable(MotorDriverT* driver)
 {
-	driver->Status.DriverState = L298_DriverStateDisable;
-	return driver->Control->SetDriverState(driver, L298_StateDisable);
+	driver->Status.DriverState = MotorDriverDriverStateDisable;
+	return driver->Control->SetDriverState(driver, MotorDriverStateDisable);
 }
 //==============================================================================
-L298_Result L298_Stop(L298_DriverT* driver)
+MotorDriverResult MotorDriverStop(MotorDriverT* driver)
 {
-	driver->Status.MotorState = L298_MotorStateStopped;
-	return driver->Control->SetMoveState(driver, L298_StateDisable);
+	driver->Status.MotorState = MotorDriverMotorStateStopped;
+	return driver->Control->SetMoveState(driver, MotorDriverStateDisable);
 }
 //==============================================================================
-void L298_Handler(L298_DriverT* driver)
+void MotorDriverHandler(MotorDriverT* driver)
 {
 	int diferense;
 	
 	switch((uint8_t)driver->Status.DriverState)
 	{
-		case L298_DriverStateEnabling:
+		case MotorDriverDriverStateEnabling:
 			if (!driver->EnableDelay)
 			{
-				driver->Status.DriverState = L298_DriverStateIsEnable;
-				driver->Control->SetDriverState(driver, L298_StateEnable);
+				driver->Status.DriverState = MotorDriverDriverStateIsEnable;
+				driver->Control->SetDriverState(driver, MotorDriverStateEnable);
 			}
 			else
 			{
@@ -53,8 +53,8 @@ void L298_Handler(L298_DriverT* driver)
 			}
 			return;
 			
-		case L298_DriverStateIsEnable:
-			if (driver->Status.MotorState == L298_MotorStateStopped)
+		case MotorDriverDriverStateIsEnable:
+			if (driver->Status.MotorState == MotorDriverMotorStateStopped)
 			{
 				if (driver->DisableDelay)
 				{
@@ -62,23 +62,23 @@ void L298_Handler(L298_DriverT* driver)
 				}
 				else
 				{
-					 L298_DriverDisable(driver);
+					 MotorDriverDriverDisable(driver);
 				}
 				return;
 			}
 			break;
 			
-		case L298_DriverStateDisable:
+		case MotorDriverDriverStateDisable:
 			return;
 	}
 	
 	switch((uint8_t)driver->Status.MotorState)
 	{
-		case L298_MotorStateStartingMove:
-			driver->Status.MotorState = L298_MotorStateInMoving;
-			driver->Control->SetMoveState(driver, L298_StateEnable);
+		case MotorDriverMotorStateStartingMove:
+			driver->Status.MotorState = MotorDriverMotorStateInMoving;
+			driver->Control->SetMoveState(driver, MotorDriverStateEnable);
 			
-		case L298_MotorStateInMoving:
+		case MotorDriverMotorStateInMoving:
 			if (driver->MoveTime > driver->CalculatedValues.DecelerationTime)
 			{
 				if (driver->Speed > driver->Options.StopSpeed)
@@ -105,8 +105,8 @@ void L298_Handler(L298_DriverT* driver)
 			
 			if (driver->MoveTime >= driver->MoveTimeRequest)
 			{
-				driver->Status.MotorState = L298_MotorStateStopped;
-				driver->Control->SetMoveState(driver, L298_StateDisable);
+				driver->Status.MotorState = MotorDriverMotorStateStopped;
+				driver->Control->SetMoveState(driver, MotorDriverStateDisable);
 			}
 			else
 			{
@@ -114,12 +114,12 @@ void L298_Handler(L298_DriverT* driver)
 			}
 			return;
 			
-		case L298_MotorStateStopped:
+		case MotorDriverMotorStateStopped:
 			return;
 	}
 }
 //==============================================================================
-void L298_PWM_Handler(L298_DriverT* driver)
+void MotorDriverPWMHandler(MotorDriverT* driver)
 {
 	if (driver->Position != driver->PositionRequest)
 	{
@@ -127,21 +127,21 @@ void L298_PWM_Handler(L298_DriverT* driver)
 	}
 	else
 	{
-		driver->Status.MotorState = L298_MotorStateStopped;
-		driver->Control->SetMoveState(driver, L298_StateDisable);
+		driver->Status.MotorState = MotorDriverMotorStateStopped;
+		driver->Control->SetMoveState(driver, MotorDriverStateDisable);
 	}
 }
 //==============================================================================
-L298_Result L298_DriverInit(L298_DriverT* driver,
+MotorDriverResult MotorDriverInit(MotorDriverT* driver,
 														void* parent,
-														L298_ControlT* control,
-														L298_OptionsT* options)
+														MotorDriverControlT* control,
+														MotorDriverOptionsT* options)
 {
 	if (driver && control)
 	{
 		if (!driver->Description)
 		{
-			driver->Description = "L298_DriverT";
+			driver->Description = "MotorDriverT";
 		}
 		
 		driver->Parent = parent;
@@ -149,17 +149,17 @@ L298_Result L298_DriverInit(L298_DriverT* driver,
 		
 		if (options)
 		{
-			memcpy((uint8_t*)&driver->Options, options, sizeof(L298_OptionsT));
+			memcpy((uint8_t*)&driver->Options, options, sizeof(MotorDriverOptionsT));
 		}
 		
 		driver->Status.IsInit = true;
 		
-		return L298_ResultAccept;
+		return MotorDriverResultAccept;
 	}
-	return L298_ResultNullPointer;
+	return MotorDriverResultNullPointer;
 }
 //==============================================================================
-static L298_Result CalculationRacingFallingForSteps(L298_DriverT* driver)
+static MotorDriverResult CalculationRacingFallingForSteps(MotorDriverT* driver)
 {
 	float steps = (driver->PositionRequest - driver->Position) * driver->Diraction;
   float speed = driver->Options.StartSpeed;
@@ -211,52 +211,52 @@ static L298_Result CalculationRacingFallingForSteps(L298_DriverT* driver)
 		driver->CalculatedValues.DecelerationTime = driver->CalculatedValues.AccelerationTime + steps / speed;
 	}
 	
-	return L298_ResultAccept;
+	return MotorDriverResultAccept;
 }
 //==============================================================================
-L298_Result L298_SetPosition(L298_DriverT* driver,
-														L298_MotorOptionsT* options,
+MotorDriverResult MotorDriverSetPosition(MotorDriverT* driver,
+														MotorDriverMotorOptionsT* options,
 														int position,
 														float speed,
 														int move_time)
 {
-	L298_Result result;
-	driver->Control->SetLockState(driver, L298_StateEnable);
+	MotorDriverResult result;
+	driver->Control->SetLockState(driver, MotorDriverStateEnable);
 	
-	if (driver->Status.MotorState != L298_MotorStateStopped)
+	if (driver->Status.MotorState != MotorDriverMotorStateStopped)
 	{
-		result = L298_ResultBusy;
+		result = MotorDriverResultBusy;
 		goto end;
 	}
 	
 	if (options)
 	{
-		memcpy((uint8_t*)&driver->Options, options, sizeof(L298_OptionsT));
+		memcpy((uint8_t*)&driver->Options, options, sizeof(MotorDriverOptionsT));
 	}
 	
 	if (move_time == 0)
 	{
-		result = L298_ResultInvalidParameter;
+		result = MotorDriverResultInvalidParameter;
 		goto end;
 	}
 	
 	if (speed <= 0)
 	{
-		result = L298_ResultInvalidParameter;
+		result = MotorDriverResultInvalidParameter;
 		goto end;
 	}
 	
 	if (driver->PositionRequest < position)
 	{
-		driver->Diraction = L298_MoveDiractionForward;
+		driver->Diraction = MotorDriverMoveDiractionForward;
 	}
 	else if (driver->PositionRequest > position)
 	{
-		driver->Diraction = L298_MoveDiractionBackward;
+		driver->Diraction = MotorDriverMoveDiractionBackward;
 	}
 	else
 	{
-		result = L298_ResultInvalidParameter;
+		result = MotorDriverResultInvalidParameter;
 		goto end;
 	}
 	
@@ -275,12 +275,12 @@ L298_Result L298_SetPosition(L298_DriverT* driver,
 
 	driver->Control->SetSpeed(driver, driver->Speed);
 	//driver->Control->SetFrequency(driver, driver->Options.Frequency);
-	driver->Control->SetPWMHandlerState(driver, L298_StateEnable);
-	L298_DriverEnable(driver);
-	driver->Status.MotorState = L298_MotorStateStartingMove;
+	driver->Control->SetPWMHandlerState(driver, MotorDriverStateEnable);
+	MotorDriverDriverEnable(driver);
+	driver->Status.MotorState = MotorDriverMotorStateStartingMove;
 	
 	end:;
-	driver->Control->SetLockState(driver, L298_StateDisable);
+	driver->Control->SetLockState(driver, MotorDriverStateDisable);
 	return result;
 }
 //==============================================================================

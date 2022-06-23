@@ -749,32 +749,37 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Libs/L298</GroupName>
+          <GroupName>Libs/MotorDriver</GroupName>
           <Files>
             <File>
-              <FileName>L298.c</FileName>
+              <FileName>MotorDriver.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libs\L298\L298.c</FilePath>
+              <FilePath>..\Libs\MotorDriver\MotorDriver.c</FilePath>
             </File>
             <File>
-              <FileName>L298.h</FileName>
+              <FileName>MotorDriver.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\Libs\L298\L298.h</FilePath>
+              <FilePath>..\Libs\MotorDriver\MotorDriver.h</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>Adapters/L298</GroupName>
+          <GroupName>Adapters/CarouselMotor</GroupName>
           <Files>
             <File>
-              <FileName>L298_Adapter.c</FileName>
+              <FileName>CarouselMotorAdapter.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Adapters\L298\L298_Adapter.c</FilePath>
+              <FilePath>..\Adapters\CarouselMotor\CarouselMotorAdapter.c</FilePath>
             </File>
             <File>
-              <FileName>L298_Adapter.h</FileName>
+              <FileName>CarouselMotorAdapter.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\Adapters\L298\L298_Adapter.h</FilePath>
+              <FilePath>..\Adapters\CarouselMotor\CarouselMotorAdapter.h</FilePath>
+            </File>
+            <File>
+              <FileName>CarouselMotorAdapterConfig.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Adapters\CarouselMotor\CarouselMotorAdapterConfig.h</FilePath>
             </File>
           </Files>
         </Group>

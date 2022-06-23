@@ -22,7 +22,7 @@
 #include "stm32f1xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "L298/L298_Adapter.h"
+#include "CarouselMotor/CarouselMotorAdapter.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,8 +42,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN PV */
-extern L298_DeviceT L298_Device1;
-extern L298_DeviceT L298_Device2;
+extern CarouselMotorAdapterT CarouselMotor;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -194,8 +193,6 @@ void TIM2_IRQHandler(void)
 		TIM2->SR &= ~TIM_SR_CC4IF;
 	}
 	
-	L298_PWM_Handler(&L298_Device2.Driver);
-	
 	return;
   /* USER CODE END TIM2_IRQn 0 */
   HAL_TIM_IRQHandler(&htim2);
@@ -225,7 +222,7 @@ void TIM3_IRQHandler(void)
 		TIM3->SR &= ~TIM_SR_CC3IF;
 	}
 	*/
-	L298_PWM_Handler(&L298_Device1.Driver);
+	MotorDriverPWMHandler(&CarouselMotor.Driver);
 	
 	return;
   /* USER CODE END TIM3_IRQn 0 */
@@ -242,7 +239,7 @@ void TIM4_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM4_IRQn 0 */
 	TIM4->SR &= ~TIM_SR_UIF;
-	L298_Handler(&L298_Device1.Driver);
+	MotorDriverHandler(&CarouselMotor.Driver);
 	return;
   /* USER CODE END TIM4_IRQn 0 */
   HAL_TIM_IRQHandler(&htim4);

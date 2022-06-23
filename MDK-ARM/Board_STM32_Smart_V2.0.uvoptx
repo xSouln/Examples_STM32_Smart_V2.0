@@ -726,7 +726,7 @@
   </Group>
 
   <Group>
-    <GroupName>Libs/L298</GroupName>
+    <GroupName>Libs/MotorDriver</GroupName>
     <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
@@ -738,8 +738,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libs\L298\L298.c</PathWithFileName>
-      <FilenameWithoutPath>L298.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libs\MotorDriver\MotorDriver.c</PathWithFileName>
+      <FilenameWithoutPath>MotorDriver.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -750,15 +750,15 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libs\L298\L298.h</PathWithFileName>
-      <FilenameWithoutPath>L298.h</FilenameWithoutPath>
+      <PathWithFileName>..\Libs\MotorDriver\MotorDriver.h</PathWithFileName>
+      <FilenameWithoutPath>MotorDriver.h</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
   </Group>
 
   <Group>
-    <GroupName>Adapters/L298</GroupName>
+    <GroupName>Adapters/CarouselMotor</GroupName>
     <tvExp>1</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
@@ -770,8 +770,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Adapters\L298\L298_Adapter.c</PathWithFileName>
-      <FilenameWithoutPath>L298_Adapter.c</FilenameWithoutPath>
+      <PathWithFileName>..\Adapters\CarouselMotor\CarouselMotorAdapter.c</PathWithFileName>
+      <FilenameWithoutPath>CarouselMotorAdapter.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -782,8 +782,20 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Adapters\L298\L298_Adapter.h</PathWithFileName>
-      <FilenameWithoutPath>L298_Adapter.h</FilenameWithoutPath>
+      <PathWithFileName>..\Adapters\CarouselMotor\CarouselMotorAdapter.h</PathWithFileName>
+      <FilenameWithoutPath>CarouselMotorAdapter.h</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>7</GroupNumber>
+      <FileNumber>43</FileNumber>
+      <FileType>5</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\Adapters\CarouselMotor\CarouselMotorAdapterConfig.h</PathWithFileName>
+      <FilenameWithoutPath>CarouselMotorAdapterConfig.h</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

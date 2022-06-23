@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "L298/L298_Adapter.h"
+#include "CarouselMotor/CarouselMotorAdapter.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,8 +45,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-extern L298_DeviceT L298_Device1;
-extern L298_DeviceT L298_Device2;
+extern CarouselMotorAdapterT CarouselMotor;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -120,17 +119,17 @@ void StartDefaultTask(void *argument)
   {
 		LED1_GPIO_Port->ODR ^= LED1_Pin;
 		//L298_MoveTime(&L298_Device1.Driver, 0, L298_MoveDiractionForward, 1000, 3000);
-		L298_SetPosition(&L298_Device1.Driver, 0, L298_FORWARD_MAX_VALUE, 1, 3000);
+		MotorDriverSetPosition(&CarouselMotor.Driver, 0, MOTOR_DRIVER_FORWARD_MAX_VALUE, 1, 3000);
 		
-		while (L298_Device1.Driver.Status.DriverState != L298_DriverStateDisable)
+		while (CarouselMotor.Driver.Status.DriverState != MotorDriverDriverStateDisable)
 		{
 			osDelay(1);
 		}
 		
 		LED1_GPIO_Port->ODR ^= LED1_Pin;
-		L298_SetPosition(&L298_Device1.Driver, 0, 0, 1, 10000);
+		MotorDriverSetPosition(&CarouselMotor.Driver, 0, 0, 1, 10000);
 		
-		while (L298_Device1.Driver.Status.DriverState != L298_DriverStateDisable)
+		while (CarouselMotor.Driver.Status.DriverState != MotorDriverDriverStateDisable)
 		{
 			osDelay(1);
 		}

@@ -1,19 +1,19 @@
 //==============================================================================
 #include <string.h>
 #include <stdbool.h>
-#include "L298/L298_Adapter.h"
+#include "CarouselMotor/CarouselMotorAdapter.h"
 #include "main.h"
 #include "tim.h"
 #include "cmsis_os.h"
 //==============================================================================
-//L298_Result
+
 //==============================================================================
-static L298_Result SetMoveState(L298_DriverT* driver, L298_State state)
+static CarouselMotorResult SetMoveState(MotorDriverT* driver, MotorDriverState state)
 {
 	switch((uint8_t)state)
 	{
-		case L298_StateEnable:
-			if (driver->Diraction == L298_MoveDiractionForward)
+		case MotorDriverStateEnable:
+			if (driver->Diraction == MotorDriverMoveDiractionForward)
 			{
 				HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_3);
 				HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
@@ -25,53 +25,53 @@ static L298_Result SetMoveState(L298_DriverT* driver, L298_State state)
 			}
 			break;
 			
-		case L298_StateDisable:
+		case MotorDriverStateDisable:
 			HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_2);
 			HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_3);
 			break;
 	}
 	
-	return L298_ResultAccept;
+	return CarouselMotorResultAccept;
 }
 //==============================================================================
-static L298_Result SetDriverState(void* driver, L298_State state)
+static CarouselMotorResult SetDriverState(MotorDriverT* driver, MotorDriverState state)
 {
 	switch((uint8_t)state)
 	{
-		case L298_StateEnable: MOTOR1_ENABLE_GPIO_Port->ODR &= ~MOTOR1_ENABLE_Pin; break;
-		case L298_StateDisable: MOTOR1_ENABLE_GPIO_Port->ODR |= MOTOR1_ENABLE_Pin; break;
+		case MotorDriverStateEnable: MOTOR1_ENABLE_GPIO_Port->ODR &= ~MOTOR1_ENABLE_Pin; break;
+		case MotorDriverStateDisable: MOTOR1_ENABLE_GPIO_Port->ODR |= MOTOR1_ENABLE_Pin; break;
 	}
-	return L298_ResultAccept;
+	return CarouselMotorResultAccept;
 }
 //==============================================================================
-L298_Result SetPWMHandlerState(void* driver, L298_State state)
+CarouselMotorResult SetPWMHandlerState(MotorDriverT* driver, MotorDriverState state)
 {
 	switch((uint8_t)state)
 	{
-		case L298_StateEnable: htim3.Instance->DIER |= TIM_DIER_UIE; break;
-		case L298_StateDisable: htim3.Instance->DIER &= ~TIM_DIER_UIE; break;
+		case MotorDriverStateEnable: htim3.Instance->DIER |= TIM_DIER_UIE; break;
+		case MotorDriverStateDisable: htim3.Instance->DIER &= ~TIM_DIER_UIE; break;
 	}
-	return L298_ResultAccept;
+	return CarouselMotorResultAccept;
 }
 //==============================================================================
-static L298_Result SetLockState(void* driver, L298_State state)
+static CarouselMotorResult SetLockState(MotorDriverT* driver, MotorDriverMotorState state)
 {
 	
-	return L298_ResultAccept;
+	return CarouselMotorResultAccept;
 }
 //==============================================================================
-static L298_Result Delay(void* driver, uint32_t ms)
+static CarouselMotorResult Delay(MotorDriverT* driver, uint32_t ms)
 {
 	osDelay(ms);
-	return L298_ResultAccept;
+	return CarouselMotorResultAccept;
 }
 //==============================================================================
-static L298_Result SetSpeed(void* driver, float speed)
+static CarouselMotorResult SetSpeed(MotorDriverT* driver, float speed)
 {
 	const uint16_t base_period;
-	htim3.Instance->CCR2 = (uint16_t)(htim3.Instance->ARR * speed) - 1;
-	htim3.Instance->CCR3 = (uint16_t)(htim3.Instance->ARR * speed) - 1;
-	return L298_ResultAccept;
+	htim3.Instance->CCR2 = (uint16_t)((htim3.Instance->ARR + 1) * speed) - 1;
+	htim3.Instance->CCR3 = (uint16_t)((htim3.Instance->ARR + 1) * speed) - 1;
+	return CarouselMotorResultAccept;
 }
 //==============================================================================
 float GetSpeed(void* driver)
@@ -79,9 +79,9 @@ float GetSpeed(void* driver)
 	return 0.0;
 }
 //==============================================================================
-L298_Result SetFrequency(void* driver, float frequency)
+CarouselMotorResult SetFrequency(MotorDriverT* driver, float frequency)
 {
-	return L298_ResultAccept;
+	return CarouselMotorResultAccept;
 }
 //==============================================================================
 float GetFrequency(void* driver)
@@ -89,18 +89,18 @@ float GetFrequency(void* driver)
 	return 0.0;
 }
 //==============================================================================
-L298_Result SetEncoderPosition(void* driver, int position)
+CarouselMotorResult SetEncoderPosition(MotorDriverT* driver, int position)
 {
 	
-	return L298_ResultAccept;
+	return CarouselMotorResultAccept;
 }
 //==============================================================================
-int GetEncoderPosition(L298_DriverT* driver)
+int GetEncoderPosition(MotorDriverT* driver)
 {
 	return 0;
 }
 //==============================================================================
-static L298_CONTROL_LAYER_DEF(Adapter,
+static MOTOR_DRIVER_CONTROL_LAYER_DEF(Adapter,
 	SetMoveState,
 	SetSpeed,
 	GetSpeed,
@@ -114,28 +114,28 @@ static L298_CONTROL_LAYER_DEF(Adapter,
 	Delay
 );
 //==============================================================================
-L298_Result L298_DeviceInit(L298_DeviceT* device,
+CarouselMotorResult CarouselMotorAdapterInit(CarouselMotorAdapterT* adapter,
 														void* parent)
 {
-	if (device)
+	if (adapter)
 	{
-		if (!device->Description) { device->Description = "L298_DeviceT"; }
-		device->Parent = parent;
+		if (!adapter->Description) { adapter->Description = "CarouselMotorAdapterT"; }
+		adapter->Parent = parent;
 		
-		device->Driver.Options.HandlerUpdateFrequency = 1000;
+		adapter->Driver.Options.HandlerUpdateFrequency = 1000;
 		
-		device->Driver.Options.StartSpeed = 0.1;
-		device->Driver.Options.StopSpeed = 0.1;
+		adapter->Driver.Options.StartSpeed = 0.1;
+		adapter->Driver.Options.StopSpeed = 0.1;
 		
-		device->Driver.Options.Acceleration = 0.33;
-		device->Driver.Options.Deceleration = 0.33;
+		adapter->Driver.Options.Acceleration = 0.33;
+		adapter->Driver.Options.Deceleration = 0.33;
 		
-		return L298_DriverInit(&device->Driver,
-														device,
+		return MotorDriverInit(&adapter->Driver,
+														adapter,
 														&AdapterControl,
 														0);
 	}
-	return L298_ResultNullPointer;
+	return CarouselMotorResultNullPointer;
 }
 //==============================================================================
 //==============================================================================
