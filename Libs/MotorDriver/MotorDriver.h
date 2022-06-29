@@ -220,6 +220,9 @@ typedef struct
 	uint32_t AccelerationTime;
 	uint32_t DecelerationTime;
 	
+	uint32_t AccelarationSteps;
+	uint32_t DeccelarationSteps;
+	
 } MotorDriverDebugValuesT;
 //------------------------------------------------------------------------------
 typedef struct

@@ -119,7 +119,7 @@ void StartDefaultTask(void *argument)
   {
 		LED1_GPIO_Port->ODR ^= LED1_Pin;
 		//L298_MoveTime(&L298_Device1.Driver, 0, L298_MoveDiractionForward, 1000, 3000);
-		MotorDriverSetPosition(&CarouselMotor.Driver, 0, MOTOR_DRIVER_FORWARD_MAX_VALUE, 1, 3000);
+		MotorDriverSetPosition(&CarouselMotor.Driver, 0, MOTOR_DRIVER_FORWARD_MAX_VALUE, 1, 6000);
 		
 		while (CarouselMotor.Driver.Status.DriverState != MotorDriverDriverStateDisable)
 		{
@@ -127,7 +127,7 @@ void StartDefaultTask(void *argument)
 		}
 		
 		LED1_GPIO_Port->ODR ^= LED1_Pin;
-		MotorDriverSetPosition(&CarouselMotor.Driver, 0, 0, 1, 10000);
+		MotorDriverSetPosition(&CarouselMotor.Driver, 0, MOTOR_DRIVER_BACKWARD_MAX_VALUE, 1, 10000);
 		
 		while (CarouselMotor.Driver.Status.DriverState != MotorDriverDriverStateDisable)
 		{

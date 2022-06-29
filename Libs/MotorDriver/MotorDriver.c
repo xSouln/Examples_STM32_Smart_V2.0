@@ -90,6 +90,7 @@ void MotorDriverHandler(MotorDriverT* driver)
 					}
 					driver->DebugValues.DecelerationTime++;
 					driver->Control->SetSpeed(driver, driver->Speed);
+					driver->DebugValues.DeccelarationSteps = driver->Position * driver->Diraction;
 				}
 			}
 			else if (driver->Speed < driver->SpeedRequest)
@@ -101,6 +102,7 @@ void MotorDriverHandler(MotorDriverT* driver)
 				}
 				driver->DebugValues.AccelerationTime++;
 				driver->Control->SetSpeed(driver, driver->Speed);
+				driver->DebugValues.AccelarationSteps = driver->Position * driver->Diraction;
 			}
 			
 			if (driver->MoveTime >= driver->MoveTimeRequest)
@@ -166,28 +168,20 @@ static MotorDriverResult CalculationRacingFallingForSteps(MotorDriverT* driver)
   float speed_offset = 0;
 	uint32_t time_move = driver->MoveTimeRequest;
 	
-	driver->CalculatedValues.dxAccelerationSteps = 0;
-	driver->CalculatedValues.dxDecelerationSteps = 0;
-	
 	driver->CalculatedValues.AccelerationTime = 0;
 	driver->CalculatedValues.DecelerationTime = 0;
 	
-	driver->DebugValues.AccelerationTime = 0;
-	driver->DebugValues.DecelerationTime = 0;
+	memset(&driver->DebugValues, 0, sizeof(driver->DebugValues));
 	
-  while (speed < driver->SpeedRequest && steps > 0 && time_move)
+  while (speed < driver->SpeedRequest && time_move)
   {
     if ((speed - speed_offset) > driver->Options.StopSpeed)
     {
-			driver->CalculatedValues.dxDecelerationSteps += (speed - speed_offset) / 2;
-			steps -= (speed - speed_offset) / 2;
       speed_offset += driver->CalculatedValues.DecelerationStep;
       driver->CalculatedValues.DecelerationTime++;
     }
     else
 		{
-			driver->CalculatedValues.dxAccelerationSteps += (speed) / 2;
-			steps -= (speed) / 2;
       speed += driver->CalculatedValues.AccelerationStep;
       driver->CalculatedValues.AccelerationTime++;
     }
@@ -195,21 +189,7 @@ static MotorDriverResult CalculationRacingFallingForSteps(MotorDriverT* driver)
 		time_move--;
 	}
 	
-	if (steps < 0)
-	{
-		steps = 0;
-	}
-	
-	//time_move = steps / speed;
-	
-	if (!time_move)
-	{
-		driver->CalculatedValues.DecelerationTime = driver->MoveTimeRequest - driver->CalculatedValues.DecelerationTime;
-	}
-	else
-	{
-		driver->CalculatedValues.DecelerationTime = driver->CalculatedValues.AccelerationTime + steps / speed;
-	}
+	driver->CalculatedValues.DecelerationTime = driver->MoveTimeRequest - driver->CalculatedValues.DecelerationTime;
 	
 	return MotorDriverResultAccept;
 }

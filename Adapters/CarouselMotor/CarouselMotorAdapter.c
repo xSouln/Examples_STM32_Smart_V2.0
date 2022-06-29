@@ -124,8 +124,8 @@ CarouselMotorResult CarouselMotorAdapterInit(CarouselMotorAdapterT* adapter,
 		
 		adapter->Driver.Options.HandlerUpdateFrequency = 1000;
 		
-		adapter->Driver.Options.StartSpeed = 0.1;
-		adapter->Driver.Options.StopSpeed = 0.1;
+		adapter->Driver.Options.StartSpeed = 0.22;
+		adapter->Driver.Options.StopSpeed = 0.22;
 		
 		adapter->Driver.Options.Acceleration = 0.33;
 		adapter->Driver.Options.Deceleration = 0.33;
