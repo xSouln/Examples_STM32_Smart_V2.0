@@ -61,6 +61,10 @@ void Error_Handler(void);
 #define LED1_GPIO_Port GPIOC
 #define BUTTON1_Pin GPIO_PIN_0
 #define BUTTON1_GPIO_Port GPIOA
+#define SERVO_PWM_Pin GPIO_PIN_6
+#define SERVO_PWM_GPIO_Port GPIOA
+#define SERVO_ENABLE_Pin GPIO_PIN_7
+#define SERVO_ENABLE_GPIO_Port GPIOA
 #define TFT_A0_Pin GPIO_PIN_1
 #define TFT_A0_GPIO_Port GPIOB
 #define TFT_CS_Pin GPIO_PIN_12
