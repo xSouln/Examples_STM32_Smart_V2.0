@@ -26,7 +26,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "FlowDirector/FlowDirector.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -46,7 +46,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+FlowDirectorT FlowDirector;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -60,6 +60,8 @@ void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN 0 */
 void TIM2_IRQHandler(void)
 {
+	FlowDirector.Driver.Control->PWM_Handler(&FlowDirector.Driver);
+	
   TIM2->SR &= ~TIM_SR_UIF;
 	TIM3->CR1 |= TIM_CR1_CEN;
 }
@@ -97,8 +99,11 @@ int main(void)
   MX_SPI2_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
-	HAL_TIM_Base_Start_IT(&htim2);
+	FlowDirectorInit(&FlowDirector, 0);
+	
+	HAL_TIM_Base_Start_IT(&htim4);
 	HAL_TIM_PWM_Start_IT(&htim3, TIM_CHANNEL_1);
   /* USER CODE END 2 */
 

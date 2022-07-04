@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xB</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Drivers/STM32F1xx_HAL_Driver/Inc;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Middlewares/Third_Party/FreeRTOS/Source/include;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2;../ARM_CM3;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Drivers/CMSIS/Device/ST/STM32F1xx/Include;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Drivers/CMSIS/Include;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3</IncludePath>
+              <IncludePath>../Core/Inc;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Drivers/STM32F1xx_HAL_Driver/Inc;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Middlewares/Third_Party/FreeRTOS/Source/include;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2;../ARM_CM3;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Drivers/CMSIS/Device/ST/STM32F1xx/Include;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Drivers/CMSIS/Include;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM3;../Adapters;../Libs</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -637,17 +637,37 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Libs/Servo</GroupName>
+          <GroupName>Libs/MotorDriver</GroupName>
           <Files>
             <File>
-              <FileName>Servo.c</FileName>
+              <FileName>MotorDriver.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libs\Servo\Servo.c</FilePath>
+              <FilePath>..\Libs\MotorDriver\MotorDriver.c</FilePath>
             </File>
             <File>
-              <FileName>Servo.h</FileName>
+              <FileName>MotorDriver.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\Libs\Servo\Servo.h</FilePath>
+              <FilePath>..\Libs\MotorDriver\MotorDriver.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Adapters/FlowDirector</GroupName>
+          <Files>
+            <File>
+              <FileName>FlowDirector.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Adapters\FlowDirector\FlowDirector.c</FilePath>
+            </File>
+            <File>
+              <FileName>FlowDirector.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Adapters\FlowDirector\FlowDirector.h</FilePath>
+            </File>
+            <File>
+              <FileName>FlowDirectorConfig.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Adapters\FlowDirector\FlowDirectorConfig.h</FilePath>
             </File>
           </Files>
         </Group>

@@ -1,6 +1,6 @@
 //==============================================================================
-#ifndef __CAROUSEL_MOTOR_ADAPTER_H
-#define __CAROUSEL_MOTOR_ADAPTER_H
+#ifndef __FLOW_DIRECTOR_H
+#define __FLOW_DIRECTOR_H
 //==============================================================================
 #ifdef __cplusplus
 extern "C" {
@@ -8,32 +8,32 @@ extern "C" {
 //==============================================================================
 #include "MotorDriver/MotorDriver.h"
 //==============================================================================
-//#ifdef CAROUSEL_MOTOR_ADAPTER_USER_CONFIG
-#include "CarouselMotorAdapterConfig.h" // override default macroses
+//#ifdef FLOW_DIRECTOR_USER_CONFIG
+#include "FlowDirectorConfig.h" // override default macroses
 //#endif
 //------------------------------------------------------------------------------
-#ifndef CarouselMotorResult
-#define CarouselMotorResult int8_t
+#ifndef FlowDirectorResult
+#define FlowDirectorResult int8_t
 #endif
 //------------------------------------------------------------------------------
-#ifndef CarouselMotorResultAccept
-#define CarouselMotorResultAccept 0
+#ifndef FlowDirectorResultAccept
+#define FlowDirectorResultAccept 0
 #endif
 //------------------------------------------------------------------------------
-#ifndef CarouselMotorResultError
-#define CarouselMotorResultError -1
+#ifndef FlowDirectorResultError
+#define FlowDirectorResultError -1
 #endif
 //------------------------------------------------------------------------------
-#ifndef CarouselMotorResultBusy
-#define CarouselMotorResultBusy -2
+#ifndef FlowDirectorResultBusy
+#define FlowDirectorResultBusy -2
 #endif
 //------------------------------------------------------------------------------
-#ifndef CarouselMotorResultNullPointer
-#define CarouselMotorResultNullPointer -3
+#ifndef FlowDirectorResultNullPointer
+#define FlowDirectorResultNullPointer -3
 #endif
 //------------------------------------------------------------------------------
-#ifndef CarouselMotorResultInvalidParameter
-#define CarouselMotorResultInvalidParameter -4
+#ifndef FlowDirectorResultInvalidParameter
+#define FlowDirectorResultInvalidParameter -4
 #endif
 //==============================================================================
 typedef struct
@@ -43,9 +43,9 @@ typedef struct
 	
 	MotorDriverT Driver;
 	
-} CarouselMotorAdapterT;
+} FlowDirectorT;
 //==============================================================================
-CarouselMotorResult CarouselMotorAdapterInit(CarouselMotorAdapterT* adapter, void* parent);
+FlowDirectorResult FlowDirectorInit(FlowDirectorT* adapter, void* parent);
 //==============================================================================
 #ifdef __cplusplus
 }

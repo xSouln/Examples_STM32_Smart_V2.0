@@ -1,77 +1,73 @@
 //==============================================================================
 #include <string.h>
 #include <stdbool.h>
-#include "CarouselMotor/CarouselMotorAdapter.h"
+#include "FlowDirector/FlowDirector.h"
 #include "main.h"
 #include "tim.h"
 #include "cmsis_os.h"
 //==============================================================================
-
 //==============================================================================
-static CarouselMotorResult SetMoveState(MotorDriverT* driver, MotorDriverState state)
+static FlowDirectorResult SetMotorState(MotorDriverT* driver, MotorDriverState state)
 {
 	switch((uint8_t)state)
 	{
 		case MotorDriverStateEnable:
-			if (driver->Diraction == MotorDriverMoveDiractionForward)
-			{
-				HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_3);
-				HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_2);
-			}
-			else
-			{
-				HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_2);
-				HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_3);
-			}
+			//HAL_TIM_Base_Start_IT(&htim2);
 			break;
 			
 		case MotorDriverStateDisable:
-			HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_2);
-			HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_3);
+			//HAL_TIM_Base_Stop_IT(&htim2);
 			break;
 	}
 	
-	return CarouselMotorResultAccept;
+	return FlowDirectorResultAccept;
 }
 //==============================================================================
-static CarouselMotorResult SetDriverState(MotorDriverT* driver, MotorDriverState state)
+static FlowDirectorResult SetDriverState(MotorDriverT* driver, MotorDriverState state)
 {
 	switch((uint8_t)state)
 	{
-		case MotorDriverStateEnable: MOTOR1_ENABLE_GPIO_Port->ODR &= ~MOTOR1_ENABLE_Pin; break;
-		case MotorDriverStateDisable: MOTOR1_ENABLE_GPIO_Port->ODR |= MOTOR1_ENABLE_Pin; break;
+		case MotorDriverStateEnable:
+			SERVO_ENABLE_GPIO_Port->ODR &= ~SERVO_ENABLE_Pin;
+			HAL_TIM_Base_Start_IT(&htim2);
+			break;
+		
+		case MotorDriverStateDisable:
+			SERVO_ENABLE_GPIO_Port->ODR |= SERVO_ENABLE_Pin;
+			HAL_TIM_Base_Stop_IT(&htim2);
+			break;
 	}
-	return CarouselMotorResultAccept;
+	return FlowDirectorResultAccept;
 }
 //==============================================================================
-CarouselMotorResult SetPWMHandlerState(MotorDriverT* driver, MotorDriverState state)
+static void PWM_Handler(MotorDriverT* driver)
 {
-	switch((uint8_t)state)
-	{
-		case MotorDriverStateEnable: htim3.Instance->DIER |= TIM_DIER_UIE; break;
-		case MotorDriverStateDisable: htim3.Instance->DIER &= ~TIM_DIER_UIE; break;
-	}
-	return CarouselMotorResultAccept;
+	TIM3->CCR1 = TIM3->ARR - (driver->Position * 2000 / 18000 + 500);
 }
 //==============================================================================
-static CarouselMotorResult SetLockState(MotorDriverT* driver, MotorDriverMotorState state)
+static void Handler(MotorDriverT* driver)
 {
 	
-	return CarouselMotorResultAccept;
 }
 //==============================================================================
-static CarouselMotorResult Delay(MotorDriverT* driver, uint32_t ms)
+static FlowDirectorResult SetLockState(MotorDriverT* driver, MotorDriverMotorState state)
+{
+	
+	return FlowDirectorResultAccept;
+}
+//==============================================================================
+static FlowDirectorResult Delay(MotorDriverT* driver, uint32_t ms)
 {
 	osDelay(ms);
-	return CarouselMotorResultAccept;
+	return FlowDirectorResultAccept;
 }
 //==============================================================================
-static CarouselMotorResult SetSpeed(MotorDriverT* driver, float speed)
+static FlowDirectorResult SetSpeed(MotorDriverT* driver, float speed)
 {
-	const uint16_t base_period;
-	htim3.Instance->CCR2 = (uint16_t)((htim3.Instance->ARR + 1) * speed) - 1;
-	htim3.Instance->CCR3 = (uint16_t)((htim3.Instance->ARR + 1) * speed) - 1;
-	return CarouselMotorResultAccept;
+	//const uint16_t base_period;
+	//htim3.Instance->CCR2 = (uint16_t)((htim3.Instance->ARR + 1) * speed) - 1;
+	//htim3.Instance->CCR3 = (uint16_t)((htim3.Instance->ARR + 1) * speed) - 1;
+	return FlowDirectorResultAccept;
 }
 //==============================================================================
 float GetSpeed(void* driver)
@@ -79,9 +75,9 @@ float GetSpeed(void* driver)
 	return 0.0;
 }
 //==============================================================================
-CarouselMotorResult SetFrequency(MotorDriverT* driver, float frequency)
+FlowDirectorResult SetFrequency(MotorDriverT* driver, float frequency)
 {
-	return CarouselMotorResultAccept;
+	return FlowDirectorResultAccept;
 }
 //==============================================================================
 float GetFrequency(void* driver)
@@ -89,53 +85,56 @@ float GetFrequency(void* driver)
 	return 0.0;
 }
 //==============================================================================
-CarouselMotorResult SetEncoderPosition(MotorDriverT* driver, int position)
+static FlowDirectorResult SetPosition(MotorDriverT* driver, int position)
 {
 	
-	return CarouselMotorResultAccept;
+	return FlowDirectorResultAccept;
 }
 //==============================================================================
-int GetEncoderPosition(MotorDriverT* driver)
+static int GetPosition(MotorDriverT* driver)
 {
-	return 0;
+	return (int)driver->CalculatedValues.Steps;
 }
 //==============================================================================
 static MOTOR_DRIVER_CONTROL_LAYER_DEF(Adapter,
-	SetMoveState,
+	SetMotorState,
 	SetSpeed,
 	GetSpeed,
 	SetFrequency,
 	GetFrequency,
 	SetDriverState,
-	GetEncoderPosition,
-	SetEncoderPosition,
-	SetPWMHandlerState,
+	GetPosition,
+	SetPosition,
+	PWM_Handler,
+	Handler,
 	SetLockState,
 	Delay
 );
 //==============================================================================
-CarouselMotorResult CarouselMotorAdapterInit(CarouselMotorAdapterT* adapter,
-														void* parent)
+FlowDirectorResult FlowDirectorInit(FlowDirectorT* adapter, void* parent)
 {
 	if (adapter)
 	{
-		if (!adapter->Description) { adapter->Description = "CarouselMotorAdapterT"; }
+		if (!adapter->Description) { adapter->Description = "FlowDirectorT"; }
 		adapter->Parent = parent;
 		
 		adapter->Driver.Options.HandlerUpdateFrequency = 1000;
 		
-		adapter->Driver.Options.StartSpeed = 0.22;
-		adapter->Driver.Options.StopSpeed = 0.22;
+		adapter->Driver.Options.StartSpeed = 1000;
+		adapter->Driver.Options.StopSpeed = 1000;
 		
-		adapter->Driver.Options.Acceleration = 0.33;
-		adapter->Driver.Options.Deceleration = 0.33;
+		adapter->Driver.Options.Acceleration = 2000;
+		adapter->Driver.Options.Deceleration = 2000;
+		
+		adapter->Driver.Options.EnableDelay = 1000;
+		adapter->Driver.Options.DisableDelay = 1000;
 		
 		return MotorDriverInit(&adapter->Driver,
 														adapter,
 														&AdapterControl,
 														0);
 	}
-	return CarouselMotorResultNullPointer;
+	return FlowDirectorResultNullPointer;
 }
 //==============================================================================
 //==============================================================================

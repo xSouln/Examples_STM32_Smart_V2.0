@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "FlowDirector/FlowDirector.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,7 +45,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-
+extern FlowDirectorT FlowDirector;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
@@ -118,7 +118,28 @@ void StartDefaultTask(void *argument)
   for(;;)
   {
 		LED1_GPIO_Port->ODR ^= LED1_Pin;
-    osDelay(500);
+		MotorDriverSetPosition(&FlowDirector.Driver,
+														0,
+														18000,
+														4500,
+														10000);
+		
+		while (FlowDirector.Driver.Status.DriverState != MotorDriverDriverStateDisable)
+		{
+			osDelay(1);
+		}
+		
+		LED1_GPIO_Port->ODR ^= LED1_Pin;
+		MotorDriverSetPosition(&FlowDirector.Driver,
+														0,
+														0,
+														4500,
+														10000);
+		
+		while (FlowDirector.Driver.Status.DriverState != MotorDriverDriverStateDisable)
+		{
+			osDelay(1);
+		}
   }
   /* USER CODE END StartDefaultTask */
 }
