@@ -9,7 +9,7 @@
 # EWARM/Config2/Obj /List /Exe
 EWARM/**/Obj
 EWARM/**/List
-# EWARM/*/settings
+EWARM/*/settings
 
 .pio
 .vscode
@@ -30,16 +30,20 @@ EWARM/**/List
 *.d
 *.code-workspace
 
-#For KEIL
+# For KEIL
 MDK-ARM/DebugConfig
 MDK-ARM/out
+MDK-ARM/build
 MDK-ARM/JLinkLog.txt
-#*.htm
-#*.axf
-#*.lnp
-#*.sct
-#*.__i
-#*.crf
+*.htm
+*.axf
+*.lnp
+*.sct
+*.__i
+*.crf
+
+# For user
+*.User
 
 Middlewares/Third_Party/MbedTLS/programs
 Middlewares/Third_Party/MbedTLS/scripts
