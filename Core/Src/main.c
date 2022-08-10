@@ -70,7 +70,13 @@ volatile STM32_TIM_REG_T* Timer4 = (STM32_TIM_REG_T*)TIM4;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-
+typedef struct
+{
+	uint8_t Green;
+	uint8_t Red;
+	uint8_t Blue;
+	
+} PixelT;
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -113,6 +119,7 @@ int main(void)
   MX_SPI1_Init();
   MX_TIM4_Init();
   MX_USART1_UART_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 	SerialPortInit(USART1, "main");
 	
@@ -135,7 +142,13 @@ int main(void)
 		{
 			time_1000ms = 999;
 			
-			xTxTransmitString(SerialPort.Tx, "qwerty\r");
+			PixelT Pixel =
+			{
+				.Blue = 0x0f
+			};
+			
+			//xTxTransmitData(SerialPort.Tx, &Pixel, sizeof(Pixel));
+			xTxTransmitData(SerialPort.Tx, &Pixel, sizeof(Pixel));
 		}
     /* USER CODE END WHILE */
 

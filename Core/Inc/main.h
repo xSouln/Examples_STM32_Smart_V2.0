@@ -61,6 +61,10 @@ void Error_Handler(void);
 #define LED1_GPIO_Port GPIOC
 #define BUTTON1_Pin GPIO_PIN_0
 #define BUTTON1_GPIO_Port GPIOA
+#define WS2812_N1_Pin GPIO_PIN_1
+#define WS2812_N1_GPIO_Port GPIOA
+#define WS2812_N2_Pin GPIO_PIN_2
+#define WS2812_N2_GPIO_Port GPIOA
 #define WIZ_CS_Pin GPIO_PIN_4
 #define WIZ_CS_GPIO_Port GPIOA
 #define WIZ_SCK_Pin GPIO_PIN_5
