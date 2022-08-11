@@ -77,11 +77,16 @@ typedef struct
 	uint8_t Blue;
 	
 } PixelT;
+
+uint8_t pixels_data[8 * 3 * 8];
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+void ConvertPixelsToData(PixelT* pixels, uint16_t pixels_count, uint8_t* data)
+{
+	
+}
 /* USER CODE END 0 */
 
 /**
