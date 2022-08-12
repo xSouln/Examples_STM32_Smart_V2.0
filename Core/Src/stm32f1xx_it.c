@@ -91,12 +91,14 @@ void HardFault_Handler(void)
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
-	extern uint32_t time_5ms;
-	extern uint32_t time_1000ms;
+	extern uint8_t time_5ms;
+	extern uint8_t time_10ms;
+	extern uint16_t time_1000ms;
+	extern uint8_t time_tcp_update;
 	extern uint32_t time_ms;
-	extern uint32_t time_tcp_update;
 	
 	if (time_5ms) { time_5ms--; }
+	if (time_10ms) { time_10ms--; }
 	if (time_1000ms) { time_1000ms--; }
 	if (time_tcp_update) { time_tcp_update--; }
 	
@@ -121,11 +123,13 @@ void SysTick_Handler(void)
 void DMA1_Channel2_IRQHandler(void)
 {
   /* USER CODE BEGIN DMA1_Channel2_IRQn 0 */
-
+	
   /* USER CODE END DMA1_Channel2_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_tim2_up);
   /* USER CODE BEGIN DMA1_Channel2_IRQn 1 */
-
+	extern void PixelsTransferComplite();
+	
+	PixelsTransferComplite();
   /* USER CODE END DMA1_Channel2_IRQn 1 */
 }
 

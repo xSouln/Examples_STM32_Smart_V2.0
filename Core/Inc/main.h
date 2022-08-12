@@ -65,6 +65,8 @@ void Error_Handler(void);
 #define WS2812_N1_GPIO_Port GPIOA
 #define WS2812_N2_Pin GPIO_PIN_2
 #define WS2812_N2_GPIO_Port GPIOA
+#define WS2812_SYNC_Pin GPIO_PIN_3
+#define WS2812_SYNC_GPIO_Port GPIOA
 #define WIZ_CS_Pin GPIO_PIN_4
 #define WIZ_CS_GPIO_Port GPIOA
 #define WIZ_SCK_Pin GPIO_PIN_5

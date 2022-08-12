@@ -78,14 +78,17 @@ int SerialPortInit(void* reg, void* parent)
 	tx_control.Handle = reg;
 	SerialPort.Reg = (volatile STM32_UART_REG_T*)reg;
 
-  //SerialPort.Reg->Control_1.ReceiverEnable = true;
+  SerialPort.Reg->Control_1.ReceiverEnable = true;
+	SerialPort.Reg->Control_3.DMA_EnableReceiver = true;
   //SerialPort.Reg->Control_1.RxNotEmptyInterruptEnable = true;
   
   SerialPort.Reg->Control_1.TransmitterEnable = true;
   SerialPort.Reg->Control_1.TxCompleteInterruptEnable = false;
   SerialPort.Reg->Control_1.TxEmptyInterruptEnable = false;
 	
-	//extern UART_HandleTypeDef huart1;
+	extern UART_HandleTypeDef huart1;
+	HAL_UART_Receive_DMA(&huart1, rx_circle_buf, sizeof(rx_circle_buf));
+	/*
 	DMA_RX = DMA1_Channel5;// huart1.hdmarx->Instance;
 	
 	DMA_RX->CCR &= ~DMA_CCR_EN;
@@ -98,9 +101,7 @@ int SerialPortInit(void* reg, void* parent)
 	DMA_RX->CMAR = (uint32_t)rx_circle_buf;
 	
 	DMA_RX->CCR |= DMA_CCR_EN;
-
-  SerialPort.Reg->Control_3.DMA_EnableReceiver = true;
-  
+  */
   return 0;
 }
 //==============================================================================
