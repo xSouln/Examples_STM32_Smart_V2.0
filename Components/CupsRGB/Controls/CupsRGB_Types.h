@@ -1,27 +1,18 @@
-/*
- * Requests.h
- *
- *  Created on: 28.09.2021
- *      Author: rekuts
- */
-
-#ifndef REQUESTS_H
-#define REQUESTS_H
+//==============================================================================
+#ifndef CUPS_RGB_TYPES_H
+#define CUPS_RGB_TYPES_H
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
  extern "C" {
 #endif 
 //==============================================================================
-#include "Common/xTx.h"
-#include "Common/xRx.h"
-#include "Common/xTransaction.h"
+#include <stdint.h>
+#include <stdbool.h>
 //==============================================================================
-static const char REQUEST_GET_FIRMWARE[] = "get firmware";
 
-extern const xRequestT Requests[];
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif /* REQUESTS_H */
+#endif /* CUPS_RGB_TYPES_H */

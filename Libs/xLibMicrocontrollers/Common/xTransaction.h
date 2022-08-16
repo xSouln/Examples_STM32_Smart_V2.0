@@ -11,8 +11,7 @@
 #include "xRx.h"
 #include "xDataBuffer.h"
 //==============================================================================
-typedef void (*xTransactionAction)(xRxT* rx,
-																		void* object,
+typedef void (*xTransactionAction)(xRequestManagerT* manager,
 																		xObject request,
 																		uint16_t request_size);
 //==============================================================================

@@ -1,27 +1,23 @@
-/*
- * Requests.h
- *
- *  Created on: 28.09.2021
- *      Author: rekuts
- */
-
-#ifndef REQUESTS_H
-#define REQUESTS_H
+//==============================================================================
+#ifndef TYPES_H
+#define TYPES_H
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
  extern "C" {
 #endif 
 //==============================================================================
-#include "Common/xTx.h"
-#include "Common/xRx.h"
-#include "Common/xTransaction.h"
+#include <stdint.h>
+#include <stdbool.h>
 //==============================================================================
-static const char REQUEST_GET_FIRMWARE[] = "get firmware";
-
-extern const xRequestT Requests[];
+typedef enum
+{
+	ResultAccept,
+	ResultError,
+	
+} ActionResults;
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif /* REQUESTS_H */
+#endif /* TYPES_H */

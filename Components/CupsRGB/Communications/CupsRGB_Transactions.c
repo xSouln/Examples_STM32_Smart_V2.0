@@ -1,55 +1,26 @@
 /*
- * Transactions.c
+ * CupsRGB_Transactions.c
  *
  *  Created on: 28.09.2021
  *      Author: rekuts
  */
 //==============================================================================
 #include <string.h>
-#include "Transactions.h"
-#include "Common/xTx.h"
-#include "Common/xRx.h"
-#include "Requests.h"
+#include "CupsRGB/Communications/CupsRGB_Transactions.h"
+#include "CupsRGB/Communications/CupsRGB_Requests.h"
+#include "CupsRGB/Adapters/CupsRGB_Adapter.h"
+#include "CupsRGB/Controls/CupsRGB_Control.h"
 //==============================================================================
-#define PACKET_EVENT_IDENTIFICATOR DEVICE_EVENT_IDENTIFICATOR
-#define PACKET_RESPONSE_IDENTIFICATOR DEVICE_RESPONSE_IDENTIFICATOR
-#define PACKET_DEVICE_KEY PACKET_DEVICE_KEY
-#define PACKET_END PACKET_END
+#define PACKET_EVENT_IDENTIFICATOR CUPS_RGB_EVENT_IDENTIFICATOR
+#define PACKET_RESPONSE_IDENTIFICATOR CUPS_RGB_RESPONSE_IDENTIFICATOR
+#define PACKET_DEVICE_KEY CUPS_RGB_PACKET_DEVICE_KEY
+#define PACKET_END CUPS_RGB_PACKET_END
 //==============================================================================
-extern const xTransactionT Transactions[];
+extern const xTransactionT WS2812_Transactions[];
 
-#define TRANSACTIONS Transactions
+#define TRANSACTIONS WS2812_Transactions
 //==============================================================================
-void TransactionGetTime(xRequestManagerT* manager)
-{
-	extern uint32_t time_ms;
-	
-	xDataBufferAdd(manager->Rx->Tx->ObjectBuffer, &time_ms, sizeof(time_ms));
-}
-//------------------------------------------------------------------------------
-void TransactionTryResetTime(xRequestManagerT* manager)
-{
-	extern uint32_t time_ms;
-	int16_t result = RESULT_ACCEPT;
-	
-	time_ms = 0;
-	
-	xDataBufferAdd(manager->Rx->Tx->ObjectBuffer, &result, sizeof(result));
-	xDataBufferAdd(manager->Rx->Tx->ObjectBuffer, &time_ms, sizeof(time_ms));
-}
-//------------------------------------------------------------------------------
-void TransactionSetTime(xRequestManagerT* manager, int* request, uint16_t request_size)
-{
-	extern uint32_t time_ms;
-	int16_t result = RESULT_ACCEPT;
-	
-	time_ms = *request;
-	
-	xDataBufferAdd(manager->Rx->Tx->ObjectBuffer, &result, sizeof(result));
-	xDataBufferAdd(manager->Rx->Tx->ObjectBuffer, &time_ms, sizeof(time_ms));
-}
-//==============================================================================
-int Device_TransmitEvent(xTxT* tx, DEVICE_TRANSACTIONS transaction, xObject data, uint16_t data_size)
+int CupsRGB_TransmitEvent(xTxT* tx, CUPS_RGB_TRANSACTIONS transaction, xObject data, uint16_t data_size)
 {
 	//event array:
 	//Header: [#][Description][:][DeviceKey];
@@ -87,7 +58,7 @@ int Device_TransmitEvent(xTxT* tx, DEVICE_TRANSACTIONS transaction, xObject data
 	return 0;
 }
 //------------------------------------------------------------------------------
-void Device_RequestTransaction(xRequestManagerT* manager, uint8_t* object, uint16_t size)
+void CupsRGB_RequestTransaction(xRequestManagerT* manager, uint8_t* object, uint16_t size)
 {
 	//request array:
 	//Packet header: [#][Description][:][DeviceKey]; - the "uint8_t*
@@ -170,33 +141,20 @@ void Device_RequestTransaction(xRequestManagerT* manager, uint8_t* object, uint1
   }
 }
 //==============================================================================
-const xTransactionT Transactions[] =
+const xTransactionT WS2812_Transactions[] =
 {
 	//----------------------------------------------------------------------------
 	//----------------------------------------------------------------------------
 	//GET
-  {
-		.Id = TRANSACTION_GET_FIRMWARE_VERSION,
-	},
-	//----------------------------------------------------------------------------
-	{
-		.Id = TRANSACTION_GET_TIME,
-		.Action = (xTransactionAction)TransactionGetTime,
-	},
+		
 	//----------------------------------------------------------------------------
 	//----------------------------------------------------------------------------
 	//SET
-	{
-		.Id = TRANSACTION_SET_TIME,
-		.Action = (xTransactionAction)TransactionSetTime,
-	},
+		
 	//----------------------------------------------------------------------------
 	//----------------------------------------------------------------------------
 	//TRY
-	{
-		.Id = TRANSACTION_TRY_RESET_TIME,
-		.Action = (xTransactionAction)TransactionTryResetTime,
-	},
+	
 	//----------------------------------------------------------------------------
 	//----------------------------------------------------------------------------
 	// end of transactions marker

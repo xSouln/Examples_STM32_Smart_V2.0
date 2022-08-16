@@ -12,11 +12,10 @@
 #include "xType.h"
 #include "xRx.h"
 //==============================================================================
-typedef uint16_t (*xRequestAction)(xRxT* rx,
-									xObject request,
-									xObject object,
-									uint16_t object_size);
-//==============================================================================
+typedef uint16_t (*xRequestAction)(xObject manager, //xRequestManagerT
+																		xObject object,
+																		uint16_t object_size);
+//------------------------------------------------------------------------------
 typedef struct
 {
   xObject Header;
@@ -25,10 +24,23 @@ typedef struct
   xRequestAction Action;
    
 } xRequestT;
-//==============================================================================
-xRequestT* xRequestIdentify(xRxT* rx, xRequestT commands[], uint8_t data[], uint16_t len);
-//==============================================================================
 //------------------------------------------------------------------------------
+typedef struct
+{
+	OBJECT_HEADER;
+	
+	void* Device;
+	
+  xRequestT* Requests;
+	xRequestT* FoundRequest;
+	
+	xRxT* Rx;
+   
+} xRequestManagerT;
+//==============================================================================
+xRequestT* xRequestIdentify(xRxT* rx, xRequestManagerT* manager, uint8_t data[], uint16_t data_size);
+xResult xRequestManagerInit(xRequestManagerT* manager, void* parent, void* device, xRequestT* requests);
+//==============================================================================
 #define NEW_REQUEST0(header, request)\
 {\
   .Header = (char*)header,\

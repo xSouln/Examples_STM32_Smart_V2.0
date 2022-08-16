@@ -6,7 +6,6 @@
 #define RX_CIRCLE_BUF_SIZE_MASK 0x1ff
 #define RX_OBJECT_BUF_SIZE 0x200
 #define TX_CIRCLE_BUF_SIZE_MASK 0x3ff
-
 //------------------------------------------------------------------------------
 static uint8_t rx_circle_buf[RX_CIRCLE_BUF_SIZE_MASK + 1];
 static uint8_t rx_object_buf[RX_OBJECT_BUF_SIZE];

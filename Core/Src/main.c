@@ -29,6 +29,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "SerialPort/SerialPort.h"
+#include "Control.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -65,7 +66,7 @@ uint8_t time_tcp_update;
 uint32_t time_ms;
 uint32_t LedUpdateCount;
 uint32_t LedUpdatePerSecond;
-
+//------------------------------------------------------------------------------
 volatile STM32_TIM_REG_T* Timer4 = (STM32_TIM_REG_T*)TIM4;
 volatile STM32_TIM_REG_T* Timer2 = (STM32_TIM_REG_T*)TIM2;
 //==============================================================================
@@ -74,6 +75,7 @@ volatile STM32_TIM_REG_T* Timer2 = (STM32_TIM_REG_T*)TIM2;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+//==============================================================================
 typedef struct
 {
 	uint8_t Green;
@@ -81,7 +83,7 @@ typedef struct
 	uint8_t Blue;
 	
 } PixelT;
-
+//------------------------------------------------------------------------------
 union
 {
 	struct
@@ -91,14 +93,16 @@ union
 	uint32_t Value;
 	
 } Status;
-
+//------------------------------------------------------------------------------
 #define PIXELS_DATA_OFFSET 50
 uint8_t pixels_data[8 * 3 * 8 + PIXELS_DATA_OFFSET + 1];
 uint8_t pixels_data_count;
+//==============================================================================
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+//==============================================================================
 uint16_t PutColorToArray(uint8_t color, uint8_t* data)
 {
 	uint16_t offset = 0;
@@ -120,7 +124,7 @@ uint16_t PutColorToArray(uint8_t color, uint8_t* data)
 	
 	return offset;
 }
-
+//------------------------------------------------------------------------------
 void PutPixelsToArray(PixelT* pixels, int pixels_count, uint8_t* data)
 {
 	int i = 0;
@@ -138,7 +142,7 @@ void PutPixelsToArray(PixelT* pixels, int pixels_count, uint8_t* data)
 	*data = 0;
 	pixels_data_count += 1;
 }
-
+//------------------------------------------------------------------------------
 PixelT Pixels[] =
 {
 	{
@@ -189,9 +193,9 @@ PixelT Pixels[] =
 		.Red = 0x00
 	},
 };
-
+//------------------------------------------------------------------------------
 static volatile DMA_Channel_TypeDef* DMA_TX = DMA1_Channel2;
-
+//------------------------------------------------------------------------------
 void Start()
 {
 	DMA_TX->CCR &= ~DMA_CCR_EN;
@@ -211,13 +215,14 @@ void Start()
 	
 	WS2812_SYNC_GPIO_Port->ODR |= WS2812_SYNC_Pin;
 }
-
+//------------------------------------------------------------------------------
 void PixelsTransferComplite()
 {
 	DMA_TX->CCR &= ~DMA_CCR_EN;
 	WS2812_SYNC_GPIO_Port->ODR &= ~WS2812_SYNC_Pin;
 	Status.PixelsThreadBusy = false;
 }
+//==============================================================================
 /* USER CODE END 0 */
 
 /**
@@ -257,8 +262,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-	SerialPortInit(USART1, "main");
-	
+	//----------------------------------------------------------------------------
 	Timer4->DMAOrInterrupts.UpdateInterruptEnable = true;
 	Timer4->Control1.CounterEnable = true;
 	
@@ -271,26 +275,29 @@ int main(void)
 	Timer2->DMAOrInterrupts.DMA_RequestEnable = true;
 	Timer2->Control1.CounterEnable = true;
 	
+	ControlInit(main);
+	//----------------------------------------------------------------------------
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+		//--------------------------------------------------------------------------
 		if (!time_5ms)
 		{
 			time_5ms = 4;
 			
 			SerialPortHandler();
 		}
-		
+		//--------------------------------------------------------------------------
 		if (!DMA_TX->CNDTR)
 		{
 			LedUpdateCount++;
 			PutPixelsToArray(Pixels, sizeof(Pixels) / sizeof(PixelT), pixels_data);
 			Start();
 		}
-		
+		//--------------------------------------------------------------------------
 		if (!time_1000ms)
 		{
 			time_1000ms = 999;
@@ -301,8 +308,9 @@ int main(void)
 			LedUpdatePerSecond = LedUpdateCount;
 			LedUpdateCount = 0;
 			//xTxTransmitData(SerialPort.Tx, &Pixel, sizeof(Pixel));
-			xTxTransmitData(SerialPort.Tx, &Pixels, sizeof(Pixels));
+			//xTxTransmitData(SerialPort.Tx, &Pixels, sizeof(Pixels));
 		}
+		//--------------------------------------------------------------------------
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

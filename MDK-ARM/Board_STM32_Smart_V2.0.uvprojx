@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F103xB</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Libs/xLibMicrocontrollers;../Libs;../USB_DEVICE/App;../USB_DEVICE/Target;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Drivers/STM32F1xx_HAL_Driver/Inc;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Middlewares/ST/STM32_USB_Device_Library/Core/Inc;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Drivers/CMSIS/Device/ST/STM32F1xx/Include;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Drivers/CMSIS/Include;../Adapters;../Communication</IncludePath>
+              <IncludePath>../Core/Inc;../Libs/xLibMicrocontrollers;../Libs;../USB_DEVICE/App;../USB_DEVICE/Target;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Drivers/STM32F1xx_HAL_Driver/Inc;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Middlewares/ST/STM32_USB_Device_Library/Core/Inc;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Drivers/CMSIS/Device/ST/STM32F1xx/Include;C:/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Drivers/CMSIS/Include;../Adapters;../Communication;..\Components;..\Controls</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -773,6 +773,126 @@
               <FileName>Transactions.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\Communication\Transactions.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Libs/WS2812</GroupName>
+          <Files>
+            <File>
+              <FileName>WS2812.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libs\WS2812\WS2812.c</FilePath>
+            </File>
+            <File>
+              <FileName>WS2812.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Libs\WS2812\WS2812.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Components/CupsRGB/Adapters</GroupName>
+          <Files>
+            <File>
+              <FileName>CupsRGB_Adapter.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Components\CupsRGB\Adapters\CupsRGB_Adapter.c</FilePath>
+            </File>
+            <File>
+              <FileName>CupsRGB_Adapter.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Components\CupsRGB\Adapters\CupsRGB_Adapter.h</FilePath>
+            </File>
+            <File>
+              <FileName>CupsRGB_Config.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Components\CupsRGB\Adapters\CupsRGB_Config.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Components/CupsRGB/Communications</GroupName>
+          <Files>
+            <File>
+              <FileName>CupsRGB_Requests.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Components\CupsRGB\Communications\CupsRGB_Requests.c</FilePath>
+            </File>
+            <File>
+              <FileName>CupsRGB_Requests.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Components\CupsRGB\Communications\CupsRGB_Requests.h</FilePath>
+            </File>
+            <File>
+              <FileName>CupsRGB_Transactions.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Components\CupsRGB\Communications\CupsRGB_Transactions.c</FilePath>
+            </File>
+            <File>
+              <FileName>CupsRGB_Transactions.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Components\CupsRGB\Communications\CupsRGB_Transactions.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Components/CupsRGB/Controls</GroupName>
+          <Files>
+            <File>
+              <FileName>CupsRGB_Control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Components\CupsRGB\Controls\CupsRGB_Control.c</FilePath>
+            </File>
+            <File>
+              <FileName>CupsRGB_Control.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Components\CupsRGB\Controls\CupsRGB_Control.h</FilePath>
+            </File>
+            <File>
+              <FileName>CupsRGB_Config.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Components\CupsRGB\Controls\CupsRGB_Config.h</FilePath>
+            </File>
+            <File>
+              <FileName>CupsRGB_Info.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Components\CupsRGB\Controls\CupsRGB_Info.h</FilePath>
+            </File>
+            <File>
+              <FileName>CupsRGB_Types.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Components\CupsRGB\Controls\CupsRGB_Types.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Application/Controls</GroupName>
+          <Files>
+            <File>
+              <FileName>Control.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Controls\Control.c</FilePath>
+            </File>
+            <File>
+              <FileName>Control.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Controls\Control.h</FilePath>
+            </File>
+            <File>
+              <FileName>Info.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Controls\Info.h</FilePath>
+            </File>
+            <File>
+              <FileName>Config.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Controls\Config.h</FilePath>
+            </File>
+            <File>
+              <FileName>Types.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Controls\Types.h</FilePath>
             </File>
           </Files>
         </Group>

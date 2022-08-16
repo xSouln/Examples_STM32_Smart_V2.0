@@ -2,27 +2,48 @@
 #include <string.h>
 #include "xRequest.h"
 //==============================================================================
-xRequestT* xRequestIdentify(xRxT* rx, xRequestT request[], uint8_t data[], uint16_t len)
+xRequestT* xRequestIdentify(xRxT* rx, xRequestManagerT* manager, uint8_t data[], uint16_t data_size)
 {
   uint8_t i = 0;
-  while(request[i].Header)
+  while(manager->Requests[i].Header)
   {
-    if(len >= request[i].HeaderLength)
+    if(data_size >= manager->Requests[i].HeaderLength)
     {
-      if(memcmp(data, request[i].Header, request[i].HeaderLength) == 0)
+      if(memcmp(data, manager->Requests[i].Header, manager->Requests[i].HeaderLength) == 0)
       {
-        data += request[i].HeaderLength;
-        len -= request[i].HeaderLength;
+        data += manager->Requests[i].HeaderLength;
+        data_size -= manager->Requests[i].HeaderLength;
         
-        if (request[i].Action)
+        if (manager->Requests[i].Action)
         {
-          request[i].Action(rx, &request[i], data, len);
+					manager->FoundRequest = &manager->Requests[i];
+					manager->Rx = rx;
+					
+          manager->Requests[i].Action(manager, data, data_size);
+					
+					manager->FoundRequest = 0;
+					manager->Rx = 0;
         }
-        return &request[i];
+        return &manager->Requests[i];
       }
     }
     i++;
   }
   return 0;
+}
+//==============================================================================
+xResult xRequestManagerInit(xRequestManagerT* manager, void* parent, void* device, xRequestT* requests)
+{
+	if (manager && device && requests)
+	{
+		manager->Description = "xRequestManagerT";
+		manager->Parent = parent;
+		manager->Device = device;
+		manager->Requests = requests;
+		
+		return RESULT_ACCEPT;
+	}
+	
+	return RESULT_ERROR;
 }
 //==============================================================================
