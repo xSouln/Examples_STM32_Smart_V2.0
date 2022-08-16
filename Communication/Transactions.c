@@ -22,37 +22,35 @@ extern xDataBufferT MainDataBuffer;
 #define TRANSACTIONS Transactions
 #define DATA_BUFFER MainDataBuffer
 //==============================================================================
-//------------------------------------------------------------------------------
-void TransactionGetTime(xRxT* rx, xDataBufferT* data_buffer)
+void TransactionGetTime(xRxT* rx)
 {
 	extern uint32_t time_ms;
 	
-	xDataBufferAdd(data_buffer, &time_ms, sizeof(time_ms));
+	xDataBufferAdd(rx->Tx->ObjectBuffer, &time_ms, sizeof(time_ms));
 }
 //------------------------------------------------------------------------------
-void TransactionTryResetTime(xRxT* rx, xDataBufferT* data_buffer)
+void TransactionTryResetTime(xRxT* rx)
 {
 	extern uint32_t time_ms;
 	int16_t result = RESULT_ACCEPT;
 	
 	time_ms = 0;
 	
-	xDataBufferAdd(data_buffer, &result, sizeof(result));
-	xDataBufferAdd(data_buffer, &time_ms, sizeof(time_ms));
+	xDataBufferAdd(rx->Tx->ObjectBuffer, &result, sizeof(result));
+	xDataBufferAdd(rx->Tx->ObjectBuffer, &time_ms, sizeof(time_ms));
 }
 //------------------------------------------------------------------------------
-void TransactionSetTime(xRxT* rx, xDataBufferT* data_buffer, int* object, uint16_t size)
+void TransactionSetTime(xRxT* rx, void* object, int* request, uint16_t request_size)
 {
 	extern uint32_t time_ms;
 	int16_t result = RESULT_ACCEPT;
 	
-	time_ms = *object;
+	time_ms = *request;
 	
-	xDataBufferAdd(data_buffer, &result, sizeof(result));
-	xDataBufferAdd(data_buffer, &time_ms, sizeof(time_ms));
+	xDataBufferAdd(rx->Tx->ObjectBuffer, &result, sizeof(result));
+	xDataBufferAdd(rx->Tx->ObjectBuffer, &time_ms, sizeof(time_ms));
 }
 //==============================================================================
-//------------------------------------------------------------------------------
 int Device_TransmitEvent(xTxT* tx, DEVICE_TRANSACTIONS transaction, xObject data, uint16_t data_size)
 {
 	PacketInfoT packet_info = { .ActionKey = transaction, .ContentSize = data_size };
@@ -101,7 +99,6 @@ void Device_RequestTransaction(xRxT* rx, xRequestT* request, uint8_t* object, ui
   if(result)
   {
 		//receiving the transmitter corresponding to the selected receiver
-		xTxT* tx = rx->Tx;
 		PacketInfoT packet_info;
     
     object += sizeof(PacketInfoT);
@@ -109,18 +106,21 @@ void Device_RequestTransaction(xRxT* rx, xRequestT* request, uint8_t* object, ui
     
     if(result->Action)
     {
+			//data buffer definition
+			xDataBufferT* data_buffer = &DATA_BUFFER;
+			
 			//clearing the data buffer
-			xDataBufferClear(&DATA_BUFFER);
+			if (rx->Tx) { xDataBufferClear(rx->Tx->ObjectBuffer); }
 			
 			//function call corresponding to the request ActionKey
-      result->Action(rx, &DATA_BUFFER, object, size);
+      result->Action(rx, 0, object, size);
 			
-			if (tx)
+			if (rx->Tx)
 			{
 				//filling in the package information structure
 				packet_info.RequestId = info->RequestId; //must match the request RequestId
 				packet_info.ActionKey = result->Id;
-				packet_info.ContentSize = DATA_BUFFER.DataSize;
+				if (rx->Tx->ObjectBuffer) { packet_info.ContentSize = rx->Tx->ObjectBuffer->DataSize; }
 				
 				//response array:
 				//Header: [#][Description][:][DeviceKey]
@@ -129,28 +129,27 @@ void Device_RequestTransaction(xRxT* rx, xRequestT* request, uint8_t* object, ui
 				//End packet marker: [\r]
 				
 				//start transmission logic implementation selected "tx" line
-				xTxStartTransmission(tx);
+				xTxStartTransmission(rx->Tx);
 				
 				//Packet header start
-				xTxTransmitData(tx, &PACKET_RESPONSE_IDENTIFICATOR, sizeof(PACKET_RESPONSE_IDENTIFICATOR));
-				xTxTransmitData(tx, &PACKET_DEVICE_KEY, sizeof(PACKET_DEVICE_KEY));
+				xTxTransmitData(rx->Tx, &PACKET_RESPONSE_IDENTIFICATOR, sizeof(PACKET_RESPONSE_IDENTIFICATOR));
+				xTxTransmitData(rx->Tx, &PACKET_DEVICE_KEY, sizeof(PACKET_DEVICE_KEY));
 				//Packet header end
 				
 				//Packet info: unique request key: "RequestId", command key: "ActionKey" and "content_size"
-				xTxTransmitData(tx, &packet_info, sizeof(packet_info));
-				xTxTransmitData(tx, DATA_BUFFER.Data, DATA_BUFFER.DataSize);
+				xTxTransmitData(rx->Tx, &packet_info, sizeof(packet_info));
+				if (rx->Tx->ObjectBuffer) { xTxTransmitData(rx->Tx, rx->Tx->ObjectBuffer->Data, rx->Tx->ObjectBuffer->DataSize); }
 				
 				//Packet end
-				xTxTransmitData(tx, PACKET_END, SIZE_STRING(PACKET_END));
+				xTxTransmitData(rx->Tx, PACKET_END, SIZE_STRING(PACKET_END));
 				
 				//transmission logic implementation selected "tx" line
-				xTxEndTransmission(tx);
+				xTxEndTransmission(rx->Tx);
 			}
     }
   }
 }
 //==============================================================================
-//------------------------------------------------------------------------------
 const xTransactionT Transactions[] =
 {
 	//----------------------------------------------------------------------------

@@ -4,18 +4,24 @@
 //==============================================================================
 void xDataBufferAdd(xDataBufferT* buffer, xObject object, uint32_t object_size)
 {
-	uint8_t* ptr = (uint8_t*)object;
-	
-	while (object_size && buffer->DataSize < buffer->Size)
+	if (buffer)
 	{
-		buffer->Data[buffer->DataSize++] = *ptr++;
-		object_size--;
+		uint8_t* ptr = (uint8_t*)object;
+		
+		while (object_size && buffer->DataSize < buffer->Size)
+		{
+			buffer->Data[buffer->DataSize++] = *ptr++;
+			object_size--;
+		}
 	}
 }
 //==============================================================================
 void xDataBufferClear(xDataBufferT* buffer)
 {
-	buffer->DataSize = 0;
+	if (buffer)
+	{
+		buffer->DataSize = 0;
+	}
 }
 //==============================================================================
 xResult xDataBufferInit(xDataBufferT* buffer,

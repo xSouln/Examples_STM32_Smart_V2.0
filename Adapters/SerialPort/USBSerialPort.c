@@ -17,6 +17,9 @@ static xTxT Tx;
 
 extern USBD_HandleTypeDef hUsbDeviceFS; //override at usb_device.c
 
+extern xDataBufferT MainDataBuffer;
+#define TX_OBJECT_BUFFER MainDataBuffer
+
 USBSerialPortT USBSerialPort;
 //==============================================================================
 static void Handler(xTxT* tx)
@@ -65,19 +68,18 @@ int USBSerialPortInit(void* parent)
 	if (USBSerialPort.Description) { USBSerialPort.Description = "USBSerialPortT"; }
 	USBSerialPort.Parent = parent;
 	
-  Tx.Rx = &Rx;
-  Rx.Tx = &Tx;
+	xTxInit(&Tx, &USBSerialPort,
+          tx_circle_buf, TX_CIRCLE_BUF_SIZE_MASK,
+          &tx_control);
+	
+	USBSerialPort.Tx->ObjectBuffer = &TX_OBJECT_BUFFER;
   
-  xRxInit(&Rx, &USBSerialPort,
+  xRxInit(&Rx, &USBSerialPort, &Tx,
           rx_circle_buf, RX_CIRCLE_BUF_SIZE,
           rx_object_buf, RX_OBJECT_BUF_SIZE,
           (xRxEventEndLine)RxEndLine);
 	
 	tx_control.Handle = USBSerialPort.Handle;
-  
-  xTxInit(&Tx, &USBSerialPort,
-          tx_circle_buf, TX_CIRCLE_BUF_SIZE_MASK,
-          &tx_control);
   
   USBSerialPort.Rx = &Rx;
   USBSerialPort.Tx = &Tx;

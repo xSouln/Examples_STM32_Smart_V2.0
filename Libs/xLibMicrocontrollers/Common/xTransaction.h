@@ -12,9 +12,9 @@
 #include "xDataBuffer.h"
 //==============================================================================
 typedef void (*xTransactionAction)(xRxT* rx,
-																		xDataBufferT* data_buffer,
-																		xObject object,
-																		uint16_t object_size);
+																		void* object,
+																		xObject request,
+																		uint16_t request_size);
 //==============================================================================
 typedef struct
 {

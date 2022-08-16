@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "xType.h"
+#include "xTx.h"
 //==============================================================================
 typedef enum
 {
@@ -71,12 +72,13 @@ typedef struct
   xRxCircleReceiverT CircleReceiver;
   xRxObjectReceiverT ObjectReceiver;
   
-  xObject Tx;
+  xTxT* Tx;
 	
 } xRxT;
 //==============================================================================
 xResult xRxInit(xRxT* rx,
 								void* parent,
+								xTxT* tx,
 								uint8_t* circle_buf, uint16_t circle_buf_size_mask,
 								uint8_t* object_buf, uint16_t object_buf_size,
 								xRxEventEndLine event_end_line);

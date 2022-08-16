@@ -79,6 +79,7 @@ void xRxClear(xRxT* rx)
 //==============================================================================
 xResult xRxInit(xRxT* rx,
 								void* parent,
+								xTxT* tx,
 								uint8_t* circle_buf, uint16_t circle_buf_size_mask,
 								uint8_t* object_buf, uint16_t object_buf_size,
 								xRxEventEndLine event_end_line)
@@ -87,6 +88,8 @@ xResult xRxInit(xRxT* rx,
 	{
 		if (!rx->Description) { rx->Description = "xRxT";}
 		rx->Parent = parent;
+		
+		rx->Tx = tx;
 		
 		rx->CircleReceiver.Buffer = circle_buf;
 		rx->CircleReceiver.SizeMask = circle_buf_size_mask;

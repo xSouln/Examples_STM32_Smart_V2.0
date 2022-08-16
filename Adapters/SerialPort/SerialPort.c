@@ -6,6 +6,7 @@
 #define RX_CIRCLE_BUF_SIZE_MASK 0x1ff
 #define RX_OBJECT_BUF_SIZE 0x200
 #define TX_CIRCLE_BUF_SIZE_MASK 0x3ff
+
 //------------------------------------------------------------------------------
 static uint8_t rx_circle_buf[RX_CIRCLE_BUF_SIZE_MASK + 1];
 static uint8_t rx_object_buf[RX_OBJECT_BUF_SIZE];
@@ -17,6 +18,9 @@ static xTxT Tx;
 SerialPortT SerialPort;
 
 static volatile DMA_Channel_TypeDef* DMA_RX;
+
+extern xDataBufferT MainDataBuffer;
+#define TX_OBJECT_BUFFER MainDataBuffer
 //==============================================================================
 static xResult SetTransmiterState(xTxT* tx, xTxState state)
 {
@@ -60,17 +64,16 @@ int SerialPortInit(void* reg, void* parent)
 	if (SerialPort.Description) { SerialPort.Description = "SerialPortT"; }
 	SerialPort.Parent = parent;
 	
-  xRxInit(&Rx, &SerialPort,
+	xTxInit(&Tx, &SerialPort,
+          tx_circle_buf, TX_CIRCLE_BUF_SIZE_MASK,
+					&tx_control);
+	
+  xRxInit(&Rx, &SerialPort, &Tx,
           rx_circle_buf, RX_CIRCLE_BUF_SIZE_MASK,
           rx_object_buf, RX_OBJECT_BUF_SIZE,
           (xRxEventEndLine)RxEndLine);
-  
-  xTxInit(&Tx, &SerialPort,
-          tx_circle_buf, TX_CIRCLE_BUF_SIZE_MASK,
-					&tx_control);
-  
-  Tx.Rx = &Rx;
-  Rx.Tx = &Tx;
+	
+	Tx.ObjectBuffer = &TX_OBJECT_BUFFER;
   
   SerialPort.Rx = &Rx;
   SerialPort.Tx = &Tx;
@@ -86,9 +89,9 @@ int SerialPortInit(void* reg, void* parent)
   SerialPort.Reg->Control_1.TxCompleteInterruptEnable = false;
   SerialPort.Reg->Control_1.TxEmptyInterruptEnable = false;
 	
-	extern UART_HandleTypeDef huart1;
-	HAL_UART_Receive_DMA(&huart1, rx_circle_buf, sizeof(rx_circle_buf));
-	/*
+	//extern UART_HandleTypeDef huart1;
+	//HAL_UART_Receive_DMA(&huart1, rx_circle_buf, sizeof(rx_circle_buf));
+	
 	DMA_RX = DMA1_Channel5;// huart1.hdmarx->Instance;
 	
 	DMA_RX->CCR &= ~DMA_CCR_EN;
@@ -101,7 +104,7 @@ int SerialPortInit(void* reg, void* parent)
 	DMA_RX->CMAR = (uint32_t)rx_circle_buf;
 	
 	DMA_RX->CCR |= DMA_CCR_EN;
-  */
+  
   return 0;
 }
 //==============================================================================
