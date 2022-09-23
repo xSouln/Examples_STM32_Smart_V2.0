@@ -1,15 +1,19 @@
 /*
- * pattern_stm32f4xx_spi.h
+ * pattern_stm32f1xx_spi.h
  *
  * Created: 16.05.2019 14:29:38
  *  Author: rekuts
  */ 
 //==============================================================================
-#ifndef PATTERN_STM32X4XX_SPI_H_
-#define PATTERN_STM32X4XX_SPI_H_
+#ifndef PATTERN_STM32X1XX_SPI_H_
+#define PATTERN_STM32X1XX_SPI_H_
 //==============================================================================
-typedef union{
-  struct{
+#include <stdint.h>
+//==============================================================================
+typedef union
+{
+  struct
+  {
     /* 0x00000001 */ uint32_t ClockPhase: 1; //SPI_CR1_CPHA    
     /* 0x00000002 */ uint32_t ClockPolarity: 1; //SPI_CR1_CPOL
     /* 0x00000004 */ uint32_t MasterSelection: 1; //SPI_CR1_MSTR    
@@ -29,10 +33,13 @@ typedef union{
     /* 0x00008000 */ uint32_t BidirectionalData: 1; //SPI_CR1_BIDIMODE
   };
   uint32_t Value;
-}SpiCR1_T;
+  
+} REG_SPI_CR1_T;
 //==============================================================================
-typedef union{
-  struct{
+typedef union
+{
+  struct
+  {
     /* 0x00000001 */ uint32_t RxEnableDMA: 1; //SPI_CR2_RXDMAEN    
     /* 0x00000002 */ uint32_t TxEnableDMA: 1; //SPI_CR2_TXDMAEN
     /* 0x00000004 */ uint32_t SS_OutputEnable: 1; //SPI_CR2_SSOE
@@ -44,10 +51,13 @@ typedef union{
     /* 0x00000080 */ uint32_t TxEmptyInterruptEnable: 1; //SPI_CR2_TXEIE
   };
   uint32_t Value;
-}SpiCR2_T;
+  
+} REG_SPI_CR2_T;
 //==============================================================================
-typedef union{
-  struct{
+typedef union
+{
+  struct
+  {
     /* 0x00000001 */ uint32_t RxNotEmpty: 1; //SPI_SR_RXNE    
     /* 0x00000002 */ uint32_t TxEmpty: 1; //SPI_SR_TXE
     /* 0x00000004 */ uint32_t ChannelSide: 1; //SPI_SR_CHSIDE
@@ -61,31 +71,51 @@ typedef union{
     /* 0x00000100 */ uint32_t FrameFormatRrror: 1; //SPI_SR_FRE
   };
   uint32_t Value;
-}SpiSR_T;
+  
+} REG_SPI_SR_T;
 //==============================================================================
-typedef union{
-  struct{
+typedef union
+{
+	volatile uint32_t Byte : 8;
+	volatile uint32_t HalfWord : 16;
+  volatile uint32_t Word;
+  
+} REG_SPI_DR_T;
+//==============================================================================
+typedef union
+{
+  struct
+  {
     /* 0x00000001 */ uint32_t CrcPolynomial: 16; //SPI_CRCPR_CRCPOLY 
   };
   uint32_t Value;
-}SpiCRCPR_T;
+  
+} REG_SPI_CRCPR_T;
 //==============================================================================
-typedef union{
-  struct{
+typedef union
+{
+  struct
+  {
     /* 0x00000001 */ uint32_t RxCrc: 16; //SPI_RXCRCR_RXCRC 
   };
   uint32_t Value;
-}SpiRXCRCR_T;
+  
+} REG_SPI_RXCRCR_T;
 //==============================================================================
-typedef union{
-  struct{
+typedef union
+{
+  struct
+  {
     /* 0x00000001 */ uint32_t TxCrc: 16; //SPI_TXCRCR_TXCRC 
   };
   uint32_t Value;
-}SpiTXCRCR_T;
+  
+} REG_SPI_TXCRCR_T;
 //==============================================================================
-typedef union{
-  struct{
+typedef union
+{
+  struct
+  {
     /* 0x00000001 */ uint32_t ChannelLength: 1; //SPI_I2SCFGR_CHLEN    
     /* 0x00000002 */ uint32_t DataLength: 2; //SPI_I2SCFGR_DATLEN
     /* 0x00000008 */ uint32_t ClockPolarity: 1; //SPI_I2SCFGR_CKPOL
@@ -100,28 +130,34 @@ typedef union{
     /* 0x00001000 */ uint32_t AsynchronousStartEnable: 1; //SPI_I2SCFGR_ASTRTEN
   };
   uint32_t Value;
-}SpiI2SCFGR_T;
+  
+} REG_SPI_I2SCFGR_T;
 //==============================================================================
-typedef union{
-  struct{
+typedef union
+{
+  struct
+  {
     /* 0x00000001 */ uint32_t LinearPrescaler: 8; //SPI_I2SPR_I2SDIV
     
     /* 0x00000100 */ uint32_t OddFactor: 1; //SPI_I2SPR_ODD
     /* 0x00000200 */ uint32_t MasterClockOutputEnable: 1; //SPI_I2SPR_MCKOE
   };
   uint32_t Value;
-}SpiI2SPR_T;
+  
+} REG_SPI_I2SPR_T;
 //==============================================================================
-typedef struct{
-  volatile SpiCR1_T CR1; //SPI control register 1
-  volatile SpiCR2_T CR2; //SPI control register 2
-  volatile SpiSR_T SR; //SPI status register
-  volatile uint32_t DR; //SPI data register
-  volatile SpiCRCPR_T CRCPR; //SPI CRC polynomial register (not used in I2S mode)
-  volatile SpiRXCRCR_T RXCRCR; //SPI RX CRC register (not used in I2S mode)
-  volatile SpiTXCRCR_T TXCRCR; //SPI TX CRC register (not used in I2S mode)
-  volatile SpiI2SCFGR_T I2SCFGR; //SPI_I2S configuration register
-  volatile SpiI2SPR_T I2SPR; //SPI_I2S prescaler register
-}SpiRegT;
+typedef struct
+{
+  volatile REG_SPI_CR1_T Control1; //SPI control register 1
+  volatile REG_SPI_CR2_T Control2; //SPI control register 2
+  volatile REG_SPI_SR_T Status; //SPI status register
+  volatile REG_SPI_DR_T Data; //SPI data register
+  volatile REG_SPI_CRCPR_T CRCPR; //SPI CRC polynomial register (not used in I2S mode)
+  volatile REG_SPI_RXCRCR_T RXCRCR; //SPI RX CRC register (not used in I2S mode)
+  volatile REG_SPI_TXCRCR_T TXCRCR; //SPI TX CRC register (not used in I2S mode)
+  volatile REG_SPI_I2SCFGR_T I2SCFGR; //SPI_I2S configuration register
+  volatile REG_SPI_I2SPR_T I2SPR; //SPI_I2S prescaler register
+  
+} REG_SPI_T;
 //==============================================================================
-#endif /* PATTERN_STM32X4XX_SPI_H_ */
+#endif /* PATTERN_STM32X1XX_SPI_H_ */

@@ -9,19 +9,19 @@
 #include "Types.h"
 #include "Info.h"
 #include "Config.h"
-#include "SerialPort/SerialPort.h"
-#include "SerialPort/USBSerialPort.h"
-#include "Transactions.h"
-#include "Requests.h"
-#include "CupsRGB/CupsRGB_Component.h"
+#include "SerialPort/SerialPort_Components.h"
+#include "TCPServer/TCPServer_Components.h"
+#include "RxTransactions.h"
+#include "RxRequests.h"
+#include "RGBCups/RGBCups_Components.h"
 //==============================================================================
 typedef struct
 {
 	OBJECT_HEADER;
 	
-	xRequestManagerT RequestManager;
+	xRxRequestManagerT RequestManager;
 	
-	CupsRGB_ControlT* CupsRGB_Control;
+	RGBCupT* RGBCups;
 	
 } ControlT;
 //==============================================================================

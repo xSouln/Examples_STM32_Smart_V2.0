@@ -7,10 +7,9 @@ extern "C" {
 #endif
 //==============================================================================
 #include <stdint.h>
-//------------------------------------------------------------------------------
-#ifdef WS2812_USER_CONFIG
-#include "WS2812_UserConfig.h" // override default macroses
-#endif
+#include <stdbool.h>
+#include "WS2812_Config.h"
+#include "WS2812_Info.h"
 //==============================================================================
 typedef enum
 {
@@ -52,9 +51,10 @@ typedef enum
 //==============================================================================
 typedef enum
 {
-	Stopped,
-	IsTransmit,
-	Error
+	WS2812_TransmitterStopped,
+	WS2812_TransmitterIsTransmit,
+	WS2812_TransmitterError,
+	WS2812_TransmitterUndefined
 	
 } WS2812_TransmitterStatus;
 //------------------------------------------------------------------------------
@@ -67,9 +67,34 @@ typedef enum
 //------------------------------------------------------------------------------
 typedef enum
 {
-	WS2812_Event_TransferComplite,
+	WS2812_EventTransferComplite,
 	
-} WS2812_Events;
+} WS2812_EventSelector;
+//------------------------------------------------------------------------------
+typedef enum
+{
+	WS2812_RequestDelay,
+	WS2812_RequestDrawingManagerHandler,
+	
+	WS2812_RequestTransmitterEnable,
+	WS2812_RequestTransmitterDisable,
+	
+} WS2812_RequestSelector;
+//------------------------------------------------------------------------------
+typedef enum
+{
+	WS2812_ValuePeriod,
+	WS2812_ValueTransmitterStatus,
+	WS2812_ValueTransmitterEnableState
+	
+} WS2812_ValueSelector;
+//------------------------------------------------------------------------------
+typedef enum
+{
+	WS2812_PixelAddModeFill,
+	WS2812_PixelAddModePut,
+	
+} WS2812_PixelAddMode;
 //------------------------------------------------------------------------------
 typedef struct
 {
@@ -79,49 +104,37 @@ typedef struct
 	
 } WS2812_PixelT;
 //------------------------------------------------------------------------------
-typedef WS2812_Result (*WS2812_ActionWritePixels)(void* driver, uint8_t* data, uint16_t data_size);
+#define WS2812_BITS_IN_PIXEL (sizeof(WS2812_PixelT) * 8)
+//------------------------------------------------------------------------------
+typedef void (*WS2812_ActionHandler)(void* driver);
 
-typedef uint16_t (*WS2812_ActionGetPeriod)(void* driver);
-typedef void (*WS2812_ActionSetPeriod)(void* driver, uint16_t period);
+typedef void (*WS2812_EventListener)(void* driver, WS2812_EventSelector event, uint32_t args, uint32_t count);
+typedef WS2812_Result (*WS2812_RequestListener)(void* driver, WS2812_RequestSelector selector, uint32_t args, uint32_t count);
 
-typedef WS2812_TransmitterStatus (*WS2812_ActionGetTransmitterStatus)(void* driver);
-typedef WS2812_Result (*WS2812_ActionSetTransmitterState)(void* driver, WS2812_State state);
-
-typedef void (*WS2812_ActionDelay)(void* driver, uint32_t ms);
-typedef void (*WS2812_EventHandler)(void* driver, WS2812_Events argument);
+typedef int (*WS2812_ActionGetValue)(void* driver, WS2812_ValueSelector selector);
+typedef WS2812_Result (*WS2812_ActionSetValue)(void* driver, WS2812_ValueSelector selector, uint32_t value);
 //------------------------------------------------------------------------------
 typedef struct
 {
-	void* Handle;
+	WS2812_ActionHandler Handler;
 	
-	WS2812_ActionWritePixels WritePixels;
+	WS2812_EventListener EventListener;
+	WS2812_RequestListener RequestListener;
 	
-	WS2812_ActionGetPeriod GetPeriod;
-	WS2812_ActionSetPeriod SetPeriod;
+	WS2812_ActionGetValue GetValue;
+	WS2812_ActionSetValue SetValue;
 	
-	WS2812_ActionGetTransmitterStatus GetTransmitterStatus;
-	WS2812_ActionSetTransmitterState SetTransmitterState;
-	
-	WS2812_EventHandler Handler;
-	
-	WS2812_ActionDelay Delay;
-	
-} WS2812_ControlT;
-//------------------------------------------------------------------------------
-typedef struct
-{
-	uint16_t Period;
-	
-} WS2812_OptionsT;
+} WS2812_InterfaceT;
 //------------------------------------------------------------------------------
 typedef union
 {
 	struct
 	{
-		uint32_t IsInit : 1;
+		uint32_t DriverInit : 1;
 		uint32_t ErrorState : 3;
+		uint32_t DrawingIsEnable : 1;
 		
-		uint32_t Transmitter : 3;
+		WS2812_TransmitterStatus Transmitter : 3;
 	};
 	uint32_t Value;
 	
@@ -139,14 +152,25 @@ typedef union
 //------------------------------------------------------------------------------
 typedef struct
 {
+	void* Rule;
+	WS2812_ActionHandler Handler;
+	
+	void* Next;
+	
+} WS2812_DrawingManagerT;
+//------------------------------------------------------------------------------
+typedef struct
+{
 	char* Description;
 	void* Parent;
 	
 	WS2812_StatusT Status;
 	WS2812_HandleT Handle;
 	
-	WS2812_ControlT* Control;
-	WS2812_OptionsT Options;
+	WS2812_DrawingManagerT DrawingManager;
+	
+	WS2812_AdapterT* Adapter;
+	WS2812_InterfaceT* Interface;
 	
 	uint8_t* Buffer;
 	uint16_t BufferSize;
@@ -154,16 +178,30 @@ typedef struct
 } WS2812_T;
 //==============================================================================
 void WS2812_Handler(WS2812_T* driver);
-void WS2812_EventReceive(WS2812_T* driver, WS2812_Events event);
 
-WS2812_Result WS2812_WritePixel(WS2812_T* driver, WS2812_PixelT pixel, uint16_t position);
-WS2812_Result WS2812_WritePixels(WS2812_T* driver, WS2812_PixelT* pixels, uint16_t pixels_count);
+void WS2812_DeclareEvent(WS2812_T* driver, WS2812_EventSelector selector, uint32_t args, uint32_t count);
+WS2812_Result WS2812_DeclareRequest(WS2812_T* driver, WS2812_RequestSelector selector, uint32_t args, uint32_t count);
 
-WS2812_Result WS2812_SetOptions(WS2812_T* driver, WS2812_OptionsT* options);
+WS2812_Result WS2812_SetValue(WS2812_T* driver, WS2812_ValueSelector selector, uint32_t value);
+int WS2812_GetValue(WS2812_T* driver, WS2812_ValueSelector selector);
+//------------------------------------------------------------------------------
+void WS2812_Draw(WS2812_T* driver);
 
+uint16_t WS2812_SetPixel(WS2812_T* driver, WS2812_PixelT pixel, uint16_t position);
+uint16_t WS2812_FillPixels(WS2812_T* driver, WS2812_PixelT pixel, uint16_t start_position, uint16_t pixels_count);
+uint16_t WS2812_SetPixels(WS2812_T* driver, WS2812_PixelT* pixels, uint16_t start_position, uint16_t pixels_count);
+
+WS2812_Result WS2812_UpdateLayout(WS2812_T* driver);
+
+WS2812_Result WS2812_DrawingStart(WS2812_T* driver, WS2812_DrawingManagerT* drawing_manager);
+void WS2812_DrawingStop(WS2812_T* driver);
+
+WS2812_TransmitterStatus WS2812_GetTransmitterStatus(WS2812_T* driver);
+//------------------------------------------------------------------------------
 WS2812_Result WS2812_Init(WS2812_T* driver,
 													void* parent,
-													WS2812_ControlT* control,
+													WS2812_AdapterT* adapter,
+													WS2812_InterfaceT* interface,
 													uint8_t* buffer,
 													uint16_t buffer_size);
 //==============================================================================

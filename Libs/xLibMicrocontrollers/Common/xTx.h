@@ -1,108 +1,143 @@
 //==============================================================================
 #ifndef X_TX_H
 #define X_TX_H
-//==============================================================================
-#include <stdint.h>
-#include <stdbool.h>
-#include "xType.h"
+//------------------------------------------------------------------------------
+#ifdef __cplusplus
+ extern "C" {
+#endif 
+//------------------------------------------------------------------------------
+#include "xTypes.h"
 #include "xDataBuffer.h"
+#include "xCircleBuffer.h"
 //==============================================================================
-#define xTX_SET_MASK_SIZE (bits)(~(0xffff << bits))
+#define xtx_word_t uint32_t
 //==============================================================================
 typedef enum
 {
 	xTxStatusFree,
-	xTxStatusTransmitted,
+	xTxStatusIsTransmits,
 	xTxStatusError
 	
-} xTxStatus;
-//==============================================================================
+} xTxTransmitterStatus;
+//------------------------------------------------------------------------------
 typedef enum
 {
 	xTxStateDisable,
 	xTxStateEnable,
 	
 } xTxState;
+//------------------------------------------------------------------------------
+typedef enum
+{
+	xTxEventIRQ = 1U,
+	xTxEventTransmissionComplete
+	
+} xTxEventSelector;
+//------------------------------------------------------------------------------
+typedef enum
+{
+	xTxRequestTransmitData = 1U,
+	xTxRequestEnableTransmitter,
+	xTxRequestDisableTransmitter,
+	
+	xTxRequestStartTransmission,
+	xTxRequestStopTransmission,
+	xTxRequestAbortTransmission,
+	
+	xTxRequestClearBuffer,
+	
+} xTxRequestSelector;
+//------------------------------------------------------------------------------
+typedef enum
+{
+	xTxValueTransmitterStatus = 1U,
+	xTxValueBufferSize,
+	xTxValueFreeBufferSize,
+	
+} xTxValueSelector;
 //==============================================================================
-typedef xResult (*xTxActionStartTransmission)(xObject tx);
-typedef xResult (*xTxActionTransmitData)(xObject tx, xObject data, uint16_t data_size);
-typedef xResult (*xTxActionEndTransmission)(xObject tx);
+typedef void (*xTxActionHandler)(void* tx);
 
-typedef xResult (*xTxActionSetTransmiterState)(xObject tx, xTxState state);
-typedef uint16_t (*xTxActionGetFreeSize)(xObject tx);
-typedef xTxStatus (*xTxActionGetTransmiterStatus)(xObject tx);
+typedef void (*xTxEventListener)(void* tx, xTxEventSelector event, uint32_t args, uint32_t count);
+typedef xResult (*xTxRequestListener)(void* tx, xTxRequestSelector selector, uint32_t args, uint32_t count);
 
-typedef void (*xTxActionHandler)(xObject tx);
-typedef void (*xTxActionIRQHandler)(xObject tx);
+typedef int (*xTxActionGetValue)(void* tx, xTxValueSelector selector);
+typedef xResult (*xTxActionSetValue)(void* tx, xTxValueSelector selector, uint32_t value);
 //==============================================================================
 typedef union
 {
   struct
   {
-    uint16_t Transmitted : 1;
-    uint16_t IsAdd : 1;
-    uint16_t IsUpdate : 1;
-    uint16_t TransferComplite : 1;
-    
-    uint16_t TxBufFull : 1;
-    uint16_t Lock : 1;
-    uint16_t CrcEnable : 1;
-  };
-  uint16_t Value;
+    uint32_t Transmitted : 1;
+		
+		uint32_t RequestState : 4;
+	};
+	
+  uint32_t Value;
 	
 } xTxHandleT;
-//==============================================================================
+//------------------------------------------------------------------------------
+typedef union
+{
+  struct
+  {
+		uint32_t IsInit : 1;
+		
+    xTxTransmitterStatus Transmitter : 4;
+  };
+	
+  uint32_t Value;
+	
+} xTxStatusT;
+//------------------------------------------------------------------------------
 typedef struct
 {
-	void* Handle;
-	
-	xTxActionStartTransmission StartTransmission;
-	xTxActionTransmitData TransmitData;
-	xTxActionEndTransmission EndTransmission;
-	
-	xTxActionSetTransmiterState SetTransmiterState;
-	xTxActionGetFreeSize GetFreeSize;
-	xTxActionGetTransmiterStatus GetTransmiterStatus;
-	
 	xTxActionHandler Handler;
-	xTxActionIRQHandler IRQHandler;
 	
-} xTxControlT;
-//==============================================================================
+	xTxEventListener EventListener;
+	xTxRequestListener RequestListener;
+	
+	xTxActionGetValue GetValue;
+	xTxActionSetValue SetValue;
+	
+} xTxInterfaceT;
+//------------------------------------------------------------------------------
+typedef void xTxAdapterT;
+//------------------------------------------------------------------------------
 typedef struct
 {
   OBJECT_HEADER;
 	
   xTxHandleT Handle;
-	xTxStatus Status;
-	xTxControlT* Control;
+	xTxStatusT Status;
 	
-	uint8_t* Buffer;
-	volatile uint16_t TotalIndex;
-	uint16_t HandlerIndex;
-	uint16_t SizeMask;
-  uint16_t Crc;
+	xTxAdapterT* Adapter;
+	xTxInterfaceT* Interface;
 	
 	xDataBufferT* ObjectBuffer;
-  xObject Rx;
 	
 } xTxT;
-//==============================================================================
-xResult xTxInit(xTxT* tx, void* parent,
-								uint8_t* buf, uint16_t buf_size_mask,
-								xTxControlT* control);
-								
-void xTxHandler(xTxT *tx);
-void xTxIRQHandler(xTxT *tx);
+//==============================================================================								
+extern void xTxHandler(xTxT* tx);
 
-extern xResult xTxTransmitData(xTxT *Tx, xObject data, uint16_t data_size);
-extern xResult xTxTransmitByte(xTxT *Tx, uint8_t byte);
-extern xResult xTxTransmitString(xTxT *Tx, char* str);
-		
-extern xResult xTxStartTransmission(xTxT* tx);
-extern xResult xTxEndTransmission(xTxT* tx);
-		
-extern uint16_t xTxGetFreeSize(xTxT* tx);
-extern void xTxClear(xTxT* tx);
+extern void xTxDeclareEvent(xTxT* tx, xTxEventSelector event, uint32_t args, uint32_t count);
+extern xResult xTxDeclareRequest(xTxT* tx, xTxRequestSelector selector, uint32_t args, uint32_t count);
+
+extern xResult xTxSetValue(xTxT* tx, xTxValueSelector selector, uint32_t value);
+extern int xTxGetValue(xTxT* tx, xTxValueSelector selector);
+
+extern int xTxTransmitData(xTxT* tx, void* data, uint32_t data_size);
+extern int xTxTransmitByte(xTxT* tx, uint8_t byte);
+extern int xTxTransmitString(xTxT* tx, char* str);
+
+xResult xTxInit(xTxT* tx,
+								void* parent,
+								xTxAdapterT* adapter,
+								xTxInterfaceT* interface,
+								xDataBufferT* object_buffer);
 //==============================================================================
+#ifdef __cplusplus
+}
+#endif
+//------------------------------------------------------------------------------
 #endif

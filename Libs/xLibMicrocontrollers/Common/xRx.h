@@ -1,94 +1,100 @@
 //==============================================================================
 #ifndef X_RX_RECIVER_H
 #define X_RX_RECIVER_H
+//------------------------------------------------------------------------------
+#ifdef __cplusplus
+extern "C" {
+#endif
 //==============================================================================
-#include <stdint.h>
-#include <stdbool.h>
-#include "xType.h"
+#include "xTypes.h"
 #include "xTx.h"
 //==============================================================================
 typedef enum
 {
-  xRxEndLineResultContinue,
-  xRxEndLineResultReset
+	xRxEventIRQ = 1U,
+	xRxEventReceiveComplete
 	
-} xRxEndLineResult;
-//==============================================================================
-typedef struct
+} xRxEventSelector;
+//------------------------------------------------------------------------------
+typedef enum
 {
-  uint16_t Storage : 1;
-  uint16_t BufLoaded : 1;
-  uint16_t ReceiveComlite : 1;
-  uint16_t EndLineControl : 1;
-  
-  uint16_t CrcEnable : 1;
+	xRxRequestReceive = 1U,
+	xRxRequestEnableReceiver,
+	xRxRequestDisableReceiver,
 	
-}xRxStateT;
-//==============================================================================
-typedef void (*xRxCircleReceiverControlActionReceive)(void* receiver,
-																											uint8_t* data,
-																											uint16_t data_size);
+	xRxRequestClearBuffer,
+	
+} xRxRequestSelector;
+//------------------------------------------------------------------------------
+typedef enum
+{
+	xRxValueReceiverEnableState = 1U
+	
+} xRxValueSelector;
+//------------------------------------------------------------------------------
+typedef union
+{
+  struct
+	{
+		uint32_t IsInit : 1;
+		
+		uint32_t Receiver : 4;
+	};
+	uint32_t Value;
+	
+} xRxStatusT;
+//------------------------------------------------------------------------------
+typedef void (*xRxActionHandler)(void* rx);
+typedef void (*xRxEventListener)(void* rx, xRxEventSelector event, uint32_t args, uint32_t count);
 
-typedef struct
-{
-	xRxCircleReceiverControlActionReceive Receive;
-	
-} xRxCircleReceiverControlT;
-//==============================================================================
-typedef struct
-{
-  uint8_t *Buffer;
-	uint16_t SizeMask;
-  volatile uint16_t TotalIndex;
-  uint16_t HandlerIndex;
-	
-} xRxCircleReceiverT;
-//==============================================================================
-typedef void (*xRxHandler)(xObject rx);
-typedef xRxEndLineResult (*xRxEventEndLine)(xObject rx, uint8_t* object, uint16_t size);
+typedef xResult (*xRxRequestListener)(void* rx, xRxRequestSelector selector, uint32_t args, uint32_t count);
 
+typedef int (*xRxActionGetValue)(void* rx, xRxValueSelector selector);
+typedef xResult (*xRxActionSetValue)(void* rx, xRxValueSelector selector, uint32_t value);
+//------------------------------------------------------------------------------
 typedef struct
 {
-	xRxHandler Handler;
-	xRxEventEndLine EventEndLine;
+	xRxActionHandler Handler;
 	
-} xRxObjectReceiverControlT;
-//==============================================================================
-typedef struct
-{
-  uint8_t* Object;
-  uint16_t ObjectMaxSize;
-  uint16_t ObjectSize;
+	xRxEventListener EventListener;
+	xRxRequestListener RequestListener;
 	
-  xRxEventEndLine EventEndLine;
+	xRxActionGetValue GetValue;
+	xRxActionSetValue SetValue;
 	
-} xRxObjectReceiverT;
-//==============================================================================
+} xRxInterfaceT;
+//------------------------------------------------------------------------------
+typedef void xRxAdapterT;
+//------------------------------------------------------------------------------
 typedef struct
 {
   OBJECT_HEADER;
   
-  volatile xRxStateT State;
-  xRxCircleReceiverT CircleReceiver;
-  xRxObjectReceiverT ObjectReceiver;
-  
+	xRxStatusT Status;
+	
+	xRxAdapterT* Adapter;
+	xRxInterfaceT* Interface;
+	
   xTxT* Tx;
 	
 } xRxT;
 //==============================================================================
+extern void xRxHandler(xRxT* rx);
+extern int xRxReceive(xRxT* rx, uint8_t* data, uint32_t size);
+
+extern void xRxDeclareEventEvent(xRxT* rx, xRxEventSelector event, uint32_t args, uint32_t count);
+extern xResult xRxDeclareEventRequest(xRxT* rx, xRxRequestSelector selector, uint32_t args, uint32_t count);
+
+extern xResult xRxSetValue(xRxT* rx, xRxValueSelector selector, uint32_t value);
+extern int xRxGetValue(xRxT* rx, xRxValueSelector selector);
+
 xResult xRxInit(xRxT* rx,
-								void* parent,
-								xTxT* tx,
-								uint8_t* circle_buf, uint16_t circle_buf_size_mask,
-								uint8_t* object_buf, uint16_t object_buf_size,
-								xRxEventEndLine event_end_line);
-
-void xRxObjectReceive(xRxT *rx, uint8_t *data, uint16_t data_size);
-void xRxCircleReceiveByte(xRxT *rx, uint8_t data);
-void xRxObjectUpdate(xRxT* rx);
-
-void xRxCircleReceive(xRxT *rx, uint8_t *data, uint16_t data_size);
-
-void xRxClear(xRxT* rx);
+									void* parent,
+									xTxAdapterT* adapter,
+									xRxInterfaceT* interface);
 //==============================================================================
+#ifdef __cplusplus
+}
+#endif
+//------------------------------------------------------------------------------
 #endif

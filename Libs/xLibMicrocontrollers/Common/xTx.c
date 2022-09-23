@@ -2,150 +2,68 @@
 #include <string.h>
 #include "xTx.h"
 //==============================================================================
-static uint16_t xTxGetFreeSizeDefault(xTxT *tx)
+inline void xTxHandler(xTxT* tx)
 {
-	int difference = (tx->TotalIndex - tx->HandlerIndex) & tx->SizeMask;
-	return (tx->SizeMask - difference);
+	tx->Interface->Handler(tx);
 }
 //------------------------------------------------------------------------------
-static xTxStatus xTxGetTransmiterStatusDefault(xTxT *tx)
+inline void xTxDeclareEvent(xTxT* tx, xTxEventSelector event, uint32_t args, uint32_t count)
 {
-	return xTxStatusFree;
+	tx->Interface->EventListener(tx, event, args, count);
 }
 //------------------------------------------------------------------------------
-static xResult xTxSetTransmiterStateDefault(xTxT *tx, xTxState state)
+inline xResult xTxDeclareRequest(xTxT* tx, xTxRequestSelector selector, uint32_t args, uint32_t count)
 {
-	return xResultAccept;
+	return tx->Interface->RequestListener(tx, selector, args, count);
 }
 //------------------------------------------------------------------------------
-static xResult xTxStartTransmissionDefault(xTxT *tx)
+inline xResult xTxSetValue(xTxT* tx, xTxValueSelector selector, uint32_t value)
 {
-	return xResultAccept;
+	return tx->Interface->SetValue(tx, selector, value);
 }
 //------------------------------------------------------------------------------
-static xResult xTxTransmitDataDefault(xTxT *tx, xObject data, uint16_t data_size)
+inline int xTxGetValue(xTxT* tx, xTxValueSelector selector)
 {
-	uint8_t *ptr = (uint8_t*)data;
-	
-	if (data_size <= tx->Control->GetFreeSize(tx))
-	{
-		while(data_size)
-		{
-			tx->Buffer[tx->TotalIndex] = *ptr++;
-			tx->TotalIndex++;
-			tx->TotalIndex &= tx->SizeMask;
-			data_size--;
-		}
-		tx->Control->Handler(tx);
-		return xResultAccept;
-	}
-	
-	return xResultError;
+	return tx->Interface->GetValue(tx, selector);
 }
 //------------------------------------------------------------------------------
-static xResult xTxEndTransmissionDefault(xTxT *tx)
+inline int xTxTransmitData(xTxT* tx, void* data, uint32_t data_size)
 {
-	return xResultAccept;
-}
-//------------------------------------------------------------------------------
-static void xTxHandlerDefault(xTxT *tx)
-{
-	if (tx->TotalIndex != tx->HandlerIndex && tx->Control->GetTransmiterStatus(tx) == xTxStatusFree)
-	{
-		tx->Control->SetTransmiterState(tx, xTxStateEnable);
-	}
-}
-//------------------------------------------------------------------------------
-static void xTxIRQHandlerDefault(xTxT *tx)
-{
-	
-}
-//------------------------------------------------------------------------------
-static xTxControlT ControlDefault =
-{
-	.StartTransmission = (xTxActionStartTransmission)xTxStartTransmissionDefault,
-	.TransmitData = (xTxActionTransmitData)xTxTransmitDataDefault,
-	.EndTransmission = (xTxActionEndTransmission)xTxEndTransmissionDefault,
-	
-	.SetTransmiterState = (xTxActionSetTransmiterState)xTxSetTransmiterStateDefault,
-	.GetFreeSize = (xTxActionGetFreeSize)xTxGetFreeSizeDefault,
-	.GetTransmiterStatus = (xTxActionGetTransmiterStatus)xTxGetTransmiterStatusDefault,
-	
-	.Handler = (xTxActionHandler)xTxHandlerDefault,
-	.IRQHandler = (xTxActionIRQHandler)xTxIRQHandlerDefault
-};
-//==============================================================================
-xResult xTxStartTransmission(xTxT* tx)
-{
-	return tx->Control->StartTransmission(tx);
-}
-//------------------------------------------------------------------------------
-xResult xTxTransmitData(xTxT *tx, xObject data, uint16_t data_size)
-{
-	return tx->Control->TransmitData(tx, data, data_size);
-}
-//------------------------------------------------------------------------------
-xResult xTxTransmitByte(xTxT *tx, uint8_t byte)
-{
-	return tx->Control->TransmitData(tx, &byte, sizeof(byte));
-}
-//------------------------------------------------------------------------------
-xResult xTxTransmitString(xTxT *tx, char* str)
-{
-  return tx->Control->TransmitData(tx, str, strlen(str));
-}
-//------------------------------------------------------------------------------
-xResult xTxEndTransmission(xTxT* tx)
-{
-	return tx->Control->EndTransmission(tx);
+	//return tx->Interface->TransmitData(tx, data, data_size);
+	return tx->Interface->RequestListener(tx, xTxRequestTransmitData, (uint32_t)data, data_size);
 }
 //==============================================================================
-void xTxHandler(xTxT *tx)
+inline int xTxTransmitByte(xTxT *tx, uint8_t byte)
 {
-	tx->Control->Handler(tx);
+	//return tx->Interface->TransmitData(tx, &byte, sizeof(byte));
+	return tx->Interface->RequestListener(tx, xTxRequestTransmitData, (uint32_t)&byte, sizeof(byte));
 }
 //------------------------------------------------------------------------------
-void xTxIRQHandler(xTxT *tx)
+inline int xTxTransmitString(xTxT *tx, char* str)
 {
-	tx->Control->IRQHandler(tx);
-}
-//==============================================================================
-uint16_t xTxGetFreeSize(xTxT *tx)
-{
-	return tx->Control->GetFreeSize(tx);
-}
-//==============================================================================
-void xTxClear(xTxT* tx)
-{
-	tx->TotalIndex = 0;
-	tx->HandlerIndex = 0;
+  //return tx->Interface->TransmitData(tx, (uint8_t*)str, strlen(str));
+	return tx->Interface->RequestListener(tx, xTxRequestTransmitData, (uint32_t)str, strlen(str));
 }
 //==============================================================================
 xResult xTxInit(xTxT* tx,
 								void* parent,
-								uint8_t* buf,
-								uint16_t buf_size_mask,
-								xTxControlT* control)
+								xTxAdapterT* adapter,
+								xTxInterfaceT* interface,
+								xDataBufferT* object_buffer)
 {
-  if (tx && control)
+  if (tx && interface && adapter)
   {
-		if (!tx->Description) { tx->Description = "xTxT"; }
+		tx->Description = "xTxT";
 		tx->Parent = parent;
 		
-    tx->Buffer = buf;
-    tx->SizeMask = buf_size_mask;
-		tx->Control = control;
+		tx->Interface = interface;
+		tx->Adapter = adapter;
+		tx->ObjectBuffer = object_buffer;
 		
-		uint32_t* control_request = (uint32_t*)tx->Control;
-		uint32_t* control_default = (uint32_t*)&ControlDefault;
+		tx->Status.IsInit = true;
 		
-		for (uint16_t i = 1; i < sizeof(xTxControlT) / sizeof(void*); i++)
-		{
-			if (!control_request[i]) { control_request[i] = control_default[i]; }
-		}
-		
-		return xResultError;
+		return xResultAccept;
   }
-  return xResultAccept;
+  return xResultError;
 }
 //==============================================================================

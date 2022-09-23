@@ -2,14 +2,18 @@
  * pattern_stm32f4xx_uart.h
  *
  * Created: 16.05.2019 14:29:38
- *  Author: rekuts
+ *  Author: souln
  */ 
 //==============================================================================
-#ifndef PATTERN_STM32X4XX_UART_H_
-#define PATTERN_STM32X4XX_UART_H_
+#ifndef PATTERN_STM32F4XX_UART_H
+#define PATTERN_STM32F4XX_UART_H
 //==============================================================================
-typedef union{
-  struct{
+#include <stdint.h>
+//==============================================================================
+typedef union
+{
+  struct
+  {
     /* 0x00000001 */ uint32_t SendBreak: 1; //USART_CR1_SBK    
     /* 0x00000002 */ uint32_t ReceiverWakeup: 1; //USART_CR1_RWU
     /* 0x00000004 */ uint32_t ReceiverEnable: 1; //USART_CR1_RE    
@@ -30,10 +34,13 @@ typedef union{
     /* 0x00008000 */ uint32_t OversamplingBy8: 1; //USART_CR1_OVER8
   };
   uint32_t Value;
-}UsartCR1_T;
+  
+} REG_UART_CR1_T;
 //==============================================================================
-typedef union{
-  struct{
+typedef union
+{
+  struct
+  {
     /* 0x00000001 */ uint32_t AddressNode: 5; //USART_CR2_ADD
     
     /* 0x00000020 */ uint32_t LIN_Length: 1; //USART_CR2_LBDL
@@ -49,10 +56,13 @@ typedef union{
     /* 0x00004000 */ uint32_t LIN_enable: 1; //USART_CR1_PS
   };
   uint32_t Value;
-}UsartCR2_T;
+  
+} REG_UART_CR2_T;
 //==============================================================================
-typedef union{
-  struct{
+typedef union
+{
+  struct
+  {
     /* 0x00000001 */ uint32_t ErrorInterruptEnable: 1; //USART_CR3_EIE    
     /* 0x00000002 */ uint32_t IrDA_Enable: 1; //USART_CR3_IREN
     /* 0x00000004 */ uint32_t IrDA_LowPower : 1; //USART_CR3_IRLP
@@ -69,28 +79,37 @@ typedef union{
     /* 0x00000800 */ uint32_t OneBitMethodEnable: 1; //USART_CR3_ONEBIT
   };
   uint32_t Value;
-}UsartCR3_T;
+  
+} REG_UART_CR3_T;
 //==============================================================================
-typedef union{
-  struct{
+typedef union
+{
+  struct
+  {
     /* 0x00000001 */ uint32_t Prescaler: 8; //USART_GTPR_PSC
 	
     /* 0x00000100 */ uint32_t GuardTime: 8; //USART_GTPR_GT
   };
   uint32_t Value;
-}UsartGTPR_T;
+  
+} REG_UART_GTPR_T;
 //==============================================================================
-typedef union{
-  struct{
+typedef union
+{
+  struct
+  {
     /* 0x00000001 */ uint32_t FractionUSARTDIV: 4; //USART_BRR_DIV_Fraction
 	
     /* 0x00000010 */ uint32_t MantissaUSARTDIV: 12; //USART_BRR_DIV_Mantissa
   };
   uint32_t Value;
-}UsartBRR_T;
+  
+} REG_UART_BRR_T;
 //==============================================================================
-typedef union{
-  struct{
+typedef union
+{
+  struct
+  {
     /* 0x00000001 */ uint32_t ErrorParity: 1; //USART_SR_PE
     /* 0x00000002 */ uint32_t ErrorFraming: 1;  //USART_SR_FE
     /* 0x00000004 */ uint32_t ErrorNoise: 1;  //USART_SR_NE
@@ -105,16 +124,19 @@ typedef union{
     /* 0x00000200 */ uint32_t CTS_Flag: 1; //USART_SR_CTS
   };
   uint32_t Value;
-}UsartSR_T;
+  
+} REG_UART_SR_T;
 //==============================================================================
-typedef struct{
-  volatile UsartSR_T SR; //USART Status register
-  volatile uint32_t DR; //USART Data register
-  volatile UsartBRR_T BRR; //USART Baud rate register
-  volatile UsartCR1_T CR1; //USART Control register 1
-  volatile UsartCR2_T CR2; //USART Control register 2
-  volatile UsartCR3_T CR3; //USART Control register 3
-  volatile UsartGTPR_T GTPR; //SART Guard time and prescaler register
-}UsartRegT; // For stm32
+typedef struct
+{
+  volatile REG_UART_SR_T Status; //USART Status register
+  volatile uint32_t Data; //USART Data register
+  volatile REG_UART_BRR_T BaudRate; //USART Baud rate register
+  volatile REG_UART_CR1_T Control1; //USART Control register 1
+  volatile REG_UART_CR2_T Control2; //USART Control register 2
+  volatile REG_UART_CR3_T Control3; //USART Control register 3
+  volatile REG_UART_GTPR_T GTPR; //SART Guard time and prescaler register
+  
+} REG_UART_T; // For REG
 //==============================================================================
-#endif /* PATTERN_STM32X4XX_UART_H_ */
+#endif /* PATTERN_STM32F4XX_UART_H */

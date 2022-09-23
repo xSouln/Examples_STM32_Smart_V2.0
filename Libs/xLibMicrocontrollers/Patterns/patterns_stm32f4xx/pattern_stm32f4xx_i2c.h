@@ -5,11 +5,15 @@
  *  Author: rekuts
  */ 
 //==============================================================================
-#ifndef PATTERN_STM32X4XX_I2C_H_
-#define PATTERN_STM32X4XX_I2C_H_
+#ifndef PATTERN_STM32F4XX_I2C_H
+#define PATTERN_STM32F4XX_I2C_H
 //==============================================================================
-typedef union{
-  struct{
+#include <stdint.h>
+//==============================================================================
+typedef union
+{
+  struct
+  {
     /* 0x00000001 */ uint32_t PeripheralEnable: 1; //I2C_CR1_PE    
     /* 0x00000002 */ uint32_t SMBusMode: 2; //I2C_CR1_SMBUS
     /* 0x00000008 */ uint32_t SMBusType: 1; //I2C_CR1_SMBTYPE
@@ -30,10 +34,13 @@ typedef union{
     /* 0x00008000 */ uint32_t SoftwareReset: 1; //I2C_CR1_SWRST
   };
   uint32_t Value;
-}I2C_CR1_T;
+  
+} REG_I2C_CR1_T;
 //==============================================================================
-typedef union{
-  struct{
+typedef union
+{
+  struct
+  {
     /* 0x00000001 */ uint32_t PeripheralClockFrequency: 6; //I2C_CR2_FREQ    
 
     /* 0x00000040 */ uint32_t Free0x40: 1; //I2C_CR1_ENGC
@@ -47,7 +54,8 @@ typedef union{
     /* 0x00001000 */ uint32_t DMALastTransfer: 1; //I2C_CR2_LAST
   };
   uint32_t Value;
-}I2C_CR2_T;
+  
+} REG_I2C_CR2_T;
 //==============================================================================
 typedef union{
   struct{
@@ -58,18 +66,23 @@ typedef union{
     /* 0x00008000 */ uint32_t SlaveMode: 1; //I2C_OAR1_ADDMODE
   };
   uint32_t Value;
-}I2C_OAR1_T;
+} REG_I2C_OAR1_T;
 //==============================================================================
-typedef union{
-  struct{
+typedef union
+{
+  struct
+  {
     /* 0x00000001 */ uint32_t DualAddressingModeEnable: 1; //I2C_OAR2_ENDUAL    
     /* 0x00000002 */ uint32_t InterfaceAddress: 7; //I2C_OAR1_ADD1_7
   };
   uint32_t Value;
-}I2C_OAR2_T;
+  
+} REG_I2C_OAR2_T;
 //==============================================================================
-typedef union{
-  struct{
+typedef union
+{
+  struct
+  {
     /* 0x00000001 */ uint32_t StartBit: 1; //I2C_SR1_SB    
     /* 0x00000002 */ uint32_t AddressSent: 1; //I2C_SR1_ADDR
     /* 0x00000004 */ uint32_t ByteTransferFinished: 1; //I2C_SR1_BTF
@@ -91,10 +104,13 @@ typedef union{
     /* 0x00008000 */ uint32_t SMBusAlert: 1; //I2C_SR1_SMBALERT
   };
   uint32_t Value;
-}I2C_SR1_T;
+  
+} REG_I2C_SR1_T;
 //==============================================================================
-typedef union{
-  struct{
+typedef union
+{
+  struct
+  {
     /* 0x00000001 */ uint32_t MasterOrSlave: 1; //I2C_SR2_MSL    
     /* 0x00000002 */ uint32_t BusBusy: 1; //I2C_SR2_BUSY
     /* 0x00000004 */ uint32_t TransmitterOrReceiver: 1; //I2C_SR1_BTF
@@ -108,10 +124,13 @@ typedef union{
     /* 0x00000100 */ uint32_t PacketErrorCheckingRegister: 8; //I2C_SR2_PEC
   };
   uint32_t Value;
-}I2C_SR2_T;
+  
+} REG_I2C_SR2_T;
 //==============================================================================
-typedef union{
-  struct{
+typedef union
+{
+  struct
+  {
     /* 0x00000001 */ uint32_t ClockControlRegister : 12; //I2C_CCR_CCR
 
     /* 0x00001000 */ uint32_t Free0x1000_0x2000: 2; //Free0x1000_0x2000
@@ -120,25 +139,31 @@ typedef union{
     /* 0x00008000 */ uint32_t I2CMasterModeSelection: 1; //I2C_CCR_FS
   };
   uint32_t Value;
-}I2C_CCR_T;
+  
+} REG_I2C_CCR_T;
 //==============================================================================
-typedef union{
-  struct{
+typedef union
+{
+  struct
+  {
     /* 0x00000001 */ uint32_t MaximumRiseTime : 6; //I2C_CCR_CCR
   };
   uint32_t Value;
-}I2C_TRISE_T;
+  
+} REG_I2C_TRISE_T;
 //==============================================================================
-typedef struct{
-  volatile I2C_CR1_T CR1;
-  volatile I2C_CR2_T CR2;
+typedef struct
+{
+  volatile I2C_CR1_T Control1;
+  volatile I2C_CR2_T Control2;
   volatile I2C_OAR1_T OAR1;
   volatile I2C_OAR2_T OAR2;
-  volatile uint32_t DR;
-  volatile I2C_SR1_T SR1;
-  volatile I2C_SR2_T SR2;
+  volatile uint32_t Data;
+  volatile I2C_SR1_T Status1;
+  volatile I2C_SR2_T Status2;
   volatile I2C_CCR_T CCR;
   volatile I2C_TRISE_T TRISE;
-}I2C_RegT;
+  
+} REG_I2C_T;
 //==============================================================================
-#endif /* PATTERN_STM32X4XX_I2C_H_ */
+#endif /* PATTERN_STM32F4XX_I2C_H */

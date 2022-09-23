@@ -22,8 +22,7 @@
 #include "stm32f1xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "Common/xType.h"
-#include "SerialPort/SerialPort.h"
+#include "Control.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -196,7 +195,8 @@ void TIM4_IRQHandler(void)
 void USART1_IRQHandler(void)
 {
   /* USER CODE BEGIN USART1_IRQn 0 */
-	SerialPortIRQ();
+	//SerialPortIRQ();
+	xTxDeclareEvent(&SerialPortUART.Tx, xTxEventIRQ, 0, 0);
   /* USER CODE END USART1_IRQn 0 */
   /* USER CODE BEGIN USART1_IRQn 1 */
 

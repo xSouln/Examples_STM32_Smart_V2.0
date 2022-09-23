@@ -25,6 +25,13 @@
 #include "patterns_stm32f1xx/pattern_stm32f1xx_uart.h"
 #include "patterns_stm32f1xx/pattern_stm32f1xx_i2c.h"
 
+#elif STM32F407xx
+
+#include "patterns_stm32f4xx/pattern_stm32f4xx_spi.h"
+#include "patterns_stm32f4xx/pattern_stm32f4xx_timer.h"
+#include "patterns_stm32f4xx/pattern_stm32f4xx_uart.h"
+#include "patterns_stm32f4xx/pattern_stm32f4xx_i2c.h"
+
 #endif
 //==============================================================================
 #endif /* X_PATTERNS_H_ */

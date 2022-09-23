@@ -89,7 +89,7 @@ xResult xTransferLayerInit(xTransferLayerT* layer, void* parent)
 {
 	if (layer)
 	{
-		if (!layer->Description) { layer->Description = "xTransferLayerT";}
+		layer->Description = "xTransferLayerT";
 		layer->Parent = parent;
 		
 		return xResultAccept;

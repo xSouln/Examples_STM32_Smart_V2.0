@@ -32,7 +32,7 @@ xResult xDataBufferInit(xDataBufferT* buffer,
 {
 	if (buffer && buf && buf_size)
 	{
-		if (!buffer->Description) { buffer->Description = "xDataBufferT"; }
+		buffer->Description = "xDataBufferT";
 		buffer->Parent = parent;
 		
 		buffer->Data = buf;

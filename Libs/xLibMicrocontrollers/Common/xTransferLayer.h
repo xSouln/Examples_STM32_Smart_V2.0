@@ -7,7 +7,7 @@
 #ifndef X_TRANSFER_LAYER_H
 #define X_TRANSFER_LAYER_H
 //==============================================================================
-#include "xType.h"
+#include "xTypes.h"
 #include "xTx.h"
 //==============================================================================
 typedef struct

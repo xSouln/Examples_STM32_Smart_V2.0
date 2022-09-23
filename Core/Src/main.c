@@ -28,7 +28,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "SerialPort/SerialPort.h"
 #include "Control.h"
 /* USER CODE END Includes */
 
@@ -76,74 +75,14 @@ volatile STM32_TIM_REG_T* Timer2 = (STM32_TIM_REG_T*)TIM2;
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 //==============================================================================
-typedef struct
-{
-	uint8_t Green;
-	uint8_t Red;
-	uint8_t Blue;
-	
-} PixelT;
-//------------------------------------------------------------------------------
-union
-{
-	struct
-	{
-		uint32_t PixelsThreadBusy : 1;
-	};
-	uint32_t Value;
-	
-} Status;
-//------------------------------------------------------------------------------
-#define PIXELS_DATA_OFFSET 50
-uint8_t pixels_data[8 * 3 * 8 + PIXELS_DATA_OFFSET + 1];
-uint8_t pixels_data_count;
+
 //==============================================================================
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 //==============================================================================
-uint16_t PutColorToArray(uint8_t color, uint8_t* data)
-{
-	uint16_t offset = 0;
-	
-	for (uint8_t bit_number = 0; bit_number < sizeof(color) * 8; bit_number++)
-	{
-		if (color & 0x80)
-		{
-			data[offset] = (uint8_t)((float)(Timer2->Period + 1) * 0.85 / 1.25);
-		}
-		else
-		{
-			data[offset] = (uint8_t)((float)(Timer2->Period + 1) * 0.4 / 1.25);
-		}
-		
-		color <<= 1;
-		offset++;
-	}
-	
-	return offset;
-}
-//------------------------------------------------------------------------------
-void PutPixelsToArray(PixelT* pixels, int pixels_count, uint8_t* data)
-{
-	int i = 0;
-	int j = 0;
-	pixels_data_count = pixels_count * 3 * 8 + PIXELS_DATA_OFFSET;
-	data = data + PIXELS_DATA_OFFSET;
-	
-	for (int i = 0; i < pixels_count; i++)
-	{
-		data += PutColorToArray(pixels[i].Green, data);
-		data += PutColorToArray(pixels[i].Red, data);
-		data += PutColorToArray(pixels[i].Blue, data);
-	}
-	
-	*data = 0;
-	pixels_data_count += 1;
-}
-//------------------------------------------------------------------------------
-PixelT Pixels[] =
+WS2812_PixelT Pixels[] =
 {
 	{
 		.Green = 0x01,
@@ -173,54 +112,16 @@ PixelT Pixels[] =
 		.Green = 0x01,
 		.Blue = 0x01,
 		.Red = 0x01
-	},
-	
-	{
-		.Green = 0x01,
-		.Blue = 0x01,
-		.Red = 0x01
-	},
-	
-	{
-		.Green = 0x01,
-		.Blue = 0x01,
-		.Red = 0x01
-	},
-	
-	{
-		.Green = 0x00,
-		.Blue = 0x00,
-		.Red = 0x00
 	},
 };
 //------------------------------------------------------------------------------
-static volatile DMA_Channel_TypeDef* DMA_TX = DMA1_Channel2;
-//------------------------------------------------------------------------------
-void Start()
-{
-	DMA_TX->CCR &= ~DMA_CCR_EN;
-	
-	DMA_TX->CCR |= DMA_CCR_PL_0;
-	DMA_TX->CCR &= ~DMA_CCR_PSIZE;
-	DMA_TX->CCR &= ~DMA_CCR_MSIZE;
-	DMA_TX->CCR |= DMA_CCR_PSIZE_1;
-	
-	DMA_TX->CNDTR = pixels_data_count;
-	DMA_TX->CPAR = (uint32_t)&Timer2->CaptureCompare3Value;
-	DMA_TX->CMAR = (uint32_t)(pixels_data);
-	
-	Status.PixelsThreadBusy = true;
-	DMA_TX->CCR |= DMA_CCR_TCIE;
-	DMA_TX->CCR |= DMA_CCR_EN;
-	
-	WS2812_SYNC_GPIO_Port->ODR |= WS2812_SYNC_Pin;
-}
-//------------------------------------------------------------------------------
 void PixelsTransferComplite()
 {
+	/*
 	DMA_TX->CCR &= ~DMA_CCR_EN;
 	WS2812_SYNC_GPIO_Port->ODR &= ~WS2812_SYNC_Pin;
 	Status.PixelsThreadBusy = false;
+	*/
 }
 //==============================================================================
 /* USER CODE END 0 */
@@ -248,7 +149,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-
+	
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -256,7 +157,7 @@ int main(void)
   MX_DMA_Init();
   MX_I2C1_Init();
   MX_SPI2_Init();
-  MX_USB_DEVICE_Init();
+  //MX_USB_DEVICE_Init();
   MX_SPI1_Init();
   MX_TIM4_Init();
   MX_USART1_UART_Init();
@@ -266,16 +167,9 @@ int main(void)
 	Timer4->DMAOrInterrupts.UpdateInterruptEnable = true;
 	Timer4->Control1.CounterEnable = true;
 	
-	TIM_CCxChannelCmd(TIM2, TIM_CHANNEL_1, TIM_CCx_ENABLE);
-	TIM_CCxChannelCmd(TIM2, TIM_CHANNEL_2, TIM_CCx_ENABLE);
-	
-	Timer2->CaptureCompare.Compare2OutputEnable = true;
-	Timer2->CaptureCompare.Compare3OutputEnable = true;
-	
-	Timer2->DMAOrInterrupts.DMA_RequestEnable = true;
-	Timer2->Control1.CounterEnable = true;
-	
 	ControlInit(main);
+	RGBCups_DrawingStart(RGBCup1, (RGBCupDrawingRuleT*)&DrawingRule1);
+	RGBCups_DrawingStart(RGBCup2, (RGBCupDrawingRuleT*)&DrawingRule2);
 	//----------------------------------------------------------------------------
   /* USER CODE END 2 */
 
@@ -288,27 +182,24 @@ int main(void)
 		{
 			time_5ms = 4;
 			
-			SerialPortHandler();
-		}
-		//--------------------------------------------------------------------------
-		if (!DMA_TX->CNDTR)
-		{
-			LedUpdateCount++;
-			PutPixelsToArray(Pixels, sizeof(Pixels) / sizeof(PixelT), pixels_data);
-			Start();
+			SerialPort_Handler(&SerialPortUART);
+			SerialPort_Handler(&SerialPortUSB);
 		}
 		//--------------------------------------------------------------------------
 		if (!time_1000ms)
 		{
 			time_1000ms = 999;
 			
-			//PutPixelsToArray(Pixels, sizeof(Pixels) / sizeof(PixelT), pixels_data);
-			//Start();
+			xTxTransmitString(&SerialPortUART.Tx, "qwerty\r");
+			xTxTransmitString(&SerialPortUSB.Tx, "qwerty\r");
+		}
+		
+		if (!time_10ms)
+		{
+			time_10ms = 99;
 			
-			LedUpdatePerSecond = LedUpdateCount;
-			LedUpdateCount = 0;
-			//xTxTransmitData(SerialPort.Tx, &Pixel, sizeof(Pixel));
-			//xTxTransmitData(SerialPort.Tx, &Pixels, sizeof(Pixels));
+			RGBCups_Draw(RGBCup1|RGBCup2);
+			RGBCups_UpdateLayout(RGBCup1|RGBCup2, 1000);
 		}
 		//--------------------------------------------------------------------------
     /* USER CODE END WHILE */

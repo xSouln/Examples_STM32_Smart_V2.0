@@ -2,9 +2,7 @@
 #ifndef X_DATA_BUFFER_H
 #define X_DATA_BUFFER_H
 //==============================================================================
-#include <stdint.h>
-#include <stdbool.h>
-#include "xType.h"
+#include "xTypes.h"
 //==============================================================================
 typedef enum
 {

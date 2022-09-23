@@ -3,23 +3,23 @@
 #include "main.h"
 #include "tim.h"
 //==============================================================================
+ControlT Control;
+//==============================================================================
 ActionResults ControlInit(void* parent)
 {
 	Control.Description = "ControlT";
 	Control.Parent = parent;
 	
-	SerialPortInit(USART1, "main");
+	SerialPortUART_ComponentInit(&Control);
+	SerialPortUSB_ComponentInit(&Control);
+	TCPServerWIZspi_ComponentInit(&Control);
+	RGBCups_ComponentInit(&Control);
 	
-	CupsRGB_ControlInit(&Control);
-	Control.CupsRGB_Control = &CupsRGB_Control;
-	
-	xRequestManagerInit(&Control.RequestManager,
+	xRxRequestManagerInit(&Control.RequestManager,
 											&Control,
 											&Control,
-											(xRequestT*)Requests);
+											(xRxRequestT*)RxRequests);
 	
 	return ResultAccept;
 }
-//==============================================================================
-ControlT Control;
 //==============================================================================
