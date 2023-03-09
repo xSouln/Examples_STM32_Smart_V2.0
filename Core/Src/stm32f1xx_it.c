@@ -22,8 +22,7 @@
 #include "stm32f1xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "Common/xType.h"
-#include "SerialPort/SerialPort.h"
+#include "Components.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -91,22 +90,11 @@ void HardFault_Handler(void)
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
-	extern uint8_t time_5ms;
-	extern uint8_t time_10ms;
-	extern uint16_t time_1000ms;
-	extern uint8_t time_tcp_update;
-	extern uint32_t time_ms;
-	
-	if (time_5ms) { time_5ms--; }
-	if (time_10ms) { time_10ms--; }
-	if (time_1000ms) { time_1000ms--; }
-	if (time_tcp_update) { time_tcp_update--; }
-	
-	time_ms++;
+
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
   /* USER CODE BEGIN SysTick_IRQn 1 */
-
+  ComponentsTimeSynchronization();
   /* USER CODE END SysTick_IRQn 1 */
 }
 
@@ -127,9 +115,7 @@ void DMA1_Channel2_IRQHandler(void)
   /* USER CODE END DMA1_Channel2_IRQn 0 */
   HAL_DMA_IRQHandler(&hdma_tim2_up);
   /* USER CODE BEGIN DMA1_Channel2_IRQn 1 */
-	extern void PixelsTransferComplite();
-	
-	PixelsTransferComplite();
+
   /* USER CODE END DMA1_Channel2_IRQn 1 */
 }
 
@@ -180,10 +166,7 @@ void TIM2_IRQHandler(void)
 void TIM4_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM4_IRQn 0 */
-	extern volatile STM32_TIM_REG_T* Timer4;
 	Timer4->Status.UpdateInterrupt = false;
-	
-	LED1_GPIO_Port->ODR ^= LED1_Pin;
   /* USER CODE END TIM4_IRQn 0 */
   /* USER CODE BEGIN TIM4_IRQn 1 */
 
@@ -196,7 +179,7 @@ void TIM4_IRQHandler(void)
 void USART1_IRQHandler(void)
 {
   /* USER CODE BEGIN USART1_IRQn 0 */
-	SerialPortIRQ();
+	SerialPortUARTComponentIRQListener();
   /* USER CODE END USART1_IRQn 0 */
   /* USER CODE BEGIN USART1_IRQn 1 */
 

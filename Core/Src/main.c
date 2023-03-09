@@ -28,8 +28,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "SerialPort/SerialPort.h"
-#include "Control.h"
+#include "Components.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,25 +49,7 @@
 
 /* USER CODE BEGIN PV */
 //==============================================================================
-#define MAIN_DATA_BUFFER_SIZE 1024
-static uint8_t main_data_buffer_memory[MAIN_DATA_BUFFER_SIZE];
 
-xDataBufferT MainDataBuffer =
-{
-	.Data = main_data_buffer_memory,
-	.Size = MAIN_DATA_BUFFER_SIZE
-};
-//------------------------------------------------------------------------------
-uint8_t time_5ms;
-uint8_t time_10ms;
-uint16_t time_1000ms;
-uint8_t time_tcp_update;
-uint32_t time_ms;
-uint32_t LedUpdateCount;
-uint32_t LedUpdatePerSecond;
-//------------------------------------------------------------------------------
-volatile STM32_TIM_REG_T* Timer4 = (STM32_TIM_REG_T*)TIM4;
-volatile STM32_TIM_REG_T* Timer2 = (STM32_TIM_REG_T*)TIM2;
 //==============================================================================
 /* USER CODE END PV */
 
@@ -76,152 +57,14 @@ volatile STM32_TIM_REG_T* Timer2 = (STM32_TIM_REG_T*)TIM2;
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 //==============================================================================
-typedef struct
-{
-	uint8_t Green;
-	uint8_t Red;
-	uint8_t Blue;
-	
-} PixelT;
-//------------------------------------------------------------------------------
-union
-{
-	struct
-	{
-		uint32_t PixelsThreadBusy : 1;
-	};
-	uint32_t Value;
-	
-} Status;
-//------------------------------------------------------------------------------
-#define PIXELS_DATA_OFFSET 50
-uint8_t pixels_data[8 * 3 * 8 + PIXELS_DATA_OFFSET + 1];
-uint8_t pixels_data_count;
+
 //==============================================================================
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 //==============================================================================
-uint16_t PutColorToArray(uint8_t color, uint8_t* data)
-{
-	uint16_t offset = 0;
-	
-	for (uint8_t bit_number = 0; bit_number < sizeof(color) * 8; bit_number++)
-	{
-		if (color & 0x80)
-		{
-			data[offset] = (uint8_t)((float)(Timer2->Period + 1) * 0.85 / 1.25);
-		}
-		else
-		{
-			data[offset] = (uint8_t)((float)(Timer2->Period + 1) * 0.4 / 1.25);
-		}
-		
-		color <<= 1;
-		offset++;
-	}
-	
-	return offset;
-}
-//------------------------------------------------------------------------------
-void PutPixelsToArray(PixelT* pixels, int pixels_count, uint8_t* data)
-{
-	int i = 0;
-	int j = 0;
-	pixels_data_count = pixels_count * 3 * 8 + PIXELS_DATA_OFFSET;
-	data = data + PIXELS_DATA_OFFSET;
-	
-	for (int i = 0; i < pixels_count; i++)
-	{
-		data += PutColorToArray(pixels[i].Green, data);
-		data += PutColorToArray(pixels[i].Red, data);
-		data += PutColorToArray(pixels[i].Blue, data);
-	}
-	
-	*data = 0;
-	pixels_data_count += 1;
-}
-//------------------------------------------------------------------------------
-PixelT Pixels[] =
-{
-	{
-		.Green = 0x01,
-		.Blue = 0x01,
-		.Red = 0x01
-	},
-	
-	{
-		.Green = 0x01,
-		.Blue = 0x01,
-		.Red = 0x01
-	},
-	
-	{
-		.Green = 0x01,
-		.Blue = 0x01,
-		.Red = 0x01
-	},
-	
-	{
-		.Green = 0x01,
-		.Blue = 0x01,
-		.Red = 0x01
-	},
-	
-	{
-		.Green = 0x01,
-		.Blue = 0x01,
-		.Red = 0x01
-	},
-	
-	{
-		.Green = 0x01,
-		.Blue = 0x01,
-		.Red = 0x01
-	},
-	
-	{
-		.Green = 0x01,
-		.Blue = 0x01,
-		.Red = 0x01
-	},
-	
-	{
-		.Green = 0x00,
-		.Blue = 0x00,
-		.Red = 0x00
-	},
-};
-//------------------------------------------------------------------------------
-static volatile DMA_Channel_TypeDef* DMA_TX = DMA1_Channel2;
-//------------------------------------------------------------------------------
-void Start()
-{
-	DMA_TX->CCR &= ~DMA_CCR_EN;
-	
-	DMA_TX->CCR |= DMA_CCR_PL_0;
-	DMA_TX->CCR &= ~DMA_CCR_PSIZE;
-	DMA_TX->CCR &= ~DMA_CCR_MSIZE;
-	DMA_TX->CCR |= DMA_CCR_PSIZE_1;
-	
-	DMA_TX->CNDTR = pixels_data_count;
-	DMA_TX->CPAR = (uint32_t)&Timer2->CaptureCompare3Value;
-	DMA_TX->CMAR = (uint32_t)(pixels_data);
-	
-	Status.PixelsThreadBusy = true;
-	DMA_TX->CCR |= DMA_CCR_TCIE;
-	DMA_TX->CCR |= DMA_CCR_EN;
-	
-	WS2812_SYNC_GPIO_Port->ODR |= WS2812_SYNC_Pin;
-}
-//------------------------------------------------------------------------------
-void PixelsTransferComplite()
-{
-	DMA_TX->CCR &= ~DMA_CCR_EN;
-	WS2812_SYNC_GPIO_Port->ODR &= ~WS2812_SYNC_Pin;
-	Status.PixelsThreadBusy = false;
-}
+
 //==============================================================================
 /* USER CODE END 0 */
 
@@ -262,55 +105,14 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-	//----------------------------------------------------------------------------
-	Timer4->DMAOrInterrupts.UpdateInterruptEnable = true;
-	Timer4->Control1.CounterEnable = true;
-	
-	TIM_CCxChannelCmd(TIM2, TIM_CHANNEL_1, TIM_CCx_ENABLE);
-	TIM_CCxChannelCmd(TIM2, TIM_CHANNEL_2, TIM_CCx_ENABLE);
-	
-	Timer2->CaptureCompare.Compare2OutputEnable = true;
-	Timer2->CaptureCompare.Compare3OutputEnable = true;
-	
-	Timer2->DMAOrInterrupts.DMA_RequestEnable = true;
-	Timer2->Control1.CounterEnable = true;
-	
-	ControlInit(main);
-	//----------------------------------------------------------------------------
+  ComponentsInit(main);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-		//--------------------------------------------------------------------------
-		if (!time_5ms)
-		{
-			time_5ms = 4;
-			
-			SerialPortHandler();
-		}
-		//--------------------------------------------------------------------------
-		if (!DMA_TX->CNDTR)
-		{
-			LedUpdateCount++;
-			PutPixelsToArray(Pixels, sizeof(Pixels) / sizeof(PixelT), pixels_data);
-			Start();
-		}
-		//--------------------------------------------------------------------------
-		if (!time_1000ms)
-		{
-			time_1000ms = 999;
-			
-			//PutPixelsToArray(Pixels, sizeof(Pixels) / sizeof(PixelT), pixels_data);
-			//Start();
-			
-			LedUpdatePerSecond = LedUpdateCount;
-			LedUpdateCount = 0;
-			//xTxTransmitData(SerialPort.Tx, &Pixel, sizeof(Pixel));
-			//xTxTransmitData(SerialPort.Tx, &Pixels, sizeof(Pixels));
-		}
-		//--------------------------------------------------------------------------
+	ComponentsHandler();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -337,7 +139,6 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-	
   RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {

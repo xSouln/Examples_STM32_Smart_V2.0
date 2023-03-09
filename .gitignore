@@ -15,6 +15,19 @@ EWARM/*/settings
 .vscode
 .git
 
+/Debug
+Debug/
+.metadata/
+.vscode
+RemoteSystemsTempFiles/
+.settings/
+/Backup
+
+*.launch
+*.bak
+
+*.7z
+
 # IAR C-STAT and C-RUN
 # Comment this out if you use C-Stat or C-Run to compile/analyze your project
 *.ewt
