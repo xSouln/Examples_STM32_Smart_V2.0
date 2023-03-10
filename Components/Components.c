@@ -91,6 +91,8 @@ void ComponentsHandler()
 		time5_ms = 5;
 
 		SerialPortUARTComponentHandler();
+		TCPServerWIZspiComponentHandler();
+
 		TerminalComponentHandler();
 	}
 
@@ -114,6 +116,7 @@ void ComponentsTimeSynchronization()
 {
 	TerminalComponentTimeSynchronization();
 	SerialPortUARTComponentTimeSynchronization();
+	TCPServerWIZspiComponentTimeSynchronization();
 
 	if (time5_ms)
 	{
@@ -166,6 +169,8 @@ xResult ComponentsInit(void* parent)
 {
 	TerminalComponentInit(parent);
 	SerialPortUARTComponentInit(parent);
+	TCPServerWIZspiComponentInit(parent);
+
 	TerminalTxBind(&SerialPortUART.Tx);
 
 	return xResultAccept;

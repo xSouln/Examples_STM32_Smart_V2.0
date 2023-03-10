@@ -2,13 +2,9 @@
 //includes:
 
 #include "SerialPort_UART_Component.h"
-#include "SerialPort/Adapters/UART/SerialPort_UART_Adapter.h"
+#include "Adapters/SerialPort_UART_Adapter.h"
 
 #include "Components.h"
-
-#ifdef TERMINAL_COMPONENT_ENABLE
-#include "Terminal/Controls/Terminal.h"
-#endif
 //==============================================================================
 //defines:
 

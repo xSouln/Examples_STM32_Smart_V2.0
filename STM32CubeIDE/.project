@@ -267,6 +267,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Libs/Components/TCP_Server/Controls</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Application/User/USB_DEVICE/App/usb_device.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/USB_DEVICE/App/usb_device.c</locationURI>
@@ -315,6 +320,36 @@
 			<name>Libs/Components/SerialPort/Controls/SerialPort_Types.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/SerialPort/Controls/SerialPort_Types.h</locationURI>
+		</link>
+		<link>
+			<name>Libs/Components/TCP_Server/Controls/TCPServer.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Controls/TCPServer.c</locationURI>
+		</link>
+		<link>
+			<name>Libs/Components/TCP_Server/Controls/TCPServer.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Controls/TCPServer.h</locationURI>
+		</link>
+		<link>
+			<name>Libs/Components/TCP_Server/Controls/TCPServer_AdapterBase.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Controls/TCPServer_AdapterBase.h</locationURI>
+		</link>
+		<link>
+			<name>Libs/Components/TCP_Server/Controls/TCPServer_Config.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Controls/TCPServer_Config.h</locationURI>
+		</link>
+		<link>
+			<name>Libs/Components/TCP_Server/Controls/TCPServer_Info.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Controls/TCPServer_Info.h</locationURI>
+		</link>
+		<link>
+			<name>Libs/Components/TCP_Server/Controls/TCPServer_Types.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Controls/TCPServer_Types.h</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

@@ -5,6 +5,8 @@
 #include "SerialPort_UART_TxAdapter.h"
 #include "SerialPort_UART_RxAdapter.h"
 //==============================================================================
+//functions:
+
 xResult SerialPortUART_AdapterInit(SerialPortT* port, SerialPortUART_AdapterT* adapter)
 {
 	if (port && adapter)

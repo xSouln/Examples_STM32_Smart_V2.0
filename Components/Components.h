@@ -23,6 +23,7 @@ extern "C" {
 
 #include "Terminal/Terminal_Component.h"
 #include "SerialPort/USART/SerialPort_UART_Component.h"
+#include "TCPServer/WIZspi/TCPServer_WIZspiComponent.h"
 //==============================================================================
 //functions:
 
