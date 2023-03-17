@@ -1,55 +1,45 @@
 //==============================================================================
-#ifndef _COMPONENTS_H
-#define _COMPONENTS_H
+//header:
+
+#ifndef _SFC_SPI_COMPONENT_H_
+#define _SFC_SPI_COMPONENT_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 //==============================================================================
 //includes:
 
-#include "Components_Types.h"
-#include "Components_Config.h"
+#include "sfc_spi_component_config.h"
+#include "sfc_spi/controls/sfc_spi.h"
 //==============================================================================
 //defines:
 
 
 //==============================================================================
-//includes:
+//macros:
 
-//#include "rng.h"
-//==============================================================================
-//configurations:
 
-#include "Terminal/Terminal_Component.h"
-#include "SerialPort/USART/SerialPort_UART_Component.h"
-#include "TCPServer/WIZspi/TCPServer_WIZspiComponent.h"
-
-#include "sfc_spi/stm32f1xx/sfc_spi_component.h"
 //==============================================================================
 //functions:
 
-xResult ComponentsInit(void* parent);
-void ComponentsTimeSynchronization();
-void ComponentsHandler();
-
-void ComponentsEventListener(ComponentObjectBaseT* object, int selector, void* arg, ...);
-void ComponentsRequestListener(ComponentObjectBaseT* object, int selector, void* arg, ...);
+xResult sfc_spi_component_init(void* parent);
+void sfc_spi_component_handler();
 //==============================================================================
-//export:
+//import:
 
 
 //==============================================================================
 //override:
 
-#define ComponentsSysGetTime() HAL_GetTick()
-//==============================================================================
-//variables:
 
+//==============================================================================
+//export:
+
+extern sfc_spi_t sfc_spi_wiz;
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif
-
+#endif //_SFC_SPI_COMPONENT_H_

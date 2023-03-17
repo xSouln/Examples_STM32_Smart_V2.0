@@ -18,6 +18,7 @@ static uint8_t rx_receiver_buf[RX_RECEIVER_BUF_SIZE];
 
 TCPServerT TCPServerWIZspi;
 REG_SPI_T* WIZspi;
+sfc_spi_t* wiz_spi;
 //==============================================================================
 //functions:
 
@@ -44,7 +45,7 @@ void WIZspiDeselectChip()
 uint8_t WIZspiReceiveByte()
 {
 	uint8_t byte = 0xff;
-
+/*
 	while(!WIZspi->Status.TxEmpty){ };
 	WIZspi->Data.Byte = byte;
 
@@ -52,12 +53,23 @@ uint8_t WIZspiReceiveByte()
 
 	while(!WIZspi->Status.RxNotEmpty){ };
 	byte = WIZspi->Data.Byte;
+*/
+	sfc_spi_transfer_t transfer = { 0 };
+	transfer.rx_data = &byte;
+	transfer.data_size = sizeof(byte);
+	transfer.timeout = 1000;
+
+	//sfc_spi_transfer(wiz_spi, &transfer);
+	sfc_spi_transfer_async(wiz_spi, &transfer);
+
+	while (wiz_spi->state.is_transmitting) { }
 
 	return byte;
 }
 //------------------------------------------------------------------------------
 void WIZspiTransmiteByte(uint8_t byte)
 {
+	/*
 	while(!WIZspi->Status.TxEmpty){ };
 	WIZspi->Data.Byte = byte;
 
@@ -65,6 +77,14 @@ void WIZspiTransmiteByte(uint8_t byte)
 
 	while(!WIZspi->Status.RxNotEmpty){ };
 	byte = WIZspi->Data.Byte;
+	*/
+	sfc_spi_transfer_t transfer = { 0 };
+	transfer.tx_data = &byte;
+	transfer.data_size = sizeof(byte);
+	transfer.timeout = 1000;
+
+	//sfc_spi_transfer(wiz_spi, &transfer);
+	sfc_spi_transfer(wiz_spi, &transfer);
 }
 //------------------------------------------------------------------------------
 void _TCPServerWIZspiComponentEventListener(TCPServerT* server, TCPServerEventSelector selector, void* arg, ...)
@@ -158,7 +178,11 @@ xResult TCPServerWIZspiComponentInit(void* parent)
 	TCPServerWIZspiAdapter.RxBufferSize = sizeof(rx_buf);
 	
 	WIZspi = TCP_SERVER_WIZ_SPI_REG;
-	WIZspi->Control1.SpiEnable = true;
+
+	sfc_spi_component_init(parent);
+	wiz_spi = &sfc_spi_wiz;
+
+	//WIZspi->Control1.SpiEnable = true;
 
 	xRxReceiverInit(&TCPServerWIZspiAdapter.RxReceiver,
 										&TCPServerWIZspi.Rx,

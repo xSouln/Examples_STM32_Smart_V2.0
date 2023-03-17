@@ -272,6 +272,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>Libs/Components/sfc_spi/controls</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>Application/User/USB_DEVICE/App/usb_device.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/USB_DEVICE/App/usb_device.c</locationURI>
@@ -350,6 +355,36 @@
 			<name>Libs/Components/TCP_Server/Controls/TCPServer_Types.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Controls/TCPServer_Types.h</locationURI>
+		</link>
+		<link>
+			<name>Libs/Components/sfc_spi/controls/sfc_spi.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/sfc_spi/controls/sfc_spi.c</locationURI>
+		</link>
+		<link>
+			<name>Libs/Components/sfc_spi/controls/sfc_spi.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/sfc_spi/controls/sfc_spi.h</locationURI>
+		</link>
+		<link>
+			<name>Libs/Components/sfc_spi/controls/sfc_spi_adapter_base.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/sfc_spi/controls/sfc_spi_adapter_base.h</locationURI>
+		</link>
+		<link>
+			<name>Libs/Components/sfc_spi/controls/sfc_spi_common.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/sfc_spi/controls/sfc_spi_common.h</locationURI>
+		</link>
+		<link>
+			<name>Libs/Components/sfc_spi/controls/sfc_spi_results.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/sfc_spi/controls/sfc_spi_results.h</locationURI>
+		</link>
+		<link>
+			<name>Libs/Components/sfc_spi/controls/sfc_spi_types.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/sfc_spi/controls/sfc_spi_types.h</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
