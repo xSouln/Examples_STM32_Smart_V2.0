@@ -13,11 +13,11 @@ static uint32_t sntp_update_time_stamp;
 //==============================================================================
 //functions:
 
-static void PrivateTerminalComponentEventListener(TerminalT* terminal, TerminalEventSelector selector, void* arg, ...)
+static void PrivateTerminalComponentEventListener(TerminalT* terminal, TerminalSysEventSelector selector, void* arg, ...)
 {
 	switch((int)selector)
 	{
-		case TerminalEventTime_1000ms:
+		case TerminalSysEventTime_1000ms:
 			xTxTransferSetTxLine(&Terminal.Transfer, &SerialPortUART.Tx);
 			xTxTransferStart(&Terminal.Transfer, "qwerty", 6);
 			break;
@@ -48,7 +48,7 @@ static void PrivateSerialPortComponentEventListener(SerialPortT* port, SerialPor
 //==============================================================================
 //default functions:
 
-void ComponentsEventListener(ComponentObjectBaseT* object, int selector, void* arg, ...)
+void ComponentsEventListener(ObjectBaseT* object, int selector, void* arg, ...)
 {
 	if (object->Description->Key != OBJECT_DESCRIPTION_KEY)
 	{
@@ -68,12 +68,14 @@ void ComponentsEventListener(ComponentObjectBaseT* object, int selector, void* a
 }
 //------------------------------------------------------------------------------
 
-void ComponentsRequestListener(ComponentObjectBaseT* port, int selector, void* arg, ...)
+xResult ComponentsRequestListener(ObjectBaseT* object, int selector, void* arg, ...)
 {
 	switch((int)selector)
 	{
-		default: break;
+		default: return xResultNotSupported;
 	}
+
+	return xResultAccept;
 }
 //------------------------------------------------------------------------------
 /**
@@ -125,7 +127,13 @@ void ComponentsTimeSynchronization()
 }
 //------------------------------------------------------------------------------
 
-void ComponentsSystemDelay(ComponentObjectBaseT* object, uint32_t time)
+uint32_t ComponentsSysGetTime()
+{
+	return HAL_GetTick();
+}
+//------------------------------------------------------------------------------
+
+void ComponentsSysDelay(uint32_t time)
 {
 	HAL_Delay(time);
 }
@@ -137,27 +145,21 @@ void ComponentsTrace(char* text)
 }
 //------------------------------------------------------------------------------
 
-void ComponentsSystemEnableIRQ()
+void ComponentsSysEnableIRQ()
 {
 
 }
 //------------------------------------------------------------------------------
 
-void ComponentsSystemDisableIRQ()
+void ComponentsSysDisableIRQ()
 {
 
 }
 //------------------------------------------------------------------------------
 
-void ComponentsSystemReset()
+void ComponentsSysReset()
 {
 
-}
-//------------------------------------------------------------------------------
-
-uint32_t ComponentsSystemGetTime()
-{
-	return HAL_GetTick();
 }
 //------------------------------------------------------------------------------
 /**

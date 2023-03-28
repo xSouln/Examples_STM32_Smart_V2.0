@@ -1,6 +1,6 @@
 //==============================================================================
-#ifndef _COMPONENTS_H
-#define _COMPONENTS_H
+#ifndef _COMPONENTS_SELECTOR_H
+#define _COMPONENTS_SELECTOR_H
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -8,18 +8,9 @@ extern "C" {
 //==============================================================================
 //includes:
 
-#include "Components_Types.h"
-#include "Components_Config.h"
-//==============================================================================
-//defines:
-
 
 //==============================================================================
-//includes:
-
-//#include "rng.h"
-//==============================================================================
-//configurations:
+//components:
 
 #include "Terminal/Terminal_Component.h"
 #include "SerialPort/USART/SerialPort_UART_Component.h"
@@ -27,24 +18,12 @@ extern "C" {
 
 #include "sfc_spi/stm32f1xx/sfc_spi_component.h"
 //==============================================================================
-//functions:
-
-xResult ComponentsInit(void* parent);
-void ComponentsTimeSynchronization();
-void ComponentsHandler();
-
-void ComponentsEventListener(ComponentObjectBaseT* object, int selector, void* arg, ...);
-void ComponentsRequestListener(ComponentObjectBaseT* object, int selector, void* arg, ...);
-//==============================================================================
-//export:
+//defines:
 
 
 //==============================================================================
-//override:
+//macros:
 
-#define ComponentsSysGetTime() HAL_GetTick()
-//==============================================================================
-//variables:
 
 //==============================================================================
 #ifdef __cplusplus

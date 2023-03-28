@@ -17,6 +17,8 @@ extern "C" {
 
 typedef struct
 {
+	SerialPortAdapterBaseT Base;
+
 	REG_UART_T* Usart;
 
 	DMA_HandleTypeDef* RxDMA;

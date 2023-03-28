@@ -11,10 +11,10 @@ xResult SerialPortUART_AdapterInit(SerialPortT* port, SerialPortUART_AdapterT* a
 {
 	if (port && adapter)
 	{
-		port->Adapter.Object.Description = nameof(SerialPortUART_AdapterT);
-		port->Adapter.Object.Parent = port;
+		port->Adapter = (SerialPortAdapterBaseT*)adapter;
 
-		port->Adapter.Child = adapter;
+		port->Adapter->Object.Note = nameof(SerialPortUART_AdapterT);
+		port->Adapter->Object.Parent = port;
 		
 		port->Status.AdapterInitResult = xResultAccept;
 	

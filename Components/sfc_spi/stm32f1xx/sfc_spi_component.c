@@ -52,7 +52,7 @@ static int sfc_spi_event_listener(sfc_spi_t* spi, sfc_spi_sys_event_selector sel
  */
 void sfc_spi_component_handler()
 {
-	uint32_t time_stamp1 = ComponentsSystemGetTime();
+	uint32_t time_stamp1 = ComponentsSysGetTime();
 
 	if (time_stamp1 - private_time_stamp1 > 999)
 	{

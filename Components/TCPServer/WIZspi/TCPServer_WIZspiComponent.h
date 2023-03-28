@@ -23,8 +23,8 @@ xResult TCPServerWIZspiComponentInit(void* parent);
 
 void _TCPServerWIZspiComponentHandler();
 void _TCPServerWIZspiComponentTimeSynchronization();
-void _TCPServerWIZspiComponentEventListener(TCPServerT* server, TCPServerEventSelector selector, void* arg, ...);
-xResult _TCPServerWIZspiComponentRequestListener(TCPServerT* server, TCPServerRequestSelector selector, void* arg, ...);
+void _TCPServerWIZspiComponentEventListener(TCPServerT* server, TCPServerSysEventSelector selector, void* arg, ...);
+xResult _TCPServerWIZspiComponentRequestListener(TCPServerT* server, TCPServerSysRequestSelector selector, void* arg, ...);
 void _TCPServerWIZspiComponentIRQListener(TCPServerT* port, ...);
 //==============================================================================
 //import:

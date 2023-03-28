@@ -2,7 +2,7 @@
 //includes:
 
 #include "TCPServer_WIZspiComponent.h"
-#include "Adapter/TCPServer_WIZspiAdapter.h"
+#include "TCPServer/Templates/WIZspi/Adapters/TCPServer_WIZspiAdapter.h"
 
 #include "Components.h"
 //==============================================================================
@@ -87,29 +87,29 @@ void WIZspiTransmiteByte(uint8_t byte)
 	sfc_spi_transfer(wiz_spi, &transfer);
 }
 //------------------------------------------------------------------------------
-void _TCPServerWIZspiComponentEventListener(TCPServerT* server, TCPServerEventSelector selector, void* arg, ...)
+void _TCPServerWIZspiComponentEventListener(TCPServerT* server, TCPServerSysEventSelector selector, void* arg, ...)
 {
 	switch ((uint8_t)selector)
 	{
-		case TCPServerEventEndLine:
+		case TCPServerSysEventEndLine:
 			TerminalReceiveData(&server->Rx,
-								((SerialPortReceivedDataT*)arg)->Data,
-								((SerialPortReceivedDataT*)arg)->Size);
+								((TCPServerReceivedDataT*)arg)->Data,
+								((TCPServerReceivedDataT*)arg)->Size);
 			break;
 		
-		case TCPServerEventBufferIsFull:
+		case TCPServerSysEventBufferIsFull:
 			TerminalReceiveData(&server->Rx,
-								((SerialPortReceivedDataT*)arg)->Data,
-								((SerialPortReceivedDataT*)arg)->Size);
+								((TCPServerReceivedDataT*)arg)->Data,
+								((TCPServerReceivedDataT*)arg)->Size);
 			break;
 	}
 }
 //------------------------------------------------------------------------------
-xResult _TCPServerWIZspiComponentRequestListener(TCPServerT* server, TCPServerRequestSelector selector, void* arg, ...)
+xResult _TCPServerWIZspiComponentRequestListener(TCPServerT* server, TCPServerSysRequestSelector selector, void* arg, ...)
 {
 	switch ((uint8_t)selector)
 	{
-		case TCPServerRequestDelay:
+		case TCPServerSysRequestDelay:
 			HAL_Delay((uint32_t)arg);
 			break;
 		
@@ -143,18 +143,16 @@ inline void _TCPServerWIZspiComponentTimeSynchronization()
 //==============================================================================
 //initializations:
 
-TCPServerInterfaceT TCPServerInterface =
+TCPServerSysInterfaceT TCPServerInterface =
 {
-	INITIALIZATION_EVENT_LISTENER(TCPServer, _TCPServerWIZspiComponentEventListener),
-	INITIALIZATION_REQUEST_LISTENER(TCPServer, _TCPServerWIZspiComponentRequestListener)
+	INITIALIZATION_EVENT_LISTENER(TCPServerSys, _TCPServerWIZspiComponentEventListener),
+	INITIALIZATION_REQUEST_LISTENER(TCPServerSys, _TCPServerWIZspiComponentRequestListener)
 };
 
 //------------------------------------------------------------------------------
 
 TCPServerWIZspiAdapterT TCPServerWIZspiAdapter =
 {
-	.SPI = TCP_SERVER_WIZ_SPI_REG,
-
 	.BusInterface =
 	{
 		.SelectChip = WIZspiSelectChip,
