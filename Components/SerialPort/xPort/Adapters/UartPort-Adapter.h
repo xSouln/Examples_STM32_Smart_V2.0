@@ -1,38 +1,45 @@
 //==============================================================================
-#ifndef _USB_SERIAL_PORT_H_
-#define _USB_SERIAL_PORT_H_
+//header:
+
+#ifndef _UART_PORT_ADAPTER_H_
+#define _UART_PORT_ADAPTER_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif 
 //==============================================================================
-#include <stdint.h>
-#include <stdbool.h>
-#include "Common/xType.h"
-#include "Common/xRx.h"
-#include "Common/xTx.h"
-#include "usbd_cdc.h"
+//includes:
+
+#include "Common/xPort/xPort.h"
+#include "Common/xRxReceiver.h"
+#include "Common/xDataBuffer.h"
+#include "Registers/registers.h"
 //==============================================================================
+//types:
+
 typedef struct
 {
-  OBJECT_HEADER;
+	xPortAdapterBaseT Base;
 
-  xRxT *Rx;
-  xTxT *Tx;
-  
-  USBD_CDC_HandleTypeDef* Handle;
+	REG_UART_T* Usart;
 
-} USBSerialPortT;
+	DMA_HandleTypeDef* RxDMA;
+
+	xDataBufferT* ResponseBuffer;
+
+	xCircleBufferT RxCircleBuffer;
+	xRxReceiverT RxReceiver;
+
+	xCircleBufferT TxCircleBuffer;
+
+} UartPortAdapterT;
 //==============================================================================
-extern USBSerialPortT USBSerialPort;
-//==============================================================================
-int USBSerialPortInit(void* parent);
-void USBSerialPortRxHandler();
+//functions:
 
-int8_t USBSerialPortTransmit(uint8_t* buf, uint16_t len);
+xResult UartPortAdapterInit(xPortT* port, UartPortAdapterT* adapter);
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif /* _USB_SERIAL_PORT_H_ */
+#endif //_UART_PORT_ADAPTER_H_

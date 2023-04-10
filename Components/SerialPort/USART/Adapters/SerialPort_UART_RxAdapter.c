@@ -118,7 +118,7 @@ static uint32_t PrivateGetBytesCountInResponseBuffer(xRxT* rx)
 
 static void PrivateRxReceiverEventListener(xRxReceiverT* receiver, xRxReceiverEventSelector event, void* arg, ...)
 {
-	SerialPortT* serial_port = receiver->Parent->Object.Parent;
+	SerialPortT* serial_port = receiver->Base.Parent;
 	
 	SerialPortReceivedDataT received_data =
 	{

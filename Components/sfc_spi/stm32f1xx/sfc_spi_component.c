@@ -64,7 +64,7 @@ void sfc_spi_component_handler()
 
 static sfc_spi_adapter_t sfc_spi_adapter_wiz =
 {
-	.spi_number = SFC_SPI_NUMBER_1,
+	.spi_number = SFC_SPI1,
 
 	.cs_port = WIZ_CS_GPIO_Port,
 	.cs_pin = WIZ_CS_Pin,

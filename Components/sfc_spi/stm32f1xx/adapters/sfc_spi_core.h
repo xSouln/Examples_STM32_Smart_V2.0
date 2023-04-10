@@ -66,6 +66,9 @@ typedef struct
 
 	const uint32_t IRQn;
 
+	volatile uint32_t APB_Bus;
+	uint32_t APB_BusEnablePin;
+
 	//the spi that caused the asynchronous transfer operation
 	sfc_spi_t* spi;
 

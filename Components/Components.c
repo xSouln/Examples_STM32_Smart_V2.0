@@ -18,14 +18,15 @@ static void PrivateTerminalComponentEventListener(TerminalT* terminal, TerminalS
 	switch((int)selector)
 	{
 		case TerminalSysEventTime_1000ms:
-			xTxTransferSetTxLine(&Terminal.Transfer, &SerialPortUART.Tx);
-			xTxTransferStart(&Terminal.Transfer, "qwerty", 6);
+			//xTxTransferSetTxLine(&Terminal.Transfer, &SerialPortUART.Tx);
+			//xTxTransferStart(&Terminal.Transfer, "qwerty", 6);
 			break;
 
 		default: break;
 	}
 }
 //------------------------------------------------------------------------------
+#ifdef SERIAL_PORT_UART_COMPONENT_ENABLE
 static void PrivateSerialPortComponentEventListener(SerialPortT* port, SerialPortEventSelector selector, void* arg, ...)
 {
 	switch((int)selector)
@@ -45,6 +46,7 @@ static void PrivateSerialPortComponentEventListener(SerialPortT* port, SerialPor
 		default: break;
 	}
 }
+#endif
 //==============================================================================
 //default functions:
 
@@ -57,9 +59,11 @@ void ComponentsEventListener(ObjectBaseT* object, int selector, void* arg, ...)
 
 	switch(object->Description->ObjectId)
 	{
+#ifdef SERIAL_PORT_UART_COMPONENT_ENABLE
 		case SERIAL_PORT_OBJECT_ID:
 			PrivateSerialPortComponentEventListener((SerialPortT*)object, selector, arg);
 			break;
+#endif
 
 		case TERMINAL_OBJECT_ID:
 			PrivateTerminalComponentEventListener((TerminalT*)object, selector, arg);
@@ -92,11 +96,16 @@ void ComponentsHandler()
 	{
 		time5_ms = 5;
 
-		SerialPortUARTComponentHandler();
-		TCPServerWIZspiComponentHandler();
+		//SerialPortUARTComponentHandler();
+		//UartPortComponentHandler();
+		//TCPServerWIZspiComponentHandler();
 
-		TerminalComponentHandler();
+		//TerminalComponentHandler();
 	}
+
+	UartPortComponentHandler();
+	TCPServerWIZspiComponentHandler();
+	TerminalComponentHandler();
 
 	if (ComponentsSysGetTime() - led_toggle_time_stamp > 999)
 	{
@@ -117,7 +126,8 @@ void ComponentsHandler()
 void ComponentsTimeSynchronization()
 {
 	TerminalComponentTimeSynchronization();
-	SerialPortUARTComponentTimeSynchronization();
+	//SerialPortUARTComponentTimeSynchronization();
+	UartPortComponentTimeSynchronization();
 	TCPServerWIZspiComponentTimeSynchronization();
 
 	if (time5_ms)
@@ -170,10 +180,11 @@ void ComponentsSysReset()
 xResult ComponentsInit(void* parent)
 {
 	TerminalComponentInit(parent);
-	SerialPortUARTComponentInit(parent);
+	//SerialPortUARTComponentInit(parent);
+	UartPortComponentInit(parent);
 	TCPServerWIZspiComponentInit(parent);
 
-	TerminalTxBind(&SerialPortUART.Tx);
+	//TerminalTxBind(&SerialPortUART.Tx);
 
 	return xResultAccept;
 }

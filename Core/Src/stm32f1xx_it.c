@@ -166,7 +166,7 @@ void TIM2_IRQHandler(void)
 void TIM4_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM4_IRQn 0 */
-	Timer4->Status.UpdateInterrupt = false;
+	rTimer4->Status.UpdateInterrupt = false;
   /* USER CODE END TIM4_IRQn 0 */
   /* USER CODE BEGIN TIM4_IRQn 1 */
 
@@ -179,7 +179,8 @@ void TIM4_IRQHandler(void)
 void USART1_IRQHandler(void)
 {
   /* USER CODE BEGIN USART1_IRQn 0 */
-	SerialPortUARTComponentIRQListener();
+	//SerialPortUARTComponentIRQListener();
+	UartPortComponentIRQ();
   /* USER CODE END USART1_IRQn 0 */
   /* USER CODE BEGIN USART1_IRQn 1 */
 

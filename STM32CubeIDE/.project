@@ -187,11 +187,6 @@
 			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Registers/registers_compiler.h</locationURI>
 		</link>
 		<link>
-			<name>Libs/Registers/registers_config.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Registers/registers_config.h</locationURI>
-		</link>
-		<link>
 			<name>Libs/Registers/registers_stm32f4xx</name>
 			<type>2</type>
 			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Registers/registers_stm32f4xx</locationURI>
@@ -302,34 +297,24 @@
 			<locationURI>PARENT-1-PROJECT_LOC/USB_DEVICE/Target/usbd_conf.c</locationURI>
 		</link>
 		<link>
+			<name>Components/TCPServer/WIZspi/Adapters/TCPServerPort-Adapter.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Adapters/STM32F4xx/WIZspi/Adapters/TCPServerPort-Adapter.c</locationURI>
+		</link>
+		<link>
+			<name>Components/TCPServer/WIZspi/Adapters/TCPServerPort-Adapter.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Adapters/STM32F4xx/WIZspi/Adapters/TCPServerPort-Adapter.h</locationURI>
+		</link>
+		<link>
 			<name>Components/TCPServer/WIZspi/Adapters/TCPServer_WIZspiAdapter.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Templates/WIZspi/Adapters/TCPServer_WIZspiAdapter.c</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Adapters/STM32F4xx/WIZspi/Adapters/TCPServer_WIZspiAdapter.c</locationURI>
 		</link>
 		<link>
 			<name>Components/TCPServer/WIZspi/Adapters/TCPServer_WIZspiAdapter.h</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Templates/WIZspi/Adapters/TCPServer_WIZspiAdapter.h</locationURI>
-		</link>
-		<link>
-			<name>Components/TCPServer/WIZspi/Adapters/TCPServer_WIZspiRxAdapter.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Templates/WIZspi/Adapters/TCPServer_WIZspiRxAdapter.c</locationURI>
-		</link>
-		<link>
-			<name>Components/TCPServer/WIZspi/Adapters/TCPServer_WIZspiRxAdapter.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Templates/WIZspi/Adapters/TCPServer_WIZspiRxAdapter.h</locationURI>
-		</link>
-		<link>
-			<name>Components/TCPServer/WIZspi/Adapters/TCPServer_WIZspiTxAdapter.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Templates/WIZspi/Adapters/TCPServer_WIZspiTxAdapter.c</locationURI>
-		</link>
-		<link>
-			<name>Components/TCPServer/WIZspi/Adapters/TCPServer_WIZspiTxAdapter.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Templates/WIZspi/Adapters/TCPServer_WIZspiTxAdapter.h</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Adapters/STM32F4xx/WIZspi/Adapters/TCPServer_WIZspiAdapter.h</locationURI>
 		</link>
 		<link>
 			<name>Libs/Components/SerialPort/Controls/SerialPort.c</name>

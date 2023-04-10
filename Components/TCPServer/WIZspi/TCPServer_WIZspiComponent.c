@@ -2,23 +2,26 @@
 //includes:
 
 #include "TCPServer_WIZspiComponent.h"
-#include "TCPServer/Templates/WIZspi/Adapters/TCPServer_WIZspiAdapter.h"
+#include "TCPServer/Adapters/STM32F4xx/WIZspi/Adapters/TCPServer_WIZspiAdapter.h"
 
 #include "Components.h"
 //==============================================================================
 //defines:
 
-#define RX_BUF_SIZE TCP_SERVER_WIZ_SPI_RX_BUF_SIZE
-#define RX_RECEIVER_BUF_SIZE TCP_SERVER_WIZ_SPI_RX_RECEIVER_BUF_SIZE
+#define OPERATION_BUF_SIZE TCP_SERVER_WIZ_OPERATION_BUF_SIZE
+#define RX_BUF_SIZE TCP_SERVER_WIZ_SPI_RX_RECEIVER_BUF_SIZE
+#define TX_BUF_SIZE 0x200
 //==============================================================================
 //variables:
 
-static uint8_t rx_buf[RX_BUF_SIZE];
-static uint8_t rx_receiver_buf[RX_RECEIVER_BUF_SIZE];
+static uint8_t private_operation_buf[OPERATION_BUF_SIZE];
+static uint8_t private_rx_buf[RX_BUF_SIZE];
+static uint8_t private_tx_buf[TX_BUF_SIZE];
 
 TCPServerT TCPServerWIZspi;
-REG_SPI_T* WIZspi;
 sfc_spi_t* wiz_spi;
+
+#define WIZspi rSPI1
 //==============================================================================
 //functions:
 
@@ -45,15 +48,16 @@ void WIZspiDeselectChip()
 uint8_t WIZspiReceiveByte()
 {
 	uint8_t byte = 0xff;
-/*
+
 	while(!WIZspi->Status.TxEmpty){ };
 	WIZspi->Data.Byte = byte;
 
-	while(WIZspi->Status.Busy){ };
-
 	while(!WIZspi->Status.RxNotEmpty){ };
 	byte = WIZspi->Data.Byte;
-*/
+
+	(void)WIZspi->Status.Value;
+	WIZspi->Status.Value = 0;
+/*
 	sfc_spi_transfer_t transfer = { 0 };
 	transfer.rx_data = &byte;
 	transfer.data_size = sizeof(byte);
@@ -63,21 +67,21 @@ uint8_t WIZspiReceiveByte()
 	sfc_spi_transfer_async(wiz_spi, &transfer);
 
 	while (wiz_spi->state.is_transmitting) { }
-
+*/
 	return byte;
 }
 //------------------------------------------------------------------------------
 void WIZspiTransmiteByte(uint8_t byte)
 {
-	/*
 	while(!WIZspi->Status.TxEmpty){ };
 	WIZspi->Data.Byte = byte;
 
-	while(WIZspi->Status.Busy){ };
-
 	while(!WIZspi->Status.RxNotEmpty){ };
 	byte = WIZspi->Data.Byte;
-	*/
+
+	(void)WIZspi->Status.Value;
+	WIZspi->Status.Value = 0;
+	/*
 	sfc_spi_transfer_t transfer = { 0 };
 	transfer.tx_data = &byte;
 	transfer.data_size = sizeof(byte);
@@ -85,6 +89,7 @@ void WIZspiTransmiteByte(uint8_t byte)
 
 	//sfc_spi_transfer(wiz_spi, &transfer);
 	sfc_spi_transfer(wiz_spi, &transfer);
+	*/
 }
 //------------------------------------------------------------------------------
 void _TCPServerWIZspiComponentEventListener(TCPServerT* server, TCPServerSysEventSelector selector, void* arg, ...)
@@ -92,13 +97,13 @@ void _TCPServerWIZspiComponentEventListener(TCPServerT* server, TCPServerSysEven
 	switch ((uint8_t)selector)
 	{
 		case TCPServerSysEventEndLine:
-			TerminalReceiveData(&server->Rx,
+			TerminalReceiveData(&server->Port,
 								((TCPServerReceivedDataT*)arg)->Data,
 								((TCPServerReceivedDataT*)arg)->Size);
 			break;
 		
 		case TCPServerSysEventBufferIsFull:
-			TerminalReceiveData(&server->Rx,
+			TerminalReceiveData(&server->Port,
 								((TCPServerReceivedDataT*)arg)->Data,
 								((TCPServerReceivedDataT*)arg)->Size);
 			break;
@@ -170,23 +175,27 @@ TCPServerWIZspiAdapterT TCPServerWIZspiAdapter =
 
 xResult TCPServerWIZspiComponentInit(void* parent)
 {
-	TCPServerWIZspiAdapter.ResponseBuffer = &Terminal.ResponseBuffer;
+	TCPServerWIZspiAdapter.OperationBuffer = private_operation_buf;
+	TCPServerWIZspiAdapter.OperationBufferSize = sizeof(private_operation_buf);
 	
-	TCPServerWIZspiAdapter.RxBuffer = rx_buf;
-	TCPServerWIZspiAdapter.RxBufferSize = sizeof(rx_buf);
-	
-	WIZspi = TCP_SERVER_WIZ_SPI_REG;
+	WIZspi->Control1.SpiEnable = true;
 
-	sfc_spi_component_init(parent);
-	wiz_spi = &sfc_spi_wiz;
+	//sfc_spi_component_init(parent);
+	//wiz_spi = &sfc_spi_wiz;
 
 	//WIZspi->Control1.SpiEnable = true;
 
+	xDataBufferInit(&TCPServerWIZspiAdapter.TxBuffer,
+			&TCPServerWIZspi,
+			0,
+			private_tx_buf,
+			sizeof(private_tx_buf));
+
 	xRxReceiverInit(&TCPServerWIZspiAdapter.RxReceiver,
-										&TCPServerWIZspi.Rx,
+										&TCPServerWIZspi.Port,
 										0,
-										rx_receiver_buf,
-										sizeof(rx_receiver_buf));
+										private_rx_buf,
+										sizeof(private_rx_buf));
 
 	TCPServerInit(&TCPServerWIZspi, parent, &TCPServerInterface);
 	TCPServerWIZspiAdapterInit(&TCPServerWIZspi, &TCPServerWIZspiAdapter);

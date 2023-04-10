@@ -1,8 +1,8 @@
 //==============================================================================
 //header:
 
-#ifndef SERIAL_PORT_UART_COMPONENT_H
-#define SERIAL_PORT_UART_COMPONENT_H
+#ifndef _SERIAL_PORT_UART_COMPONENT_H_
+#define _SERIAL_PORT_UART_COMPONENT_H_
 //==============================================================================
 #ifdef __cplusplus
 extern "C" {
@@ -15,7 +15,7 @@ extern "C" {
 //==============================================================================
 //defines:
 
-
+#define SERIAL_PORT_UART_COMPONENT_ENABLE 1
 //==============================================================================
 //macros:
 
@@ -50,4 +50,4 @@ extern SerialPortT SerialPortUART;
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //SERIAL_PORT_UART_COMPONENT_H
+#endif //_SERIAL_PORT_UART_COMPONENT_H_

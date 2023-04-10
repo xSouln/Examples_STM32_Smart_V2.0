@@ -1,6 +1,6 @@
 //==============================================================================
-#ifndef SERIAL_PORT_UART_COMPONENT_CONFIG_H
-#define SERIAL_PORT_UART_COMPONENT_CONFIG_H
+#ifndef _SERIAL_PORT_UART_COMPONENT_CONFIG_H_
+#define _SERIAL_PORT_UART_COMPONENT_CONFIG_H_
 //==============================================================================
 #ifdef __cplusplus
 extern "C" {
@@ -17,8 +17,8 @@ extern DMA_HandleTypeDef hdma_usart1_rx;
 //==============================================================================
 //defines:
 
-#define SERIAL_PORT_UART_RX_CIRCLE_BUF_SIZE_MASK 0x1ff
-#define SERIAL_PORT_UART_RX_OBJECT_BUF_SIZE 0xfff
+#define SERIAL_PORT_UART_RX_CIRCLE_BUF_SIZE_MASK 0x0ff
+#define SERIAL_PORT_UART_RX_OBJECT_BUF_SIZE 0x1ff
 #define SERIAL_PORT_UART_TX_CIRCLE_BUF_SIZE_MASK 0x1ff
 
 #define SERIAL_PORT_UART_REG USART1
@@ -28,4 +28,4 @@ extern DMA_HandleTypeDef hdma_usart1_rx;
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //SERIAL_PORT_UART_COMPONENT_CONFIG_H
+#endif //_SERIAL_PORT_UART_COMPONENT_CONFIG_H_

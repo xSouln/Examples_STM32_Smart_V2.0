@@ -1,35 +1,44 @@
 //==============================================================================
 //header:
 
-#ifndef TCP_SERVER_WIZ_SPI_COMPONENT_CONFIG_H
-#define TCP_SERVER_WIZ_SPI_COMPONENT_CONFIG_H
-//------------------------------------------------------------------------------
+#ifndef _UART_PORT_COMPONENT_H_
+#define _UART_PORT_COMPONENT_H_
+//==============================================================================
 #ifdef __cplusplus
 extern "C" {
 #endif
 //==============================================================================
 //includes:
 
-#include "Components_Types.h"
-#include "spi.h"
+#include "UartPort-ComponentConfig.h"
+#include "Common/xPort/xPort.h"
+//==============================================================================
+//defines:
+
+
 //==============================================================================
 //macros:
 
 
 //==============================================================================
+//functions:
+
+xResult UartPortComponentInit(void* parent);
+
+void UartPortComponentHandler();
+void UartPortComponentTimeSynchronization();
+void UartPortComponentIRQ();
+//==============================================================================
 //import:
 
 
 //==============================================================================
-//defines:
+//export:
 
-#define TCP_SERVER_WIZ_OPERATION_BUF_SIZE 0x200
-#define TCP_SERVER_WIZ_SPI_RX_RECEIVER_BUF_SIZE 0x100
-
-#define TCP_SERVER_WIZ_SPI_REG (REG_SPI_T*)SPI1
+extern xPortT UartPort;
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //TCP_SERVER_WIZ_SPI_COMPONENT_CONFIG_H
+#endif //_UART_PORT_COMPONENT_H_

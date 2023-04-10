@@ -13,14 +13,14 @@ extern sfc_spi_handle_t sfc_spi_handles[];
 //==============================================================================
 //functions:
 
-#if	defined(SPI1) && defined(SFC_SPI_NUMBER1_ENABLE)
+#if	defined(SPI1) && defined(SFC_SPI1_ENABLE)
 void SPI1_IRQHandler(void)
 {
-	sfc_spi_handles[SFC_SPI_NUMBER_1].irq(sfc_spi_handles[SFC_SPI_NUMBER_1].spi);
+	sfc_spi_handles[SFC_SPI1].irq(sfc_spi_handles[SFC_SPI1].spi);
 }
 #endif
 //------------------------------------------------------------------------------
-#if	defined(SPI4) && defined(SFC_SPI_NUMBER4_ENABLE)
+#if	defined(SPI4) && defined(SFC_SPI4_ENABLE)
 void SPI4_IRQHandler(void)
 {
 	sfc_spi_handles[SFC_SPI_NUMBER_4].irq(sfc_spi_handles[SFC_SPI_NUMBER_4].spi);
@@ -43,25 +43,25 @@ void sfc_spi_core_clock_enable(sfc_spi_t* spi)
 
 	switch((int)handle->reg)
 	{
-#if	defined(SPI1) && defined(SFC_SPI_NUMBER1_ENABLE)
+#if	defined(SPI1) && defined(SFC_SPI1_ENABLE)
 		case (int)SPI1:
 			__HAL_RCC_SPI1_CLK_ENABLE();
 			break;
 #endif
 
-#if	defined(SPI2) && defined(SFC_SPI_NUMBER2_ENABLE)
+#if	defined(SPI2) && defined(SFC_SPI2_ENABLE)
 		case (int)SPI2:
 			__HAL_RCC_SPI2_CLK_ENABLE();
 			break;
 #endif
 
-#if	defined(SPI3) && defined(SFC_SPI_NUMBER3_ENABLE)
+#if	defined(SPI3) && defined(SFC_SPI3_ENABLE)
 		case (int)SPI3:
 			__HAL_RCC_SPI3_CLK_ENABLE();
 			break;
 #endif
 
-#if	defined(SPI4) && defined(SFC_SPI_NUMBER4_ENABLE)
+#if	defined(SPI4) && defined(SFC_SPI4_ENABLE)
 		case (int)SPI4:
 			__HAL_RCC_SPI4_CLK_ENABLE();
 			break;
@@ -75,25 +75,25 @@ void sfc_spi_core_clock_disable(sfc_spi_t* spi)
 
 	switch((int)handle->reg)
 	{
-#if	defined(SPI1) && defined(SFC_SPI_NUMBER1_ENABLE)
+#if	defined(SPI1) && defined(SFC_SPI1_ENABLE)
 		case (int)SPI1:
 			__HAL_RCC_SPI1_CLK_DISABLE();
 			break;
 #endif
 
-#if	defined(SPI2) && defined(SFC_SPI_NUMBER2_ENABLE)
+#if	defined(SPI2) && defined(SFC_SPI2_ENABLE)
 		case (int)SPI2:
 			__HAL_RCC_SPI2_CLK_DISABLE();
 			break;
 #endif
 
-#if	defined(SPI3) && defined(SFC_SPI_NUMBER3_ENABLE)
+#if	defined(SPI3) && defined(SFC_SPI3_ENABLE)
 		case (int)SPI3:
 			__HAL_RCC_SPI3_CLK_DISABLE();
 			break;
 #endif
 
-#if	defined(SPI4) && defined(SFC_SPI_NUMBER4_ENABLE)
+#if	defined(SPI4) && defined(SFC_SPI4_ENABLE)
 		case (int)SPI4:
 			__HAL_RCC_SPI4_CLK_DISABLE();
 			break;
@@ -224,32 +224,32 @@ sfc_spi_result_t sfc_spi_core_bind_handle(sfc_spi_t* spi, sfc_spi_number_t numbe
 //------------------------------------------------------------------------------
 sfc_spi_handle_t sfc_spi_handles[] =
 {
-#if	defined(SPI1) && defined(SFC_SPI_NUMBER1_ENABLE)
-	[SFC_SPI_NUMBER_1] =
+#if	defined(SPI1) && defined(SFC_SPI1_ENABLE)
+	[SFC_SPI1] =
 	{
 		.reg = (REG_SPI_T*)SPI1,
 		.IRQn = SPI1_IRQn,
 	},
 #endif
 
-#if	defined(SPI2) && defined(SFC_SPI_NUMBER2_ENABLE)
-	[SFC_SPI_NUMBER_2] =
+#if	defined(SPI2) && defined(SFC_SPI2_ENABLE)
+	[SFC_SPI2] =
 	{
 		.reg = (REG_SPI_T*)SPI2,
 		.IRQn = SPI2_IRQn,
 	},
 #endif
 
-#if	defined(SPI3) && defined(SFC_SPI_NUMBER3_ENABLE)
-	[SFC_SPI_NUMBER_3] =
+#if	defined(SPI3) && defined(SFC_SPI3_ENABLE)
+	[SFC_SPI3] =
 	{
 		.reg = (REG_SPI_T*)SPI3,
 		.IRQn = SPI3_IRQn,
 	},
 #endif
 
-#if	defined(SPI4) && defined(SFC_SPI_NUMBER4_ENABLE)
-	[SFC_SPI_NUMBER_4] =
+#if	defined(SPI4) && defined(SFC_SPI4_ENABLE)
+	[SFC_SPI4] =
 	{
 		.reg = (REG_SPI_T*)SPI4,
 		.IRQn = SPI4_IRQn,
