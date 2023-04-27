@@ -173,7 +173,7 @@ TCPServerWIZspiAdapterT TCPServerWIZspiAdapter =
 //==============================================================================
 //initialization:
 
-xResult TCPServerWIZspiComponentInit(void* parent)
+xResult _TCPServerWIZspiComponentInit(void* parent)
 {
 	TCPServerWIZspiAdapter.OperationBuffer = private_operation_buf;
 	TCPServerWIZspiAdapter.OperationBufferSize = sizeof(private_operation_buf);

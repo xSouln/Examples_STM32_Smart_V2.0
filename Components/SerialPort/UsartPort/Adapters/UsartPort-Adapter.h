@@ -1,23 +1,25 @@
 //==============================================================================
 //header:
 
-#ifndef SERIAL_PORT_UART_ADAPTER_H
-#define SERIAL_PORT_UART_ADAPTER_H
-//==============================================================================
+#ifndef _USART_PORT_ADAPTER_H_
+#define _USART_PORT_ADAPTER_H_
+//------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
 #endif 
 //==============================================================================
 //includes:
 
-#include "SerialPort/Controls/SerialPort_Types.h"
+#include "Common/xPort/xPort.h"
 #include "Common/xRxReceiver.h"
+#include "Common/xDataBuffer.h"
+#include "Registers/registers.h"
 //==============================================================================
 //types:
 
 typedef struct
 {
-	SerialPortAdapterBaseT Base;
+	xPortAdapterBaseT Base;
 
 	REG_UART_T* Usart;
 
@@ -30,14 +32,14 @@ typedef struct
 
 	xCircleBufferT TxCircleBuffer;
 
-} SerialPortUART_AdapterT;
+} UsartPortAdapterT;
 //==============================================================================
 //functions:
 
-xResult SerialPortUART_AdapterInit(SerialPortT* serial_port, SerialPortUART_AdapterT* adapter);
+xResult UsartPortAdapterInit(xPortT* port, UsartPortAdapterT* adapter);
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //SERIAL_PORT_UART_ADAPTER_H
+#endif //_USART_PORT_ADAPTER_H_

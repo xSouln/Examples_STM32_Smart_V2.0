@@ -2,7 +2,7 @@
 //includes:
 
 #include "Components.h"
-#include "Adapters/UartPort-Adapter.h"
+#include "Adapters/UsartPort-Adapter.h"
 //==============================================================================
 //defines:
 
@@ -16,7 +16,7 @@ static uint8_t uart_rx_circle_buf[RX_CIRCLE_BUF_SIZE_MASK + 1];
 static uint8_t rx_object_buf[RX_OBJECT_BUF_SIZE];
 static uint8_t tx_circle_buf[TX_CIRCLE_BUF_SIZE_MASK + 1];
 
-xPortT UartPort;
+xPortT UsartPort;
 //==============================================================================
 //import:
 
@@ -56,24 +56,24 @@ static xResult RequestListener(xPortT* port, xPortSysRequestSelector selector, v
 }
 //------------------------------------------------------------------------------
 
-void UartPortComponentIRQ()
+void UsartPortComponentIRQ()
 {
-	xPortIRQ(&UartPort, 0);
+	xPortIRQ(&UsartPort, 0);
 }
 //------------------------------------------------------------------------------
 //component functions:
 /**
  * @brief main handler
  */
-void UartPortComponentHandler()
+void UsartPortComponentHandler()
 {
-	xPortHandler(&UartPort);
+	xPortHandler(&UsartPort);
 }
 //------------------------------------------------------------------------------
 /**
  * @brief time synchronization of time-dependent processes
  */
-void UartPortComponentTimeSynchronization()
+void UsartPortComponentTimeSynchronization()
 {
 
 }
@@ -81,7 +81,7 @@ void UartPortComponentTimeSynchronization()
 //==============================================================================
 //initialization:
 
-static UartPortAdapterT PrivateUartPortAdapter =
+static UsartPortAdapterT PrivateUsartPortAdapter =
 {
 	.Usart =  (REG_UART_T*)UART_PORT_REG,
 
@@ -99,14 +99,14 @@ static xPortSysInterfaceT PrivatePortSysInterface =
 //==============================================================================
 //component initialization:
 
-xResult UartPortComponentInit(void* parent)
+xResult UsartPortComponentInit(void* parent)
 {
-	xCircleBufferInit(&PrivateUartPortAdapter.RxCircleBuffer, &UartPort, uart_rx_circle_buf, RX_CIRCLE_BUF_SIZE_MASK);
-	xCircleBufferInit(&PrivateUartPortAdapter.TxCircleBuffer, &UartPort, tx_circle_buf, TX_CIRCLE_BUF_SIZE_MASK);
-	xRxReceiverInit(&PrivateUartPortAdapter.RxReceiver, &UartPort, 0, rx_object_buf, RX_OBJECT_BUF_SIZE);
+	xCircleBufferInit(&PrivateUsartPortAdapter.RxCircleBuffer, &UsartPort, uart_rx_circle_buf, RX_CIRCLE_BUF_SIZE_MASK);
+	xCircleBufferInit(&PrivateUsartPortAdapter.TxCircleBuffer, &UsartPort, tx_circle_buf, TX_CIRCLE_BUF_SIZE_MASK);
+	xRxReceiverInit(&PrivateUsartPortAdapter.RxReceiver, &UsartPort, 0, rx_object_buf, RX_OBJECT_BUF_SIZE);
 	
-	UartPortAdapterInit(&UartPort, &PrivateUartPortAdapter);
-	xPortInit(&UartPort, parent, &PrivatePortSysInterface);
+	UsartPortAdapterInit(&UsartPort, &PrivateUsartPortAdapter);
+	xPortInit(&UsartPort, parent, &PrivatePortSysInterface);
   
 	return 0;
 }

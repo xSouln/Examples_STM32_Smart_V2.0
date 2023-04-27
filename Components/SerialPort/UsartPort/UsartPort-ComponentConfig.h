@@ -1,8 +1,6 @@
 //==============================================================================
-//header:
-
-#ifndef SERIAL_PORT_UART_RX_ADAPTER_H
-#define SERIAL_PORT_UART_RX_ADAPTER_H
+#ifndef _USART_PORT_COMPONENT_CONFIG_H_
+#define _USART_PORT_COMPONENT_CONFIG_H_
 //==============================================================================
 #ifdef __cplusplus
 extern "C" {
@@ -10,14 +8,24 @@ extern "C" {
 //==============================================================================
 //includes:
 
-#include "SerialPort_UART_Adapter.h"
-//==============================================================================
-//functions:
+#include "Components_Types.h"
 
-xResult SerialPortUART_RxAdapterInit(SerialPortT* serial_port, SerialPortUART_AdapterT* adapter);
+//==============================================================================
+//import:
+
+extern DMA_HandleTypeDef hdma_usart1_rx;
+//==============================================================================
+//defines:
+
+#define UART_PORT_RX_CIRCLE_BUF_SIZE_MASK 0x0ff
+#define UART_PORT_RX_OBJECT_BUF_SIZE 0x1ff
+#define UART_PORT_TX_CIRCLE_BUF_SIZE_MASK 0x1ff
+
+#define UART_PORT_REG USART1
+#define UART_PORT_RX_DMA hdma_usart1_rx
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //SERIAL_PORT_UART_RX_ADAPTER_H
+#endif //_USART_PORT_COMPONENT_CONFIG_H_

@@ -1,13 +1,13 @@
 //==============================================================================
 //includes:
 
-#include "UartPort-Adapter.h"
+#include "UsartPort-Adapter.h"
 //==============================================================================
 //functions:
 
 static void PrivateHandler(xPortT* port)
 {
-	register UartPortAdapterT* adapter = (UartPortAdapterT*)port->Adapter;
+	register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter;
 
 	adapter->RxCircleBuffer.TotalIndex = (adapter->RxCircleBuffer.SizeMask + 1) -
 											((DMA_Channel_TypeDef*)adapter->RxDMA->Instance)->CNDTR;
@@ -25,7 +25,7 @@ static void PrivateHandler(xPortT* port)
 //------------------------------------------------------------------------------
 static void PrivateIRQ(xPortT* port, void* arg)
 {
-	register UartPortAdapterT* adapter = (UartPortAdapterT*)port->Adapter;
+	register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter;
 
 	if (adapter->Usart->Control1.TxEmptyInterruptEnable && adapter->Usart->InterruptAndStatus.TxEmpty)
 	{
@@ -42,7 +42,7 @@ static void PrivateIRQ(xPortT* port, void* arg)
 //------------------------------------------------------------------------------
 static xResult PrivateRequestListener(xPortT* port, xPortRequestSelector selector, void* arg)
 {
-	register UartPortAdapterT* adapter = (UartPortAdapterT*)port->Adapter;
+	register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter;
 
 	switch ((uint32_t)selector)
 	{
@@ -99,7 +99,7 @@ static xResult PrivateRequestListener(xPortT* port, xPortRequestSelector selecto
 //------------------------------------------------------------------------------
 static void PrivateEventListener(xPortT* port, xPortEventSelector selector, void* arg)
 {
-	register UartPortAdapterT* adapter = (UartPortAdapterT*)port->Adapter;
+	//register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter;
 
 	switch((int)selector)
 	{
@@ -109,7 +109,7 @@ static void PrivateEventListener(xPortT* port, xPortEventSelector selector, void
 //------------------------------------------------------------------------------
 static int PrivateTransmit(xPortT* port, void* data, uint32_t size)
 {
-	register UartPortAdapterT* adapter = (UartPortAdapterT*)port->Adapter;
+	register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter;
 
 	if (xCircleBufferGetFreeSize(&adapter->TxCircleBuffer) >= size)
 	{
@@ -163,13 +163,13 @@ static xRxReceiverInterfaceT PrivateRxReceiverInterface =
 	.EventListener = (xRxReceiverEventListenerT)PrivateRxReceiverEventListener
 };
 //------------------------------------------------------------------------------
-xResult UartPortAdapterInit(xPortT* port, UartPortAdapterT* adapter)
+xResult UsartPortAdapterInit(xPortT* port, UsartPortAdapterT* adapter)
 {
 	if (port && adapter)
 	{
 		port->Adapter = (xPortAdapterBaseT*)adapter;
 
-		port->Adapter->Base.Note = nameof(UartPortAdapterT);
+		port->Adapter->Base.Note = nameof(UsartPortAdapterT);
 		port->Adapter->Base.Parent = port;
 		
 		port->Adapter->Interface = &PrivatePortInterface;

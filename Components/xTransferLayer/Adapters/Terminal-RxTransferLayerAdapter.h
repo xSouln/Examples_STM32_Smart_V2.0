@@ -1,8 +1,8 @@
 //==============================================================================
 //header:
 
-#ifndef _UART_PORT_ADAPTER_H_
-#define _UART_PORT_ADAPTER_H_
+#ifndef _TERMINAL_RX_TARNSFER_LAYER_ADAPTER_H_
+#define _TERMINAL_RX_TARNSFER_LAYER_ADAPTER_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -10,36 +10,34 @@ extern "C" {
 //==============================================================================
 //includes:
 
+#include "Components.h"
+
+#include "Common/xTransferLayer/xTransferLayer.h"
 #include "Common/xPort/xPort.h"
-#include "Common/xRxReceiver.h"
-#include "Common/xDataBuffer.h"
-#include "Registers/registers.h"
+#include "Common/xRxRequest.h"
 //==============================================================================
 //types:
 
 typedef struct
 {
-	xPortAdapterBaseT Base;
+	TerminalObjectT TerminalObject;
 
-	REG_UART_T* Usart;
+} TerminalRxTransferLayerAdapterDataT;
+//------------------------------------------------------------------------------
+typedef struct
+{
+	xTransferLayerAdapterBaseT Base;
 
-	DMA_HandleTypeDef* RxDMA;
+	TerminalRxTransferLayerAdapterDataT Data;
 
-	xDataBufferT* ResponseBuffer;
-
-	xCircleBufferT RxCircleBuffer;
-	xRxReceiverT RxReceiver;
-
-	xCircleBufferT TxCircleBuffer;
-
-} UartPortAdapterT;
+} TerminalRxTransferLayerAdapterT;
 //==============================================================================
 //functions:
 
-xResult UartPortAdapterInit(xPortT* port, UartPortAdapterT* adapter);
+xResult TerminalRxTransferLayerAdapterInit(xTransferLayerT* layer, TerminalRxTransferLayerAdapterT* adapter);
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_UART_PORT_ADAPTER_H_
+#endif //_TERMINAL_RX_TARNSFER_LAYER_ADAPTER_H_

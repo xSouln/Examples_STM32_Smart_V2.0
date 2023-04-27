@@ -1,8 +1,8 @@
 //==============================================================================
 //header:
 
-#ifndef _SERIAL_PORT_UART_COMPONENT_H_
-#define _SERIAL_PORT_UART_COMPONENT_H_
+#ifndef _USART_PORT_COMPONENT_H_
+#define _USART_PORT_COMPONENT_H_
 //==============================================================================
 #ifdef __cplusplus
 extern "C" {
@@ -10,12 +10,12 @@ extern "C" {
 //==============================================================================
 //includes:
 
-#include "SerialPort_UART_ComponentConfig.h"
-#include "SerialPort/Controls/SerialPort.h"
+#include "UsartPort-ComponentConfig.h"
+#include "Common/xPort/xPort.h"
 //==============================================================================
 //defines:
 
-#define SERIAL_PORT_UART_COMPONENT_ENABLE 1
+
 //==============================================================================
 //macros:
 
@@ -23,31 +23,22 @@ extern "C" {
 //==============================================================================
 //functions:
 
-xResult _SerialPortUARTComponentInit(void* parent);
+xResult UsartPortComponentInit(void* parent);
 
-void _SerialPortUARTComponentHandler();
-void _SerialPortUARTComponentTimeSynchronization();
-void _SerialPortUARTComponentIRQListener();
+void UsartPortComponentHandler();
+void UsartPortComponentTimeSynchronization();
+void UsartPortComponentIRQ();
 //==============================================================================
 //import:
 
 
 //==============================================================================
-//override:
-
-#define SerialPortUARTComponentInit(parent) _SerialPortUARTComponentInit(parent)
-
-#define SerialPortUARTComponentHandler() SerialPortHandler(&SerialPortUART)
-#define SerialPortUARTComponentTimeSynchronization() SerialPortTimeSynchronization(&SerialPortUART)
-
-#define SerialPortUARTComponentIRQListener() SerialPortIRQListener(&SerialPortUART)
-//==============================================================================
 //export:
 
-extern SerialPortT SerialPortUART;
+extern xPortT UsartPort;
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_SERIAL_PORT_UART_COMPONENT_H_
+#endif //_USART_PORT_COMPONENT_H_
