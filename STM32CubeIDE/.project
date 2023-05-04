@@ -262,11 +262,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>Libs/Components/SerialPort/Controls</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>Libs/Components/TCP_Server/Controls</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -315,36 +310,6 @@
 			<name>Components/TCPServer/WIZspi/Adapters/TCPServer_WIZspiAdapter.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Adapters/STM32F4xx/WIZspi/Adapters/TCPServer_WIZspiAdapter.h</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/SerialPort/Controls/SerialPort.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/SerialPort/Controls/SerialPort.c</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/SerialPort/Controls/SerialPort.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/SerialPort/Controls/SerialPort.h</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/SerialPort/Controls/SerialPort_AdapterBase.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/SerialPort/Controls/SerialPort_AdapterBase.h</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/SerialPort/Controls/SerialPort_Config.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/SerialPort/Controls/SerialPort_Config.h</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/SerialPort/Controls/SerialPort_Info.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/SerialPort/Controls/SerialPort_Info.h</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/SerialPort/Controls/SerialPort_Types.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/SerialPort/Controls/SerialPort_Types.h</locationURI>
 		</link>
 		<link>
 			<name>Libs/Components/TCP_Server/Controls/TCPServer.c</name>

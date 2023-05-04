@@ -188,7 +188,7 @@ xResult UsartPortAdapterInit(xPortT* port, UsartPortAdapterT* adapter)
 		{
 			uint8_t dma_result = HAL_DMA_Start(adapter->RxDMA,
 												(uint32_t)&adapter->Usart->Data,
-												(uint32_t)adapter->RxCircleBuffer.Buffer,
+												(uint32_t)adapter->RxCircleBuffer.Memory,
 												adapter->RxCircleBuffer.SizeMask + 1);
 
 			if (dma_result != HAL_OK)

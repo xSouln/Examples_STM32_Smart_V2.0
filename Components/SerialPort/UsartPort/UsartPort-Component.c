@@ -101,8 +101,8 @@ static xPortSysInterfaceT PrivatePortSysInterface =
 
 xResult UsartPortComponentInit(void* parent)
 {
-	xCircleBufferInit(&PrivateUsartPortAdapter.RxCircleBuffer, &UsartPort, uart_rx_circle_buf, RX_CIRCLE_BUF_SIZE_MASK);
-	xCircleBufferInit(&PrivateUsartPortAdapter.TxCircleBuffer, &UsartPort, tx_circle_buf, TX_CIRCLE_BUF_SIZE_MASK);
+	xCircleBufferInit(&PrivateUsartPortAdapter.RxCircleBuffer, uart_rx_circle_buf, RX_CIRCLE_BUF_SIZE_MASK, sizeof(uint8_t));
+	xCircleBufferInit(&PrivateUsartPortAdapter.TxCircleBuffer, tx_circle_buf, TX_CIRCLE_BUF_SIZE_MASK, sizeof(uint8_t));
 	xRxReceiverInit(&PrivateUsartPortAdapter.RxReceiver, &UsartPort, 0, rx_object_buf, RX_OBJECT_BUF_SIZE);
 	
 	UsartPortAdapterInit(&UsartPort, &PrivateUsartPortAdapter);
