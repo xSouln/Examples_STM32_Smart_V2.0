@@ -5,9 +5,12 @@
 //==============================================================================
 //functions:
 
-static void PrivateHandler(xADC_T* object)
+static void PrivateHandler(xADC_T* adc)
 {
-	register ADC_AdapterT* adapter = (ADC_AdapterT*)object->Adapter;
+	register ADC_AdapterT* adapter = (ADC_AdapterT*)adc->Adapter;
+	DMA_Channel_TypeDef* dma = adapter->Handle->DMA_Handle->Instance;
+
+	adc->Points->Buffer.TotalIndex = ((adc->Points->Buffer.SizeMask + 1) *  adapter->ChannelsCount - dma->CNDTR) / adapter->ChannelsCount;
 }
 //------------------------------------------------------------------------------
 static void PrivateIRQ(xADC_T* object, void* arg)
@@ -15,13 +18,22 @@ static void PrivateIRQ(xADC_T* object, void* arg)
 	//register ADC_AdapterT* adapter = (UsartPortAdapterT*)port->Adapter;
 }
 //------------------------------------------------------------------------------
-static xResult PrivateRequestListener(xADC_T* object, xADC_RequestSelector selector, void* arg)
+static xResult PrivateRequestListener(xADC_T* adc, xADC_RequestSelector selector, void* arg)
 {
-	register ADC_AdapterT* adapter = (ADC_AdapterT*)object->Adapter;
+	register ADC_AdapterT* adapter = (ADC_AdapterT*)adc->Adapter;
 
 	switch ((uint32_t)selector)
 	{
 		case xADC_RequestStart:
+			adapter->Timer->Control1.CounterEnable = true;
+			break;
+
+		case xADC_RequestStop:
+			adapter->Timer->Control1.CounterEnable = false;
+			break;
+
+		case xADC_RequestGetNumberOfNewPoints:
+			*((uint32_t*)arg) = xCircleBufferGetFilledSize(&adc->Points->Buffer);
 			break;
 
 		default : return xResultRequestIsNotFound;
@@ -53,17 +65,40 @@ static xADC_InterfaceT PrivatePortInterface =
 	.EventListener = (xADC_EventListenerT)PrivateEventListener,
 };
 //------------------------------------------------------------------------------
-xResult ADC_AdapterInit(xADC_T* object, ADC_AdapterT* adapter)
+xResult ADC_AdapterInit(xADC_T* adc, ADC_AdapterInitializationT* initialization)
 {
-	if (object && adapter)
+	if (adc && initialization)
 	{
-		object->Adapter = (xADC_AdapterBaseT*)adapter;
+		ADC_AdapterT* adapter = initialization->Adapter;
 
-		object->Adapter->Base.Note = nameof(ADC_AdapterT);
-		object->Adapter->Base.Parent = object;
+		adc->Adapter = (xADC_AdapterBaseT*)adapter;
+
+		adc->Adapter->Base.Note = nameof(ADC_AdapterT);
+		adc->Adapter->Base.Parent = adc;
 		
-		object->Adapter->Interface = &PrivatePortInterface;
+		adapter->Base.Interface = &PrivatePortInterface;
 		
+		adc->Points = initialization->PointsBuffer;
+		adc->NumberOfPointsBuffer = 1;
+
+		adapter->Handle = initialization->Handle;
+		adapter->Timer = initialization->Timer;
+		adapter->ChannelsCount = initialization->ChannelsCount;
+
+		xCircleBufferInit(&adc->Points->Buffer,
+				initialization->PointsMemmory,
+				initialization->SizeOfPointsMemmory / SIZE_ELEMENT(initialization->PointsMemmory) / initialization->ChannelsCount - 1,
+				SIZE_ELEMENT(initialization->PointsMemmory) * initialization->ChannelsCount);
+
+		HAL_ADC_Start_DMA(initialization->Handle, adc->Points->Buffer.Memory, initialization->SizeOfPointsMemmory / SIZE_ELEMENT(initialization->PointsMemmory));
+		/*
+		HAL_DMA_Start(adapter->Handle->DMA_Handle,
+						adapter->Handle->Instance->DR,
+						(uint32_t)adc->Points->Buffer.Memory,
+						initialization->SizeOfPointsMemmory / SIZE_ELEMENT(initialization->PointsMemmory));
+
+		HAL_ADC_Start(adapter->Handle);
+		 */
 		return xResultAccept;
 	}
   

@@ -70,45 +70,14 @@ static void PrivateTerminalComponentEventListener(TerminalT* terminal, TerminalS
 		default: break;
 	}
 }
-//------------------------------------------------------------------------------
-static xResult PrivateTransferLayerRequestListener(xTransferLayerT* layer, xTransferLayerSysRequestSelector selector, void* arg)
-{
-	switch((int)selector)
-	{
-		case xTransferLayerSysRequestGetTime:
-			*(uint32_t*)arg = ComponentsSysGetTime();
-			break;
-
-		default: return xResultNotSupported;
-	}
-
-	return xResultAccept;
-}
-//------------------------------------------------------------------------------
-#ifdef SERIAL_PORT_UART_COMPONENT_ENABLE
-static void PrivateSerialPortComponentEventListener(SerialPortT* port, SerialPortEventSelector selector, void* arg)
-{
-	switch((int)selector)
-	{
-		case SerialPortEventEndLine:
-			TerminalReceiveData(&port->Rx,
-								((SerialPortReceivedDataT*)arg)->Data,
-								((SerialPortReceivedDataT*)arg)->Size);
-			break;
-
-		case SerialPortEventBufferIsFull:
-			TerminalReceiveData(&port->Rx,
-								((SerialPortReceivedDataT*)arg)->Data,
-								((SerialPortReceivedDataT*)arg)->Size);
-			break;
-
-		default: break;
-	}
-}
-#endif
 //==============================================================================
 //default functions:
 
+xResult ComponentsRequestListener(ObjectBaseT* object, int selector, void* arg)
+{
+	return xResultNotSupported;
+}
+//------------------------------------------------------------------------------
 void ComponentsEventListener(ObjectBaseT* object, int selector, void* arg)
 {
 	if (object->Description->Key != OBJECT_DESCRIPTION_KEY)
@@ -118,45 +87,10 @@ void ComponentsEventListener(ObjectBaseT* object, int selector, void* arg)
 
 	switch(object->Description->ObjectId)
 	{
-#ifdef SERIAL_PORT_UART_COMPONENT_ENABLE
-		case SERIAL_PORT_OBJECT_ID:
-			PrivateSerialPortComponentEventListener((SerialPortT*)object, selector, arg);
-			break;
-#endif
-
 		case TERMINAL_OBJECT_ID:
 			PrivateTerminalComponentEventListener((TerminalT*)object, selector, arg);
 			break;
 	}
-}
-//------------------------------------------------------------------------------
-
-xResult ComponentsRequestListener(ObjectBaseT* object, int selector, void* arg)
-{
-	switch((int)selector)
-	{
-		case xSystemRequestGetTime:
-			*(uint32_t*)arg = ComponentsSysGetTime();
-			break;
-
-		default: return xResultNotSupported;
-	}
-
-	return xResultAccept;
-}
-//------------------------------------------------------------------------------
-xResult xSystemRequestListener(ObjectBaseT* object, int selector, void* arg)
-{
-	switch((int)selector)
-	{
-		case xSystemRequestGetTime:
-			*(uint32_t*)arg = HAL_GetTick();
-			break;
-
-		default: return xResultNotSupported;
-	}
-
-	return xResultAccept;
 }
 //------------------------------------------------------------------------------
 /**
@@ -167,15 +101,16 @@ void ComponentsHandler()
 	UsartPortComponentHandler();
 	TCPServerWIZspiComponentHandler();
 	TerminalComponentHandler();
+	ADC_ComponentHandler();
 
 	xTxRequestHandler(&TxRequestControl);
 
 	xTransferLayerHandler(&TxTransferLayer);
 	xTransferLayerHandler(&RxTransferLayer);
 
-	if (ComponentsSysGetTime() - led_toggle_time_stamp > 999)
+	if (xSystemGetTime(ComponentsHandler) - led_toggle_time_stamp > 999)
 	{
-		led_toggle_time_stamp = ComponentsSysGetTime();
+		led_toggle_time_stamp = xSystemGetTime(ComponentsHandler);
 
 		if(TxRequest0.State == xTxRequesStateIdle)
 		{
@@ -195,9 +130,9 @@ void ComponentsHandler()
 		LED1_GPIO_Port->ODR ^= LED1_Pin;
 	}
 
-	if (ComponentsSysGetTime() - sntp_update_time_stamp > 9999)
+	if (xSystemGetTime(ComponentsHandler) - sntp_update_time_stamp > 9999)
 	{
-		sntp_update_time_stamp = ComponentsSysGetTime();
+		sntp_update_time_stamp = xSystemGetTime(ComponentsHandler);
 	}
 }
 //------------------------------------------------------------------------------
@@ -209,42 +144,7 @@ void ComponentsTimeSynchronization()
 	TerminalComponentTimeSynchronization();
 	UsartPortComponentTimeSynchronization();
 	TCPServerWIZspiComponentTimeSynchronization();
-}
-//------------------------------------------------------------------------------
-
-uint32_t ComponentsSysGetTime()
-{
-	return HAL_GetTick();
-}
-//------------------------------------------------------------------------------
-
-void ComponentsSysDelay(uint32_t time)
-{
-	HAL_Delay(time);
-}
-//------------------------------------------------------------------------------
-
-void ComponentsTrace(char* text)
-{
-
-}
-//------------------------------------------------------------------------------
-
-void ComponentsSysEnableIRQ()
-{
-
-}
-//------------------------------------------------------------------------------
-
-void ComponentsSysDisableIRQ()
-{
-
-}
-//------------------------------------------------------------------------------
-
-void ComponentsSysReset()
-{
-
+	ADC_ComponentTimeSynchronization();
 }
 //------------------------------------------------------------------------------
 static xResult RxRequest0ReceiveData(xRxRequestManagerT* manager, uint8_t* data, uint16_t size)
@@ -298,11 +198,14 @@ static TerminalObjectT TerminalObject =
 xResult ComponentsInit(void* parent)
 {
 	TerminalComponentInit(parent);
+
+	xSystemInit(parent);
 	//SerialPortUARTComponentInit(parent);
 	UsartPortComponentInit(parent);
 	TCPServerWIZspiComponentInit(parent);
+	ADC_ComponentInit(parent);
 
-	xTxRequestControlInit(&TxRequestControl, parent, 0);
+	xTxRequestControlInit(&TxRequestControl, parent);
 	TerminalAddObject(&TxRequestControl.TerminalObject);
 
 	TerminalTxTransferLayerAdapterInit(&TxTransferLayer, &TerminalTxTransferLayerAdapter);

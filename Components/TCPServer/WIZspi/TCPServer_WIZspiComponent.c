@@ -92,7 +92,7 @@ void WIZspiTransmiteByte(uint8_t byte)
 	*/
 }
 //------------------------------------------------------------------------------
-void _TCPServerWIZspiComponentEventListener(TCPServerT* server, TCPServerSysEventSelector selector, void* arg, ...)
+void _TCPServerWIZspiComponentEventListener(TCPServerT* server, TCPServerSysEventSelector selector, void* arg)
 {
 	switch ((uint8_t)selector)
 	{
@@ -110,7 +110,7 @@ void _TCPServerWIZspiComponentEventListener(TCPServerT* server, TCPServerSysEven
 	}
 }
 //------------------------------------------------------------------------------
-xResult _TCPServerWIZspiComponentRequestListener(TCPServerT* server, TCPServerSysRequestSelector selector, void* arg, ...)
+xResult _TCPServerWIZspiComponentRequestListener(TCPServerT* server, TCPServerSysRequestSelector selector, void* arg)
 {
 	switch ((uint8_t)selector)
 	{

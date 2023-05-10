@@ -61,12 +61,6 @@ void Error_Handler(void);
 #define LED1_GPIO_Port GPIOC
 #define BUTTON1_Pin GPIO_PIN_0
 #define BUTTON1_GPIO_Port GPIOA
-#define WS2812_N1_Pin GPIO_PIN_1
-#define WS2812_N1_GPIO_Port GPIOA
-#define WS2812_N2_Pin GPIO_PIN_2
-#define WS2812_N2_GPIO_Port GPIOA
-#define WS2812_SYNC_Pin GPIO_PIN_3
-#define WS2812_SYNC_GPIO_Port GPIOA
 #define WIZ_CS_Pin GPIO_PIN_4
 #define WIZ_CS_GPIO_Port GPIOA
 #define WIZ_SCK_Pin GPIO_PIN_5
@@ -89,6 +83,7 @@ void Error_Handler(void);
 #define FLASH_SCL_GPIO_Port GPIOB
 #define FLASH_SDA_Pin GPIO_PIN_7
 #define FLASH_SDA_GPIO_Port GPIOB
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

@@ -111,14 +111,29 @@ static int PrivateTransmit(xPortT* port, void* data, uint32_t size)
 {
 	register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter;
 
-	if (xCircleBufferGetFreeSize(&adapter->TxCircleBuffer) >= size)
-	{
-		xCircleBufferAdd(&adapter->TxCircleBuffer, (uint8_t*)data, size);
+	uint8_t* in = data;
+	int result = size;
 
-		return size;
+	while (size)
+	{
+		uint16_t packet_size = xCircleBufferGetFreeSize(&adapter->TxCircleBuffer);
+
+		if (packet_size > size)
+		{
+			packet_size = size;
+		}
+
+		if (packet_size)
+		{
+			xCircleBufferAdd(&adapter->TxCircleBuffer, in, packet_size);
+			adapter->Usart->Control1.TxEmptyInterruptEnable = true;
+
+			in += packet_size;
+			size -= packet_size;
+		}
 	}
 
-	return -xResultError;
+	return result;
 }
 //------------------------------------------------------------------------------
 static int PrivateReceive(xPortT* port, void* data, uint32_t size)

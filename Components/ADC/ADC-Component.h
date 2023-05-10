@@ -10,8 +10,7 @@ extern "C" {
 //==============================================================================
 //includes:
 
-#include "UsartPort-ComponentConfig.h"
-#include "Common/xPort/xPort.h"
+#include "Common/xADC/xADC.h"
 //==============================================================================
 //defines:
 
@@ -26,8 +25,9 @@ extern "C" {
 xResult ADC_ComponentInit(void* parent);
 
 void ADC_ComponentHandler();
-void ADC_ComponentTimeSynchronization();
-void ADC_ComponentIRQ();
+
+#define ADC_ComponentTimeSynchronization()
+#define ADC_ComponentIRQ()
 //==============================================================================
 //import:
 

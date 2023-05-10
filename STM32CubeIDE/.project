@@ -42,6 +42,16 @@
 			<location>C:/Users/Afhib/Desktop/Projects/Examples_STM32_Smart_V2.0/Components</location>
 		</link>
 		<link>
+			<name>Components/Components.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/Components.h</locationURI>
+		</link>
+		<link>
+			<name>Components/Components_Types.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/Components_Types.h</locationURI>
+		</link>
+		<link>
 			<name>Libs/Common</name>
 			<type>2</type>
 			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Common</locationURI>
@@ -55,6 +65,16 @@
 			<name>Drivers/STM32F1xx_HAL_Driver/stm32f1xx_hal.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/STM32F1xx_HAL_Driver/stm32f1xx_hal_adc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc.c</locationURI>
+		</link>
+		<link>
+			<name>Drivers/STM32F1xx_HAL_Driver/stm32f1xx_hal_adc_ex.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_adc_ex.c</locationURI>
 		</link>
 		<link>
 			<name>Drivers/STM32F1xx_HAL_Driver/stm32f1xx_hal_cortex.c</name>
@@ -147,49 +167,9 @@
 			<locationURI>PARENT-4-PROJECT_LOC/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_ll_usb.c</locationURI>
 		</link>
 		<link>
-			<name>Libs/Components/Components.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/Components.h</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/Components_Types.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/Components_Types.h</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/Documents</name>
-			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/Documents</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/README.md</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/README.md</locationURI>
-		</link>
-		<link>
 			<name>Libs/Components/Terminal</name>
 			<type>2</type>
 			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/Terminal</locationURI>
-		</link>
-		<link>
-			<name>Libs/Drivers/WIZ</name>
-			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Drivers/WIZ</locationURI>
-		</link>
-		<link>
-			<name>Libs/Registers/registers.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Registers/registers.h</locationURI>
-		</link>
-		<link>
-			<name>Libs/Registers/registers_compiler.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Registers/registers_compiler.h</locationURI>
-		</link>
-		<link>
-			<name>Libs/Registers/registers_stm32f4xx</name>
-			<type>2</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Registers/registers_stm32f4xx</locationURI>
 		</link>
 		<link>
 			<name>Middlewares/USB_Device_Library/usbd_cdc.c</name>
@@ -210,6 +190,11 @@
 			<name>Middlewares/USB_Device_Library/usbd_ioreq.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.4/Middlewares/ST/STM32_USB_Device_Library/Core/Src/usbd_ioreq.c</locationURI>
+		</link>
+		<link>
+			<name>Application/User/Core/adc.c</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/adc.c</locationURI>
 		</link>
 		<link>
 			<name>Application/User/Core/dma.c</name>
@@ -257,21 +242,6 @@
 			<locationURI>PARENT-1-PROJECT_LOC/Core/Src/usart.c</locationURI>
 		</link>
 		<link>
-			<name>Components/TCPServer/WIZspi/Adapters</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/TCP_Server/Controls</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/sfc_spi/controls</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>Application/User/USB_DEVICE/App/usb_device.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/USB_DEVICE/App/usb_device.c</locationURI>
@@ -290,86 +260,6 @@
 			<name>Application/User/USB_DEVICE/Target/usbd_conf.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/USB_DEVICE/Target/usbd_conf.c</locationURI>
-		</link>
-		<link>
-			<name>Components/TCPServer/WIZspi/Adapters/TCPServerPort-Adapter.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Adapters/STM32F4xx/WIZspi/Adapters/TCPServerPort-Adapter.c</locationURI>
-		</link>
-		<link>
-			<name>Components/TCPServer/WIZspi/Adapters/TCPServerPort-Adapter.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Adapters/STM32F4xx/WIZspi/Adapters/TCPServerPort-Adapter.h</locationURI>
-		</link>
-		<link>
-			<name>Components/TCPServer/WIZspi/Adapters/TCPServer_WIZspiAdapter.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Adapters/STM32F4xx/WIZspi/Adapters/TCPServer_WIZspiAdapter.c</locationURI>
-		</link>
-		<link>
-			<name>Components/TCPServer/WIZspi/Adapters/TCPServer_WIZspiAdapter.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Adapters/STM32F4xx/WIZspi/Adapters/TCPServer_WIZspiAdapter.h</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/TCP_Server/Controls/TCPServer.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Controls/TCPServer.c</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/TCP_Server/Controls/TCPServer.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Controls/TCPServer.h</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/TCP_Server/Controls/TCPServer_AdapterBase.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Controls/TCPServer_AdapterBase.h</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/TCP_Server/Controls/TCPServer_Config.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Controls/TCPServer_Config.h</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/TCP_Server/Controls/TCPServer_Info.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Controls/TCPServer_Info.h</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/TCP_Server/Controls/TCPServer_Types.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/TCPServer/Controls/TCPServer_Types.h</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/sfc_spi/controls/sfc_spi.c</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/sfc_spi/controls/sfc_spi.c</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/sfc_spi/controls/sfc_spi.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/sfc_spi/controls/sfc_spi.h</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/sfc_spi/controls/sfc_spi_adapter_base.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/sfc_spi/controls/sfc_spi_adapter_base.h</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/sfc_spi/controls/sfc_spi_common.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/sfc_spi/controls/sfc_spi_common.h</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/sfc_spi/controls/sfc_spi_results.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/sfc_spi/controls/sfc_spi_results.h</locationURI>
-		</link>
-		<link>
-			<name>Libs/Components/sfc_spi/controls/sfc_spi_types.h</name>
-			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/xLibs/Components/sfc_spi/controls/sfc_spi_types.h</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

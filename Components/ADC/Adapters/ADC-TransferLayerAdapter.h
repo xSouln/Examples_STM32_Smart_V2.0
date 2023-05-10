@@ -1,8 +1,8 @@
 //==============================================================================
 //header:
 
-#ifndef _ADC_ADAPTER_H_
-#define _ADC_ADAPTER_H_
+#ifndef _ADC_TARNSFER_LAYER_ADAPTER_H_
+#define _ADC_TARNSFER_LAYER_ADAPTER_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -10,46 +10,36 @@ extern "C" {
 //==============================================================================
 //includes:
 
-#include "Common/xADC/xADC.h"
-#include "Common/xCircleBuffer.h"
-#include "Registers/registers.h"
-#include "adc.h"
+#include "Components.h"
+
+#include "Common/xTransferLayer/xTransferLayer.h"
+#include "Common/xPort/xPort.h"
+#include "Common/xRxRequest.h"
 //==============================================================================
 //types:
 
 typedef struct
 {
-	xADC_AdapterBaseT Base;
+	xTransferLayerAdapterBaseT Base;
 
-	ADC_HandleTypeDef* Handle;
-	REG_TIM_T* Timer;
+	xADC_T* ADC;
 
-	uint8_t ChannelsCount;
-
-} ADC_AdapterT;
+} ADC_TransferLayerAdapterT;
 //------------------------------------------------------------------------------
 typedef struct
 {
-	ADC_AdapterT* Adapter;
+	ADC_TransferLayerAdapterT* Adapter;
 
-	ADC_HandleTypeDef* Handle;
-	REG_TIM_T* Timer;
+	xADC_T* ADC;
 
-	xADC_PointsT* PointsBuffer;
-
-	uint16_t* PointsMemmory;
-	uint32_t SizeOfPointsMemmory;
-
-	uint8_t ChannelsCount;
-
-} ADC_AdapterInitializationT;
+} ADC_TransferLayerAdapterInitializationT;
 //==============================================================================
 //functions:
 
-xResult ADC_AdapterInit(xADC_T* object, ADC_AdapterInitializationT* initialization);
+xResult ADC_TransferLayerAdapterInit(xTransferLayerT* layer, ADC_TransferLayerAdapterInitializationT* initialization);
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_ADC_ADAPTER_H_
+#endif //_ADC_TARNSFER_LAYER_ADAPTER_H_
