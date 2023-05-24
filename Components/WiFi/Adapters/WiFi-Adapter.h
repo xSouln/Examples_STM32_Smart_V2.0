@@ -1,8 +1,8 @@
 //==============================================================================
 //header:
 
-#ifndef _ADC_TARNSFER_LAYER_ADAPTER_H_
-#define _ADC_TARNSFER_LAYER_ADAPTER_H_
+#ifndef _WIFI_ADAPTER_H_
+#define _WIFI_ADAPTER_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
@@ -10,36 +10,36 @@ extern "C" {
 //==============================================================================
 //includes:
 
-#include "Components.h"
-
-#include "Common/xTransferLayer/xTransferLayer.h"
-#include "Common/xPort/xPort.h"
-#include "Common/xRxRequest.h"
+#include "Common/xWiFi/xWiFi.h"
 //==============================================================================
 //types:
 
 typedef struct
 {
-	xTransferLayerAdapterBaseT Base;
+	uint8_t wifi_event_group;
 
-	xADC_T* ADC;
-
-} ADC_TransferLayerAdapterT;
+} WiFi_AdapterInternalT;
 //------------------------------------------------------------------------------
 typedef struct
 {
-	ADC_TransferLayerAdapterT* Adapter;
+	xWiFi_AdapterBaseT Base;
 
-	xADC_T* ADC;
+	WiFi_AdapterInternalT Internal;
 
-} ADC_TransferLayerAdapterInitializationT;
+} WiFi_AdapterT;
+//------------------------------------------------------------------------------
+typedef struct
+{
+	WiFi_AdapterT* adapter;
+	
+} WiFi_AdapterInitializationT;
 //==============================================================================
 //functions:
 
-xResult ADC_TransferLayerAdapterInit(xTransferLayerT* layer, ADC_TransferLayerAdapterInitializationT* initialization);
+xResult WiFi_AdapterInit(xWiFi_T* wifi, WiFi_AdapterT* adapter, WiFi_AdapterInitializationT* initialization);
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_ADC_TARNSFER_LAYER_ADAPTER_H_
+#endif //_WIFI_ADAPTER_H_

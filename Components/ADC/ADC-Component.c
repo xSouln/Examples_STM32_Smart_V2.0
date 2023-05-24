@@ -56,11 +56,6 @@ void ADC_ComponentHandler()
 	{
 		int number_of_points = xADC_GetNumberOfNewPoints(&mADC);
 
-		if (!mADC.IsEnable)
-		{
-			return;
-		}
-
 		if (number_of_points >= 64)
 		{
 			number_of_points = xCircleBufferReadObject(&mADC.Points->Buffer, PointsPacket.Buffer, 64, 0, 0);
@@ -120,7 +115,7 @@ xResult ADC_ComponentInit(void* parent)
 	xADC_InitializationT adc_init =
 	{
 		.Parent = parent,
-		.Number = 1,
+		.Number = xADC1,
 		.Interface = &Private_ADC_SysInterface
 	};
 

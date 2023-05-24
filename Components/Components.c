@@ -102,6 +102,7 @@ void ComponentsHandler()
 	TCPServerWIZspiComponentHandler();
 	TerminalComponentHandler();
 	ADC_ComponentHandler();
+	WiFi_ComponentHandler();
 
 	xTxRequestHandler(&TxRequestControl);
 
@@ -145,6 +146,7 @@ void ComponentsTimeSynchronization()
 	UsartPortComponentTimeSynchronization();
 	TCPServerWIZspiComponentTimeSynchronization();
 	ADC_ComponentTimeSynchronization();
+	WiFi_ComponentTimeSynchronization();
 }
 //------------------------------------------------------------------------------
 static xResult RxRequest0ReceiveData(xRxRequestManagerT* manager, uint8_t* data, uint16_t size)
@@ -200,10 +202,10 @@ xResult ComponentsInit(void* parent)
 	TerminalComponentInit(parent);
 
 	xSystemInit(parent);
-	//SerialPortUARTComponentInit(parent);
 	UsartPortComponentInit(parent);
 	TCPServerWIZspiComponentInit(parent);
 	ADC_ComponentInit(parent);
+	WiFi_ComponentInit(parent);
 
 	xTxRequestControlInit(&TxRequestControl, parent);
 	TerminalAddObject(&TxRequestControl.TerminalObject);

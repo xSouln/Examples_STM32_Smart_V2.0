@@ -1,24 +1,16 @@
 //==============================================================================
-#ifndef _COMPONENTS_SELECTOR_H_
-#define _COMPONENTS_SELECTOR_H_
-//------------------------------------------------------------------------------
+//header:
+
+#ifndef _WIFI_COMPONENT_H_
+#define _WIFI_COMPONENT_H_
+//==============================================================================
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 //==============================================================================
 //includes:
 
-
-//==============================================================================
-//components:
-
-#include "Terminal/Terminal_Component.h"
-#include "TCPServer/WIZspi/TCPServer_WIZspiComponent.h"
-#include "SerialPort/UsartPort/UsartPort-Component.h"
-#include "ADC/ADC-Component.h"
-#include "WiFi/WiFi-Component.h"
-
-#include "sfc_spi/stm32f1xx/sfc_spi_component.h"
+#include "Common/xWiFi/xWiFi.h"
 //==============================================================================
 //defines:
 
@@ -28,9 +20,25 @@ extern "C" {
 
 
 //==============================================================================
+//functions:
+
+xResult WiFi_ComponentInit(void* parent);
+
+void WiFi_ComponentHandler();
+
+#define WiFi_ComponentTimeSynchronization()
+#define WiFi_ComponentIRQ()
+//==============================================================================
+//import:
+
+
+//==============================================================================
+//export:
+
+extern xWiFi_T mWiFi;
+//==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_COMPONENTS_SELECTOR_H_
-
+#endif //_WIFI_COMPONENT_H_
