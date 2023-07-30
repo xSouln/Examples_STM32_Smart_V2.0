@@ -10,7 +10,8 @@ extern "C" {
 //==============================================================================
 //includes:
 
-#include "Common/xADC/xADC.h"
+#include "ADC-ComponentConfig.h"
+#include "Peripherals/xADC/xADC.h"
 //==============================================================================
 //defines:
 

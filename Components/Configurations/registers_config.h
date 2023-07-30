@@ -7,7 +7,8 @@ extern "C" {
 #endif
 //==============================================================================
 #define REGISTERS_STM32F4XX_ENABLE 1
-#include "stm32f1xx.h"
+//#include "stm32f103xb.h"
+#include "stm32f1xx_hal.h"
 //==============================================================================
 #ifdef __cplusplus
 }

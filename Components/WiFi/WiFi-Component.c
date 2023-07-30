@@ -19,7 +19,7 @@
 //==============================================================================
 //functions:
 
-static void EventListener(xWiFi_T* wifi, xWiFi_SysEventSelector selector, void* arg)
+static void EventListener(xWiFi_T* wifi, xWiFi_ObjectEventSelector selector, void* arg)
 {
 	switch((int)selector)
 	{
@@ -28,7 +28,7 @@ static void EventListener(xWiFi_T* wifi, xWiFi_SysEventSelector selector, void* 
 }
 //------------------------------------------------------------------------------
 
-static xResult RequestListener(xWiFi_T* wifi, xWiFi_SysRequestSelector selector, void* arg)
+static xResult RequestListener(xWiFi_T* wifi, xWiFi_ObjectRequestSelector selector, void* arg)
 {
 	switch ((uint8_t)selector)
 	{
@@ -51,10 +51,10 @@ void WiFi_ComponentHandler()
 //initialization:
 
 
-static xWiFi_SysInterfaceT Private_WiFi_SysInterface =
+static xWiFi_ObjectInterfaceT Private_WiFi_SysInterface =
 {
-	.RequestListener = (xWiFi_SysRequestListenerT)RequestListener,
-	.EventListener = (xWiFi_SysEventListenerT)EventListener
+	.RequestListener = (xObjectRequestListenerT)RequestListener,
+	.EventListener = (xObjectEventListenerT)EventListener
 };
 
 static WiFi_AdapterT WiFi_Adapter;
@@ -68,7 +68,7 @@ xResult WiFi_ComponentInit(void* parent)
 	WiFi_AdapterInitializationT adapter_init;
 	WiFi_AdapterInit(&mWiFi, &WiFi_Adapter, &adapter_init);
 
-	xWiFi_InitializationT init =
+	xWiFi_InitT init =
 	{
 		.Parent = parent,
 		.Interface = &Private_WiFi_SysInterface

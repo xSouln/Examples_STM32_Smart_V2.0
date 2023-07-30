@@ -10,7 +10,7 @@ extern "C" {
 //==============================================================================
 //includes:
 
-#include "Common/xADC/xADC.h"
+#include "Peripherals/xADC/xADC.h"
 #include "Common/xCircleBuffer.h"
 #include "Registers/registers.h"
 #include "adc.h"
@@ -19,8 +19,6 @@ extern "C" {
 
 typedef struct
 {
-	xADC_AdapterBaseT Base;
-
 	ADC_HandleTypeDef* Handle;
 	REG_TIM_T* Timer;
 
@@ -30,8 +28,6 @@ typedef struct
 //------------------------------------------------------------------------------
 typedef struct
 {
-	ADC_AdapterT* Adapter;
-
 	ADC_HandleTypeDef* Handle;
 	REG_TIM_T* Timer;
 
@@ -42,11 +38,11 @@ typedef struct
 
 	uint8_t ChannelsCount;
 
-} ADC_AdapterInitializationT;
+} ADC_AdapterInitT;
 //==============================================================================
 //functions:
 
-xResult ADC_AdapterInit(xADC_T* object, ADC_AdapterInitializationT* initialization);
+xResult ADC_AdapterInit(xADC_T* object, xADC_AdapterInitT* init);
 //==============================================================================
 #ifdef __cplusplus
 }

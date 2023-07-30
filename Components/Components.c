@@ -2,9 +2,10 @@
 //includes:
 
 #include "Components.h"
-#include "xTransferLayer/Adapters/Terminal-TxTransferLayerAdapter.h"
-#include "xTransferLayer/Adapters/Terminal-RxTransferLayerAdapter.h"
-#include "Common/xTxRequest/xTxRequest.h"
+#include "main.h"
+#include "Templates/Adapters/Terminal-TransferLayer/Terminal-TxTransferLayerAdapter.h"
+#include "Templates/Adapters/Terminal-TransferLayer/Terminal-RxTransferLayerAdapter.h"
+#include "Abstractions/xTxRequest/xTxRequest.h"
 //==============================================================================
 //defines:
 
@@ -99,10 +100,8 @@ void ComponentsEventListener(ObjectBaseT* object, int selector, void* arg)
 void ComponentsHandler()
 {
 	UsartPortComponentHandler();
-	TCPServerWIZspiComponentHandler();
 	TerminalComponentHandler();
 	ADC_ComponentHandler();
-	WiFi_ComponentHandler();
 
 	xTxRequestHandler(&TxRequestControl);
 
@@ -115,13 +114,13 @@ void ComponentsHandler()
 
 		if(TxRequest0.State == xTxRequesStateIdle)
 		{
-			xTxRequestSetPort(&TxRequest0, &UsartPort);
+			xTxRequestSetPort(&TxRequest0, &SerialPort);
 			xTxRequestAdd(&TxRequestControl, &TxRequest0);
 		}
 
 		if(TxRequest1.State == xTxRequesStateIdle)
 		{
-			xTxRequestSetPort(&TxRequest1, &UsartPort);
+			xTxRequestSetPort(&TxRequest1, &SerialPort);
 			xTxRequestAdd(&TxRequestControl, &TxRequest1);
 		}
 
@@ -144,9 +143,7 @@ void ComponentsTimeSynchronization()
 {
 	TerminalComponentTimeSynchronization();
 	UsartPortComponentTimeSynchronization();
-	TCPServerWIZspiComponentTimeSynchronization();
 	ADC_ComponentTimeSynchronization();
-	WiFi_ComponentTimeSynchronization();
 }
 //------------------------------------------------------------------------------
 static xResult RxRequest0ReceiveData(xRxRequestManagerT* manager, uint8_t* data, uint16_t size)
@@ -203,20 +200,35 @@ xResult ComponentsInit(void* parent)
 
 	xSystemInit(parent);
 	UsartPortComponentInit(parent);
-	TCPServerWIZspiComponentInit(parent);
 	ADC_ComponentInit(parent);
-	WiFi_ComponentInit(parent);
 
 	xTxRequestControlInit(&TxRequestControl, parent);
 	TerminalAddObject(&TxRequestControl.TerminalObject);
 
-	TerminalTxTransferLayerAdapterInit(&TxTransferLayer, &TerminalTxTransferLayerAdapter);
-	xTransferLayerInit(&TxTransferLayer, parent, 0);
-	xTransferLayerSetBinding(&TxTransferLayer, &UsartPort);
+	TerminalTxTransferLayerAdapterInitT txTransferLayerAdapterInit =
+	{
+		.HeaderTransferStart = "HeaderTransferStart",
+		.HeaderTransfer = "HeaderTransfer :",
+		.HeaderTransferEnd = "HeaderTransferEnd\r"
+	};
 
-	TerminalRxTransferLayerAdapterInit(&RxTransferLayer, &TerminalRxTransferLayerAdapter);
-	xTransferLayerInit(&RxTransferLayer, parent, 0);
-	xTransferLayerSetBinding(&RxTransferLayer, &UsartPort);
+	xTransferLayerInitT transferLayerInit;
+	transferLayerInit.Parent = parent;
+	transferLayerInit.AdapterInit.Adapter = &TerminalTxTransferLayerAdapter;
+	transferLayerInit.AdapterInit.Init = &txTransferLayerAdapterInit;
+	transferLayerInit.AdapterInit.Initializer = TerminalTxTransferLayerAdapterInit;
+
+	xTransferLayerInit(&TxTransferLayer, &transferLayerInit);
+	xTransferLayerSetBinding(&TxTransferLayer, &SerialPort);
+
+	TerminalRxTransferLayerAdapterInitT rxTransferLayerAdapterInit;
+
+	transferLayerInit.AdapterInit.Adapter = &TerminalRxTransferLayerAdapter;
+	transferLayerInit.AdapterInit.Init = &rxTransferLayerAdapterInit;
+	transferLayerInit.AdapterInit.Initializer = TerminalRxTransferLayerAdapterInit;
+
+	xTransferLayerInit(&RxTransferLayer,  &transferLayerInit);
+	xTransferLayerSetBinding(&RxTransferLayer, &SerialPort);
 
 	TerminalAddObjectList(&TxTransferLayer.Objects);
 	TerminalAddObjectList(&RxTransferLayer.Objects);
@@ -231,8 +243,6 @@ xResult ComponentsInit(void* parent)
 	TerminalAddObjectList(&TxTransferLayer.Objects);
 
 	TerminalAddObject(&TerminalObject);
-
-	//TerminalTxBind(&SerialPortUART.Tx);
 
 	return xResultAccept;
 }

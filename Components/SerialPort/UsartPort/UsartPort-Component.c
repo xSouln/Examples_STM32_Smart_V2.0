@@ -6,17 +6,83 @@
 //==============================================================================
 //defines:
 
-#define RX_CIRCLE_BUF_SIZE_MASK (UART_PORT_RX_CIRCLE_BUF_SIZE_MASK)
-#define RX_OBJECT_BUF_SIZE (UART_PORT_RX_OBJECT_BUF_SIZE)
-#define TX_CIRCLE_BUF_SIZE_MASK (UART_PORT_TX_CIRCLE_BUF_SIZE_MASK)
+#define UASRT_PORT_BUFFERS_INIT(name)\
+static uint8_t name##_RX_CIRCLE_BUF[name##_RX_CIRCLE_BUF_SIZE_MASK + 1];\
+static uint8_t name##_RX_OBJECT_BUF[name##_RX_OBJECT_BUF_SIZE];\
+static uint8_t name##_TX_CIRCLE_BUF[name##_TX_CIRCLE_BUF_SIZE_MASK + 1]
+//------------------------------------------------------------------------------
+#define UASRT_PORT_ADAPTER_INIT(name, adapterInit)\
+adapterInit.Usart = (REG_UART_T*)name##_REG;\
+adapterInit.RxDMA = &name##_RX_DMA;\
+adapterInit.RxBuffer = name##_RX_CIRCLE_BUF;\
+adapterInit.RxBufferSizeMask = name##_RX_CIRCLE_BUF_SIZE_MASK;\
+adapterInit.RxResponseBuffer = name##_RX_OBJECT_BUF;\
+adapterInit.RxResponseBufferSize = name##_RX_OBJECT_BUF_SIZE;\
+adapterInit.TxBuffer = name##_TX_CIRCLE_BUF;\
+adapterInit.TxBufferSizeMask = name##_TX_CIRCLE_BUF_SIZE_MASK
+//------------------------------------------------------------------------------
+#define UASRT_PORT_ADAPTER_STRUCT_INIT(name)\
+{\
+	.Usart = (REG_UART_T*)name##_REG,\
+	.RxDMA = &name##_RX_DMA,\
+	.RxBuffer = name##_RX_CIRCLE_BUF,\
+	.RxBufferSizeMask = name##_RX_CIRCLE_BUF_SIZE_MASK,\
+	.RxResponseBuffer = name##_RX_OBJECT_BUF,\
+	.RxResponseBufferSize = name##_RX_OBJECT_BUF_SIZE,\
+	.TxBuffer = name##_TX_CIRCLE_BUF,\
+	.TxBufferSizeMask = name##_TX_CIRCLE_BUF_SIZE_MASK\
+}
+//==============================================================================
+//types:
+
+
 //==============================================================================
 //variables:
 
-static uint8_t uart_rx_circle_buf[RX_CIRCLE_BUF_SIZE_MASK + 1];
-static uint8_t rx_object_buf[RX_OBJECT_BUF_SIZE];
-static uint8_t tx_circle_buf[TX_CIRCLE_BUF_SIZE_MASK + 1];
+#ifdef SERIAL1_ENABLE
+UASRT_PORT_BUFFERS_INIT(SERIAL1);
+#endif
 
-xPortT UsartPort;
+#ifdef SERIAL2_ENABLE
+UASRT_PORT_BUFFERS_INIT(SERIAL2);
+#endif
+
+#ifdef SERIAL3_ENABLE
+UASRT_PORT_BUFFERS_INIT(SERIAL3);
+#endif
+
+#ifdef SERIAL4_ENABLE
+UASRT_PORT_BUFFERS_INIT(SERIAL4);
+#endif
+
+#ifdef SERIAL5_ENABLE
+UASRT_PORT_BUFFERS_INIT(SERIAL5);
+#endif
+
+static const UsartPortAdapterInitT adapterInits[SERIAL_PORTS_COUNT] =
+{
+#ifdef SERIAL1_ENABLE
+	UASRT_PORT_ADAPTER_STRUCT_INIT(SERIAL1),
+#endif
+
+#ifdef SERIAL2_ENABLE
+	UASRT_PORT_ADAPTER_STRUCT_INIT(SERIAL2),
+#endif
+
+#ifdef SERIAL3_ENABLE
+	UASRT_PORT_ADAPTER_STRUCT_INIT(SERIAL3),
+#endif
+
+#ifdef SERIAL4_ENABLE
+	UASRT_PORT_ADAPTER_STRUCT_INIT(SERIAL4),
+#endif
+
+#ifdef SERIAL5_ENABLE
+	UASRT_PORT_ADAPTER_STRUCT_INIT(SERIAL5),
+#endif
+};
+
+xPortT SerialPorts[SERIAL_PORTS_COUNT];
 //==============================================================================
 //import:
 
@@ -24,20 +90,20 @@ xPortT UsartPort;
 //==============================================================================
 //functions:
 
-static void EventListener(xPortT* port, xPortSysEventSelector selector, void* arg)
+static void EventListener(xPortT* port, xPortObjectEventSelector selector, void* arg)
 {
 	switch((int)selector)
 	{
-		case xPortSysEventRxFoundEndLine:
+		case xPortObjectEventRxFoundEndLine:
 			TerminalReceiveData(port,
-								((xPortSysEventDataPacketArgT*)arg)->Data,
-								((xPortSysEventDataPacketArgT*)arg)->Size);
+								((xPortEventDataPacketArgT*)arg)->Data,
+								((xPortEventDataPacketArgT*)arg)->Size);
 			break;
 
-		case xPortSysEventRxBufferIsFull:
+		case xPortObjectEventRxBufferIsFull:
 			TerminalReceiveData(port,
-								((xPortSysEventDataPacketArgT*)arg)->Data,
-								((xPortSysEventDataPacketArgT*)arg)->Size);
+								((xPortEventDataPacketArgT*)arg)->Data,
+								((xPortEventDataPacketArgT*)arg)->Size);
 			break;
 
 		default: break;
@@ -45,20 +111,9 @@ static void EventListener(xPortT* port, xPortSysEventSelector selector, void* ar
 }
 //------------------------------------------------------------------------------
 
-static xResult RequestListener(xPortT* port, xPortSysRequestSelector selector, void* arg)
-{
-	switch ((uint8_t)selector)
-	{
-		default: return xResultRequestIsNotFound;
-	}
-
-	return xResultAccept;
-}
-//------------------------------------------------------------------------------
-
 void UsartPortComponentIRQ()
 {
-	xPortIRQ(&UsartPort, 0);
+
 }
 //------------------------------------------------------------------------------
 //component functions:
@@ -67,7 +122,10 @@ void UsartPortComponentIRQ()
  */
 void UsartPortComponentHandler()
 {
-	xPortHandler(&UsartPort);
+	for (uint8_t i = 0; i < SERIAL_PORTS_COUNT; i++)
+	{
+		xPortHandler(&SerialPorts[i]);
+	}
 }
 //------------------------------------------------------------------------------
 /**
@@ -81,34 +139,30 @@ void UsartPortComponentTimeSynchronization()
 //==============================================================================
 //initialization:
 
-static UsartPortAdapterT PrivateUsartPortAdapter =
-{
-	.Usart =  (REG_UART_T*)UART_PORT_REG,
-
-	#ifdef UART_PORT_RX_DMA
-	.RxDMA = &UART_PORT_RX_DMA,
-	#endif
-};
-//------------------------------------------------------------------------------
-
-static xPortSysInterfaceT PrivatePortSysInterface =
-{
-	.RequestListener = (xPortSysRequestListenerT)RequestListener,
-	.EventListener = (xPortSysEventListenerT)EventListener
-};
+static UsartPortAdapterT PrivateUsartPortAdapter[SERIAL_PORTS_COUNT];
 //==============================================================================
 //component initialization:
 
 xResult UsartPortComponentInit(void* parent)
 {
-	xCircleBufferInit(&PrivateUsartPortAdapter.RxCircleBuffer, uart_rx_circle_buf, RX_CIRCLE_BUF_SIZE_MASK, sizeof(uint8_t));
-	xCircleBufferInit(&PrivateUsartPortAdapter.TxCircleBuffer, tx_circle_buf, TX_CIRCLE_BUF_SIZE_MASK, sizeof(uint8_t));
-	xRxReceiverInit(&PrivateUsartPortAdapter.RxReceiver, &UsartPort, 0, rx_object_buf, RX_OBJECT_BUF_SIZE);
-	
-	UsartPortAdapterInit(&UsartPort, &PrivateUsartPortAdapter);
-	xPortInit(&UsartPort, parent, &PrivatePortSysInterface);
+	xPortInitT init =
+	{
+		.Parent = parent,
+		.EventListener = (xObjectEventListenerT)EventListener,
+
+		.AdapterInit =
+		{
+			.Adapter = PrivateUsartPortAdapter,
+		},
+		.AdapterInitializer = UsartPortAdapterInit
+	};
+
+	for (int i = 0; i < SERIAL_PORTS_COUNT; i++)
+	{
+		init.AdapterInit.Init = &adapterInits[i];
+		xPortInit(&SerialPorts[i], &init);
+	}
   
 	return 0;
 }
 //==============================================================================
-

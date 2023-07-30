@@ -10,7 +10,7 @@ extern "C" {
 //==============================================================================
 //includes:
 
-#include "Common/xPort/xPort.h"
+#include "Abstractions/xPort/xPort.h"
 #include "Common/xRxReceiver.h"
 #include "Common/xDataBuffer.h"
 #include "Registers/registers.h"
@@ -19,13 +19,10 @@ extern "C" {
 
 typedef struct
 {
-	xPortAdapterBaseT Base;
+	//SemaphoreHandle_t TransactionMutex;
 
 	REG_UART_T* Usart;
-
 	DMA_HandleTypeDef* RxDMA;
-
-	xDataBufferT* ResponseBuffer;
 
 	xCircleBufferT RxCircleBuffer;
 	xRxReceiverT RxReceiver;
@@ -33,10 +30,26 @@ typedef struct
 	xCircleBufferT TxCircleBuffer;
 
 } UsartPortAdapterT;
+//------------------------------------------------------------------------------
+typedef struct
+{
+	REG_UART_T* Usart;
+	DMA_HandleTypeDef* RxDMA;
+
+	uint8_t* RxBuffer;
+	uint16_t RxBufferSizeMask;
+
+	uint8_t* RxResponseBuffer;
+	uint16_t RxResponseBufferSize;
+
+	uint8_t* TxBuffer;
+	uint16_t TxBufferSizeMask;
+
+} UsartPortAdapterInitT;
 //==============================================================================
 //functions:
 
-xResult UsartPortAdapterInit(xPortT* port, UsartPortAdapterT* adapter);
+xResult UsartPortAdapterInit(xPortT* port, xPortAdapterInitT* init);
 //==============================================================================
 #ifdef __cplusplus
 }

@@ -7,10 +7,13 @@
 
 static void PrivateHandler(xPortT* port)
 {
-	register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter;
+	register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter.Content;
 
-	adapter->RxCircleBuffer.TotalIndex = (adapter->RxCircleBuffer.SizeMask + 1) -
-											((DMA_Channel_TypeDef*)adapter->RxDMA->Instance)->CNDTR;
+	if (adapter->RxDMA)
+	{
+		adapter->RxCircleBuffer.TotalIndex = (adapter->RxCircleBuffer.SizeMask + 1) -
+												((DMA_Channel_TypeDef*)adapter->RxDMA->Instance)->CNDTR;
+	}
 
 	if (!adapter->Usart->Control1.TxEmptyInterruptEnable
 	&& adapter->TxCircleBuffer.TotalIndex != adapter->TxCircleBuffer.HandlerIndex)
@@ -25,7 +28,7 @@ static void PrivateHandler(xPortT* port)
 //------------------------------------------------------------------------------
 static void PrivateIRQ(xPortT* port, void* arg)
 {
-	register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter;
+	register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter.Content;
 
 	if (adapter->Usart->Control1.TxEmptyInterruptEnable && adapter->Usart->InterruptAndStatus.TxEmpty)
 	{
@@ -40,64 +43,76 @@ static void PrivateIRQ(xPortT* port, void* arg)
 	}
 }
 //------------------------------------------------------------------------------
-static xResult PrivateRequestListener(xPortT* port, xPortRequestSelector selector, void* arg)
+static xResult PrivateRequestListener(xPortT* port, xPortAdapterRequestSelector selector, void* arg)
 {
-	register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter;
+	register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter.Content;
 
-	switch ((uint32_t)selector)
-	{
-		case xPortRequestEnableTx:
-			adapter->Usart->Control1.TransmitterEnable = true;
-			break;
+		switch ((uint32_t)selector)
+		{
+			case xPortAdapterRequestEnableTx:
+				adapter->Usart->Control1.TransmitterEnable = true;
+				break;
 
-		case xPortRequestDisableTx:
-			adapter->Usart->Control1.TransmitterEnable = false;
-			break;
+			case xPortAdapterRequestDisableTx:
+				adapter->Usart->Control1.TransmitterEnable = false;
+				break;
 
-		case xPortRequestUpdateTxStatus:
-			port->Tx.IsEnable = adapter->Usart->Control1.TransmitterEnable;
-			port->Tx.IsTransmitting = adapter->Usart->Control1.TxEmptyInterruptEnable;
-			break;
+			case xPortAdapterRequestUpdateTxStatus:
+				port->Tx.IsEnable = adapter->Usart->Control1.TransmitterEnable;
+				port->Tx.IsTransmitting = adapter->Usart->Control1.TxEmptyInterruptEnable;
+				break;
 
-		case xPortRequestUpdateRxStatus:
-			port->Rx.IsEnable = adapter->Usart->Control1.ReceiverEnable;
-			break;
+			case xPortAdapterRequestUpdateRxStatus:
+				port->Rx.IsEnable = adapter->Usart->Control1.ReceiverEnable;
+				break;
 
-		case xPortRequestGetRxBuffer:
-			*(uint8_t**)arg = adapter->RxReceiver.Buffer;
-			break;
+			case xPortAdapterRequestGetRxBuffer:
+				*(uint8_t**)arg = adapter->RxReceiver.Buffer;
+				break;
 
-		case xPortRequestGetRxBufferSize:
-			*(uint32_t*)arg = adapter->RxReceiver.BufferSize;
-			break;
+			case xPortAdapterRequestGetRxBufferSize:
+				*(uint32_t*)arg = adapter->RxReceiver.BufferSize;
+				break;
 
-		case xPortRequestGetRxBufferFreeSize:
-			*(uint32_t*)arg = adapter->RxReceiver.BufferSize - adapter->RxReceiver.BytesReceived;
-			break;
+			case xPortAdapterRequestGetRxBufferFreeSize:
+				*(uint32_t*)arg = adapter->RxReceiver.BufferSize - adapter->RxReceiver.BytesReceived;
+				break;
 
-		case xPortRequestClearRxBuffer:
-			adapter->RxReceiver.BytesReceived = 0;
-			break;
+			case xPortAdapterRequestClearRxBuffer:
+				adapter->RxReceiver.BytesReceived = 0;
+				break;
 
-		case xPortRequestGetTxBufferSize:
-			*(uint32_t*)arg = adapter->TxCircleBuffer.SizeMask + 1;
-			break;
+			case xPortAdapterRequestGetTxBufferSize:
+				*(uint32_t*)arg = adapter->TxCircleBuffer.SizeMask + 1;
+				break;
 
-		case xPortRequestGetTxBufferFreeSize:
-			*(uint32_t*)arg = xCircleBufferGetFreeSize(&adapter->TxCircleBuffer);
-			break;
+			case xPortAdapterRequestGetTxBufferFreeSize:
+				*(uint32_t*)arg = xCircleBufferGetFreeSize(&adapter->TxCircleBuffer);
+				break;
 
-		case xPortRequestClearTxBuffer:
-			adapter->TxCircleBuffer.HandlerIndex = adapter->TxCircleBuffer.TotalIndex;
-			break;
+			case xPortAdapterRequestClearTxBuffer:
+				adapter->TxCircleBuffer.HandlerIndex = adapter->TxCircleBuffer.TotalIndex;
+				break;
 
-		default : return xResultRequestIsNotFound;
-	}
+			case xPortAdapterRequestSetBinding:
+				port->Binding = arg;
+				break;
 
-	return xResultAccept;
+			case xPortAdapterRequestStartTransmission:
+				//xSemaphoreTake(adapter->TransactionMutex, portMAX_DELAY);
+				break;
+
+			case xPortAdapterRequestEndTransmission:
+				//xSemaphoreGive(adapter->TransactionMutex);
+				break;
+
+			default : return xResultRequestIsNotFound;
+		}
+
+		return xResultAccept;
 }
 //------------------------------------------------------------------------------
-static void PrivateEventListener(xPortT* port, xPortEventSelector selector, void* arg)
+static void PrivateEventListener(xPortT* port, xPortAdapterEventSelector selector, void* arg)
 {
 	//register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter;
 
@@ -109,7 +124,7 @@ static void PrivateEventListener(xPortT* port, xPortEventSelector selector, void
 //------------------------------------------------------------------------------
 static int PrivateTransmit(xPortT* port, void* data, uint32_t size)
 {
-	register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter;
+	register UsartPortAdapterT* adapter = (UsartPortAdapterT*)port->Adapter.Content;
 
 	uint8_t* in = data;
 	int result = size;
@@ -148,11 +163,11 @@ static void PrivateRxReceiverEventListener(xRxReceiverT* receiver, xRxReceiverEv
 	switch ((uint8_t)event)
 	{
 		case xRxReceiverEventEndLine:
-			xPortEventListener(port, xPortSysEventRxFoundEndLine, arg);
+			xPortEventListener(port, xPortObjectEventRxFoundEndLine, arg);
 			break;
 
 		case xRxReceiverEventBufferIsFull:
-			xPortEventListener(port, xPortSysEventRxBufferIsFull, arg);
+			xPortEventListener(port, xPortObjectEventRxBufferIsFull, arg);
 			break;
 
 		default: return;
@@ -161,16 +176,16 @@ static void PrivateRxReceiverEventListener(xRxReceiverT* receiver, xRxReceiverEv
 //==============================================================================
 //initializations:
 
-static xPortInterfaceT PrivatePortInterface =
+static xPortAdapterInterfaceT PrivatePortInterface =
 {
-	.Handler = (xPortHandlerT)PrivateHandler,
-	.IRQ = (xPortIRQT)PrivateIRQ,
+	.Handler = (xPortAdapterHandlerT)PrivateHandler,
+	.IRQ = (xPortAdapterIRQT)PrivateIRQ,
 
-	.RequestListener = (xPortRequestListenerT)PrivateRequestListener,
-	.EventListener = (xPortEventListenerT)PrivateEventListener,
+	.RequestListener = (xPortAdapterRequestListenerT)PrivateRequestListener,
+	.EventListener = (xPortAdapterEventListenerT)PrivateEventListener,
 
-	.Transmit = (xPortTransmitActionT)PrivateTransmit,
-	.Receive = (xPortReceiveActionT)PrivateReceive
+	.Transmit = (xPortAdapterTransmitActionT)PrivateTransmit,
+	.Receive = (xPortAdapterReceiveActionT)PrivateReceive
 };
 //------------------------------------------------------------------------------
 static xRxReceiverInterfaceT PrivateRxReceiverInterface =
@@ -178,43 +193,68 @@ static xRxReceiverInterfaceT PrivateRxReceiverInterface =
 	.EventListener = (xRxReceiverEventListenerT)PrivateRxReceiverEventListener
 };
 //------------------------------------------------------------------------------
-xResult UsartPortAdapterInit(xPortT* port, UsartPortAdapterT* adapter)
+xResult UsartPortAdapterInit(xPortT* port, xPortAdapterInitT* init)
 {
-	if (port && adapter)
+	if (port && init)
 	{
-		port->Adapter = (xPortAdapterBaseT*)adapter;
+		UsartPortAdapterInitT* adapterInit = (UsartPortAdapterInitT*)init->Init;
+		UsartPortAdapterT* adapter = init->Adapter;
 
-		port->Adapter->Base.Note = nameof(UsartPortAdapterT);
-		port->Adapter->Base.Parent = port;
-		
-		port->Adapter->Interface = &PrivatePortInterface;
+		port->Adapter.Description = nameof(UsartPortAdapterT);
+		port->Adapter.Content = adapter;
+		port->Adapter.Interface = &PrivatePortInterface;
 
+		adapter->Usart = adapterInit->Usart;
+		adapter->RxDMA = adapterInit->RxDMA;
 		adapter->RxReceiver.Interface = &PrivateRxReceiverInterface;
+
+		//adapter->TransactionMutex = xSemaphoreCreateMutex();
+
+		xCircleBufferInit(&adapter->RxCircleBuffer, adapterInit->RxBuffer, adapterInit->RxBufferSizeMask, sizeof(uint8_t));
+		xCircleBufferInit(&adapter->TxCircleBuffer, adapterInit->TxBuffer, adapterInit->TxBufferSizeMask, sizeof(uint8_t));
+		xRxReceiverInit(&adapter->RxReceiver,
+				port,
+				&PrivateRxReceiverInterface,
+				adapterInit->RxResponseBuffer,
+				adapterInit->RxResponseBufferSize);
+
+		adapter->Usart->Control1.USART_Enable = false;
 
 		adapter->Usart->Control1.TxCompleteInterruptEnable = false;
 		adapter->Usart->Control1.TxEmptyInterruptEnable = false;
 		adapter->Usart->Control1.RxNotEmptyInterruptEnable = false;
+		adapter->Usart->Control3.ErrorInterruptEnable = true;
 
 		(void)adapter->Usart->Data;
 		adapter->Usart->InterruptAndStatus.Value = 0;
-		adapter->Usart->Control3.RxDMA_Enable = true;
 
 		if (adapter->RxDMA)
 		{
-			uint8_t dma_result = HAL_DMA_Start(adapter->RxDMA,
-												(uint32_t)&adapter->Usart->Data,
-												(uint32_t)adapter->RxCircleBuffer.Memory,
-												adapter->RxCircleBuffer.SizeMask + 1);
+			adapter->Usart->Control3.RxDMA_Enable = true;
 
-			if (dma_result != HAL_OK)
+			if (adapter->RxDMA)
 			{
-				return xResultError;
+				uint8_t dma_result = HAL_DMA_Start(adapter->RxDMA,
+													(uint32_t)&adapter->Usart->Data,
+													(uint32_t)adapter->RxCircleBuffer.Memory,
+													adapter->RxCircleBuffer.SizeMask + 1);
+
+				if (dma_result != HAL_OK)
+				{
+					return xResultError;
+				}
 			}
+		}
+		else
+		{
+			adapter->Usart->Control1.RxNotEmptyInterruptEnable = true;
 		}
 		
 		adapter->Usart->Control1.TransmitterEnable = true;
 		adapter->Usart->Control1.ReceiverEnable = true;
 		
+		adapter->Usart->Control1.USART_Enable = true;
+
 		return xResultAccept;
 	}
   

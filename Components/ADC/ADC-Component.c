@@ -1,9 +1,9 @@
 //==============================================================================
 //includes:
 
-#include "Components.h"
+#include "ADC-Component.h"
 #include "Adapters/ADC-Adapter.h"
-#include "Common/xADC/Communications/xADC-RxTransactions.h"
+#include "Peripherals/xADC/Communications/xADC-RxTransactions.h"
 //==============================================================================
 //defines:
 
@@ -14,7 +14,7 @@
 struct
 {
 	xADC_TransactionEventNewPointsT Header;
-	uint16_t Buffer[64 * 3];
+	uint16_t Buffer[ADC_NUMBER_OF_CHANNELS * ADC_POINTS_IN_PACKET];
 
 } PointsPacket;
 //==============================================================================
@@ -24,25 +24,13 @@ struct
 //==============================================================================
 //functions:
 
-static void EventListener(xPortT* port, xPortSysEventSelector selector, void* arg)
+static void EventListener(xADC_T* adc, xADC_EventSelector selector, void* arg)
 {
 	switch((int)selector)
 	{
 		default: break;
 	}
 }
-//------------------------------------------------------------------------------
-
-static xResult RequestListener(xPortT* port, xPortSysRequestSelector selector, void* arg)
-{
-	switch ((uint8_t)selector)
-	{
-		default: return xResultRequestIsNotFound;
-	}
-
-	return xResultAccept;
-}
-
 //------------------------------------------------------------------------------
 //component functions:
 /**
@@ -56,21 +44,35 @@ void ADC_ComponentHandler()
 	{
 		int number_of_points = xADC_GetNumberOfNewPoints(&mADC);
 
-		if (number_of_points >= 64)
+		if (number_of_points > 0)
 		{
-			number_of_points = xCircleBufferReadObject(&mADC.Points->Buffer, PointsPacket.Buffer, 64, 0, 0);
+			number_of_points = xCircleBufferReadObject(&mADC.Points->Buffer, PointsPacket.Buffer, ADC_POINTS_IN_PACKET, 0, 0);
 
-			if (number_of_points == 64)
+			if (number_of_points <= 0)
 			{
-				PointsPacket.Header.Channels = 0x7;
-				PointsPacket.Header.PointsCount = 64;
-				PointsPacket.Header.PointSize = SIZE_ELEMENT(PointsPacket.Buffer);
-
-				xRxTransactionTransmitEvent(&UsartPort,
-						mADC.Base.Description->ObjectId,
-						TRANSACTION_EVENT_NEW_POTINTS,
-						&PointsPacket, sizeof(PointsPacket));
+				return;
 			}
+
+			PointsPacket.Header.Channels = 0x7;
+			PointsPacket.Header.PointsCount = number_of_points;
+			PointsPacket.Header.PointSize = SIZE_ELEMENT(PointsPacket.Buffer);
+
+			xArgT args[] =
+			{
+				{
+					.Element = &PointsPacket,
+					.Size = sizeof(PointsPacket.Header)
+				},
+				{
+					.Element = &PointsPacket.Buffer,
+					.Size = mADC.Points->Buffer.TypeSize * number_of_points
+				}
+			};
+
+			xRxTransactionTransmitEvent(mADC.EventPort,
+					mADC.Base.Description->ObjectId,
+					TRANSACTION_EVENT_NEW_POTINTS,
+					args, 2);
 		}
 	}
 }
@@ -80,15 +82,7 @@ void ADC_ComponentHandler()
 
 static ADC_AdapterT Private_ADC_Adapter;
 //------------------------------------------------------------------------------
-
-static xADC_SysInterfaceT Private_ADC_SysInterface =
-{
-	.RequestListener = (xADC_SysRequestListenerT)RequestListener,
-	.EventListener = (xADC_SysEventListenerT)EventListener
-};
-//------------------------------------------------------------------------------
-static uint16_t PrivatePointsMemory[sizeof(uint16_t) * 3 * 256];
-
+static uint16_t PrivatePointsMemory[sizeof(uint16_t) * ADC_NUMBER_OF_CHANNELS * ADC_POINTS_PER_CHANNEL];
 static xADC_PointsT PrivatePoints;
 //------------------------------------------------------------------------------
 xADC_T mADC;
@@ -97,29 +91,32 @@ xADC_T mADC;
 
 xResult ADC_ComponentInit(void* parent)
 {
-	ADC_AdapterInitializationT adapter_init =
+	ADC_AdapterInitT adapterInit =
 	{
-		.Adapter = &Private_ADC_Adapter,
-
 		.PointsBuffer = &PrivatePoints,
 		.PointsMemmory = PrivatePointsMemory,
 		.SizeOfPointsMemmory = sizeof(PrivatePointsMemory),
 
 		.Handle = &hadc1,
 		.Timer = (void*)TIM3,
-		.ChannelsCount = 3
+		.ChannelsCount = ADC_NUMBER_OF_CHANNELS
 	};
 
-	ADC_AdapterInit(&mADC, &adapter_init);
-
-	xADC_InitializationT adc_init =
+	xADC_InitT init =
 	{
 		.Parent = parent,
 		.Number = xADC1,
-		.Interface = &Private_ADC_SysInterface
+		.EventListener = (xADC_EventListenerT)EventListener,
+
+		.AdapterInit =
+		{
+			.Adapter = &Private_ADC_Adapter,
+			.Init = &adapterInit,
+			.Initializer = ADC_AdapterInit
+		}
 	};
 
-	xADC_Init(&mADC, &adc_init);
+	xADC_Init(&mADC, &init);
 
 	xADC_Start(&mADC);
   

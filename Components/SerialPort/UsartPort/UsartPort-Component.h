@@ -10,8 +10,8 @@ extern "C" {
 //==============================================================================
 //includes:
 
+#include "Abstractions/xPort/xPort.h"
 #include "UsartPort-ComponentConfig.h"
-#include "Common/xPort/xPort.h"
 //==============================================================================
 //defines:
 
@@ -35,7 +35,9 @@ void UsartPortComponentIRQ();
 //==============================================================================
 //export:
 
-extern xPortT UsartPort;
+extern xPortT SerialPorts[SERIAL_PORTS_COUNT];
+
+#define SerialPort SerialPorts[SERIAL1]
 //==============================================================================
 #ifdef __cplusplus
 }
