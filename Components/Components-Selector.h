@@ -13,7 +13,7 @@ extern "C" {
 //components:
 
 #include "Terminal/Terminal-Component.h"
-#include "SerialPort/UsartPort/UsartPort-Component.h"
+#include "Components/USART-SerialPorts/UsartPort-Component.h"
 #include "ADC/ADC-Component.h"
 //==============================================================================
 //defines:
