@@ -3,95 +3,44 @@
 
 #include "Components.h"
 #include "main.h"
-#include "Templates/Adapters/Terminal-TransferLayer/Terminal-TxTransferLayerAdapter.h"
-#include "Templates/Adapters/Terminal-TransferLayer/Terminal-RxTransferLayerAdapter.h"
-#include "Abstractions/xTxRequest/xTxRequest.h"
+#include "Peripherals/xTimer/xTimer.h"
+#include "Common/xList.h"
 //==============================================================================
 //defines:
 
-#define TX_DATA "dvmoqwhgolSDJVIOSionpmpcoKQFEWJGUBETBVNAIMEO,CSS{lcspJHBRYEVIU5GHI	PockoZMCL{LlOJFUWRBVETQIUVNOMPOM,Cp[ewpomgo	iwrngojMV\r"
+#if FREERTOS_ENABLE == 1
+#define COMPONENTS_MAIN_TASK_STACK_SIZE 0x200
+#endif
 //==============================================================================
 //variables:
 
-static uint32_t led_toggle_time_stamp;
-static uint32_t sntp_update_time_stamp;
+UniqueDeviceID_T* UniqueDeviceID = (void*)0x1FFF7A10;
 
-xTransferLayerT TxTransferLayer;
-xTransferLayerT RxTransferLayer;
-
-char tx_transfer_data[] = TX_DATA;
-char rx_transfer_data[sizeof(tx_transfer_data)];
-
-char tx_request0_data[] = "Request 0: " TX_DATA;
-char tx_request1_data[] = "Request 1: " TX_DATA;
+static uint32_t ledToggleTimeStamp;
 //------------------------------------------------------------------------------
-xTxRequestControlT TxRequestControl;
+#if FREERTOS_ENABLE == 1
 
-static xResult TxRequestAccept(xRxRequestManagerT* manager, uint8_t* data, uint16_t size)
-{
-	return xResultAccept;
-}
+int RTOS_FreeHeapSize;
+int RTOS_ComponentsTaskStackWaterMark;
 
-static const xRxRequestT TxRequestResponse[] =
-{
-	NEW_RX_REQUEST0("Request 0: Accept", TxRequestAccept),
-	NEW_RX_REQUEST0("Request 1: Accept", TxRequestAccept),
-	{ 0 }
-};
+//static TaskHandle_t taskHandle;
+#endif
 
-xTxRequestT TxRequest0 =
-{
-	.Data = tx_request0_data,
-	.DataSize = sizeof_str(tx_request0_data),
-	.TimeOut = 300,
-	.AttemptsCount = 3,
-	.Rx = TxRequestResponse
-};
-
-xTxRequestT TxRequest1 =
-{
-	.Data = tx_request1_data,
-	.DataSize = sizeof_str(tx_request1_data),
-	.TimeOut = 300,
-	.AttemptsCount = 3,
-	.Rx = TxRequestResponse
-};
 //==============================================================================
 //functions:
 
-static void PrivateTerminalComponentEventListener(TerminalT* terminal, TerminalSysEventSelector selector, void* arg)
-{
-	switch((int)selector)
-	{
-		case TerminalSysEventTime_1000ms:
-			//xTxTransferSetTxLine(&Terminal.Transfer, &SerialPortUART.Tx);
-			//xTxTransferStart(&Terminal.Transfer, "qwerty", 6);
-			break;
 
-		default: break;
-	}
-}
 //==============================================================================
 //default functions:
 
-xResult ComponentsRequestListener(ObjectBaseT* object, int selector, void* arg)
+xResult ComponentsRequestListener(ObjectBaseT* object, int selector, uint32_t description, void* arg)
 {
 	return xResultNotSupported;
 }
 //------------------------------------------------------------------------------
-void ComponentsEventListener(ObjectBaseT* object, int selector, void* arg)
+void ComponentsEventListener(ObjectBaseT* object, int selector, uint32_t description, void* arg)
 {
-	if (object->Description->Key != OBJECT_DESCRIPTION_KEY)
-	{
-		return;
-	}
 
-	switch(object->Description->ObjectId)
-	{
-		case TERMINAL_OBJECT_ID:
-			PrivateTerminalComponentEventListener((TerminalT*)object, selector, arg);
-			break;
-	}
 }
 //------------------------------------------------------------------------------
 /**
@@ -99,150 +48,107 @@ void ComponentsEventListener(ObjectBaseT* object, int selector, void* arg)
  */
 void ComponentsHandler()
 {
-	UsartPortComponentHandler();
+	UsartPortsComponentHandler();
 	TerminalComponentHandler();
-	ADC_ComponentHandler();
 
-	xTxRequestHandler(&TxRequestControl);
+#if NET_ENABLE == 1
+	NetComponentHandler();
+#endif
 
-	xTransferLayerHandler(&TxTransferLayer);
-	xTransferLayerHandler(&RxTransferLayer);
+#if DEVICE_CONTROL_ENABLE == 1
 
-	if (xSystemGetTime(ComponentsHandler) - led_toggle_time_stamp > 999)
+	LocalTransferLayerComponentHandler();
+	HostTransferLayerComponentHandler();
+
+	RequestControlComponentHandler();
+
+	Device1ComponentHandler();
+
+#endif
+	uint32_t time = xSystemGetTime();
+	if (time - ledToggleTimeStamp > 999)
 	{
-		led_toggle_time_stamp = xSystemGetTime(ComponentsHandler);
+		ledToggleTimeStamp = time;
 
-		if(TxRequest0.State == xTxRequesStateIdle)
-		{
-			xTxRequestSetPort(&TxRequest0, &SerialPort);
-			xTxRequestAdd(&TxRequestControl, &TxRequest0);
-		}
-
-		if(TxRequest1.State == xTxRequesStateIdle)
-		{
-			xTxRequestSetPort(&TxRequest1, &SerialPort);
-			xTxRequestAdd(&TxRequestControl, &TxRequest1);
-		}
-
-		//xTransferLayerStrartTransfer(&RxTransferLayer, rx_transfer_data, sizeof_str(rx_transfer_data));
-		//xTransferLayerStrartTransfer(&TxTransferLayer, tx_transfer_data, sizeof_str(tx_transfer_data));
-
-		LED1_GPIO_Port->ODR ^= LED1_Pin;
+		PortE->Output.LED1 ^= 1;
 	}
 
-	if (xSystemGetTime(ComponentsHandler) - sntp_update_time_stamp > 9999)
-	{
-		sntp_update_time_stamp = xSystemGetTime(ComponentsHandler);
-	}
+#if FREERTOS_ENABLE == 1
+	RTOS_FreeHeapSize = xPortGetFreeHeapSize();
+	RTOS_ComponentsTaskStackWaterMark = uxTaskGetStackHighWaterMark(NULL);
+#endif
 }
 //------------------------------------------------------------------------------
 /**
  * @brief time synchronization of time-dependent processes
  */
-void ComponentsTimeSynchronization()
+inline void ComponentsTimeSynchronization()
 {
 	TerminalComponentTimeSynchronization();
-	UsartPortComponentTimeSynchronization();
-	ADC_ComponentTimeSynchronization();
+	UsartPortsComponentTimeSynchronization();
+
+#if DEVICE_CONTROL_ENABLE == 1
+
+	Device1ComponentTimeSynchronization();
+
+#endif
 }
 //------------------------------------------------------------------------------
-static xResult RxRequest0ReceiveData(xRxRequestManagerT* manager, uint8_t* data, uint16_t size)
+void Timer4_IRQ_Handler(xTimerT* timer, xTimerHandleT* handle)
 {
-	const char response[] = "Request 0: Accept\r";
+	handle->Status.UpdateInterrupt = false;
 
-	xDataBufferAdd(manager->ResponseBuffer, (void*)response, sizeof_str(response));
-
-	return xResultAccept;
-}
-//------------------------------------------------------------------------------
-static xResult RxRequest1ReceiveData(xRxRequestManagerT* manager, uint8_t* data, uint16_t size)
-{
-	const char response[] = "Request 1: Accept\r";
-
-	xDataBufferAdd(manager->ResponseBuffer, (void*)response, sizeof_str(response));
-
-	return xResultAccept;
+	ComponentsTimeSynchronization();
 }
 //==============================================================================
 //initialization:
 
-TerminalTxTransferLayerAdapterT TerminalTxTransferLayerAdapter =
-{
-	.HeaderTransferStart = "HeaderTransferStart",
-	.HeaderTransfer = "HeaderTransfer :",
-	.HeaderTransferEnd = "HeaderTransferEnd\r"
-};
-//------------------------------------------------------------------------------
-TerminalRxTransferLayerAdapterT TerminalRxTransferLayerAdapter;
-
-//------------------------------------------------------------------------------
-static const xRxRequestT RxRequests[] =
-{
-	NEW_RX_REQUEST0("Request 0: ", RxRequest0ReceiveData),
-	NEW_RX_REQUEST0("Request 1: ", RxRequest1ReceiveData),
-
-	{ 0 }
-};
-
-static TerminalObjectT TerminalObject =
-{
-	.Requests = RxRequests
-};
-//------------------------------------------------------------------------------
 /**
  * @brief initializing the component
  * @param parent binding to the parent object
- * @return int
+ * @return xResult
  */
 xResult ComponentsInit(void* parent)
 {
+	xSystemInit(parent);
+
 	TerminalComponentInit(parent);
 
-	xSystemInit(parent);
-	UsartPortComponentInit(parent);
-	ADC_ComponentInit(parent);
+	UsartPortsComponentInit(parent);
 
-	xTxRequestControlInit(&TxRequestControl, parent);
-	TerminalAddObject(&TxRequestControl.TerminalObject);
+#if NET_ENABLE == 1
+	NetComponentInit(parent);
 
-	TerminalTxTransferLayerAdapterInitT txTransferLayerAdapterInit =
-	{
-		.HeaderTransferStart = "HeaderTransferStart",
-		.HeaderTransfer = "HeaderTransfer :",
-		.HeaderTransferEnd = "HeaderTransferEnd\r"
-	};
+#if MQTT_ENABLE == 1
+	MqttClientComponentInit(parent);
+#endif
 
-	xTransferLayerInitT transferLayerInit;
-	transferLayerInit.Parent = parent;
-	transferLayerInit.AdapterInit.Adapter = &TerminalTxTransferLayerAdapter;
-	transferLayerInit.AdapterInit.Init = &txTransferLayerAdapterInit;
-	transferLayerInit.AdapterInit.Initializer = TerminalTxTransferLayerAdapterInit;
+#endif
 
-	xTransferLayerInit(&TxTransferLayer, &transferLayerInit);
-	xTransferLayerSetBinding(&TxTransferLayer, &SerialPort);
+#if DEVICE_CONTROL_ENABLE == 1
 
-	TerminalRxTransferLayerAdapterInitT rxTransferLayerAdapterInit;
+	CAN_PortsComponentInit(parent);
 
-	transferLayerInit.AdapterInit.Adapter = &TerminalRxTransferLayerAdapter;
-	transferLayerInit.AdapterInit.Init = &rxTransferLayerAdapterInit;
-	transferLayerInit.AdapterInit.Initializer = TerminalRxTransferLayerAdapterInit;
+	LocalTransferLayerComponentInit(parent);
+	HostTransferLayerComponentInit(parent);
 
-	xTransferLayerInit(&RxTransferLayer,  &transferLayerInit);
-	xTransferLayerSetBinding(&RxTransferLayer, &SerialPort);
+	HostDeviceComponentInit(parent);
 
-	TerminalAddObjectList(&TxTransferLayer.Objects);
-	TerminalAddObjectList(&RxTransferLayer.Objects);
+	RequestControlComponentInit(parent);
+	Device1ComponentInit(parent);
 
-	TerminalRemoveObjectList(&TxTransferLayer.Objects);
-	TerminalRemoveObjectList(&RxTransferLayer.Objects);
+#endif
 
-	TerminalAddObjectList(&TxTransferLayer.Objects);
-	TerminalAddObjectList(&RxTransferLayer.Objects);
+	xTimerCoreBind(xTimer4, Timer4_IRQ_Handler, rTimer4, 0);
+	rTimer4->DMAOrInterrupts.UpdateInterruptEnable = true;
+	rTimer4->Control1.CounterEnable = true;
 
-	TerminalRemoveObjectList(&TxTransferLayer.Objects);
-	TerminalAddObjectList(&TxTransferLayer.Objects);
-
-	TerminalAddObject(&TerminalObject);
+	/*xTaskCreate(privateTask, // Function that implements the task.
+				"CAN local task", // Text name for the task.
+				TASK_STACK_SIZE, // Number of indexes in the xStack array.
+				NULL, // Parameter passed into the task.
+				osPriorityHigh, // Priority at which the task is created.
+				&taskHandle);*/
 
 	return xResultAccept;
 }

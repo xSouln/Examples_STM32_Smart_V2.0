@@ -168,7 +168,7 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 void TIM2_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM2_IRQn 0 */
-
+	xTimerIRQ_Handler(xTimer2);
   /* USER CODE END TIM2_IRQn 0 */
   /* USER CODE BEGIN TIM2_IRQn 1 */
 
@@ -181,7 +181,7 @@ void TIM2_IRQHandler(void)
 void TIM4_IRQHandler(void)
 {
   /* USER CODE BEGIN TIM4_IRQn 0 */
-	rTimer4->Status.UpdateInterrupt = false;
+	xTimerIRQ_Handler(xTimer4);
   /* USER CODE END TIM4_IRQn 0 */
   /* USER CODE BEGIN TIM4_IRQn 1 */
 
@@ -194,8 +194,7 @@ void TIM4_IRQHandler(void)
 void USART1_IRQHandler(void)
 {
   /* USER CODE BEGIN USART1_IRQn 0 */
-	//SerialPortUARTComponentIRQListener();
-	UsartPortComponentIRQ();
+	xUSART_IRQ_Handler(xUSART1);
   /* USER CODE END USART1_IRQn 0 */
   /* USER CODE BEGIN USART1_IRQn 1 */
 

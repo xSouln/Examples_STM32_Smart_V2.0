@@ -250,7 +250,7 @@
 	<variableList>
 		<variable>
 			<name>Components</name>
-			<value>file:/C:/Users/Afhib/Desktop/Projects/Examples_STM32_Smart_V2.0/Components</value>
+			<value>file:/C:/Users/Afhib/Desktop/Projects/Board_STM32_Smart_V2.0/Components</value>
 		</variable>
 		<variable>
 			<name>xLib</name>

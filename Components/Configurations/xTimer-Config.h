@@ -1,32 +1,34 @@
 //==============================================================================
-#ifndef _COMPONENTS_SELECTOR_H_
-#define _COMPONENTS_SELECTOR_H_
+#ifndef _X_TIMER_CONFIG_H_
+#define _X_TIMER_CONFIG_H_
 //------------------------------------------------------------------------------
 #ifdef __cplusplus
 extern "C" {
-#endif 
+#endif
 //==============================================================================
 //includes:
 
-
-//==============================================================================
-//components:
-
-#include "Terminal/Terminal-Component.h"
-#include "Peripherals/xUSART/xUSART.h"
-#include "Components/USART-Ports/USART-Ports-Component.h"
+#include "Registers/registers.h"
 //==============================================================================
 //defines:
 
 
 //==============================================================================
-//macros:
+//types:
 
+typedef enum
+{
+	xTimer2,
+	xTimer4,
 
+	xTimersCount
+
+} xTimerNumber;
+//------------------------------------------------------------------------------
+#define xTimerHandleT REG_TIM_T
 //==============================================================================
 #ifdef __cplusplus
 }
 #endif
 //------------------------------------------------------------------------------
-#endif //_COMPONENTS_SELECTOR_H_
-
+#endif //_X_TIMER_CONFIG_H_
