@@ -39,7 +39,7 @@
 		<link>
 			<name>Components</name>
 			<type>2</type>
-			<locationURI>Components</locationURI>
+			<locationURI>$%7BPARENT-1-PROJECT_LOC%7D/Components</locationURI>
 		</link>
 		<link>
 			<name>xLib</name>
@@ -247,14 +247,4 @@
 			<locationURI>PARENT-1-PROJECT_LOC/USB_DEVICE/Target/usbd_conf.c</locationURI>
 		</link>
 	</linkedResources>
-	<variableList>
-		<variable>
-			<name>Components</name>
-			<value>file:/C:/Users/Afhib/Desktop/Projects/Board_STM32_Smart_V2.0/Components</value>
-		</variable>
-		<variable>
-			<name>xLib</name>
-			<value>file:/C:/Users/Afhib/Desktop/Projects/xLibs</value>
-		</variable>
-	</variableList>
 </projectDescription>

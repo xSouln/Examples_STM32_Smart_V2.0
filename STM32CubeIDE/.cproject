@@ -86,9 +86,8 @@
 					</folderInfo>
 					<sourceEntries>
 						<entry excluding="Components|xLib" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
-						<entry excluding="ADC|SerialPort|TcpServer/WIZspi|WiFi|sfc_spi|Mqtt" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Components"/>
+						<entry excluding="WiFi|TcpServer|sfc_spi|Mqtt|ADC" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Components"/>
 						<entry excluding="Components/CAN-Ports|Registers/registers_stm32f4xx|Registers/registers_stm32f0xx|Components/USART-Ports/Adapters/STM32H7xx|Components/USART-Ports/Adapters/STM32F4xx|Components/USART-Ports/Adapters/STM32F0xx|Components/CAN-Ports/Adapters/STM32F4xx|Components/CAN-Ports/Adapters/STM32F0xx|Components/USART-SerialPorts/Adapters/STM32H7xx|Components/USART-SerialPorts/Adapters/STM32F4xx|Drivers|Registers/registers_stm32h7xx|Templates" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="xLib"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="xLib/Templates/Adapters/Terminal-TransferLayer"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -163,7 +162,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="Components/ADC|xLib/Components/CAN-Ports|xLib/Registers/registers_stm32f4xx|xLib/Registers/registers_stm32f0xx|xLib/Components/USART-Ports/Adapters/STM32H7xx|xLib/Components/USART-Ports/Adapters/STM32F4xx|xLib/Components/USART-Ports/Adapters/STM32F0xx|xLib/Components/CAN-Ports/Adapters/STM32F4xx|xLib/Components/CAN-Ports/Adapters/STM32F0xx|xLib/Components/USART-SerialPorts/Adapters/STM32H7xx|xLib/Components/USART-SerialPorts/Adapters/STM32F4xx|Components/SerialPort|Components/TcpServer/WIZspi|Components/Mqtt|Components/WiFi|xLib/Drivers|xLib/Registers/registers_stm32h7xx|xLib/Templates|Components/sfc_spi" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="Components/TcpServer|Components/ADC|xLib/Components/CAN-Ports|xLib/Registers/registers_stm32f4xx|xLib/Registers/registers_stm32f0xx|xLib/Components/USART-Ports/Adapters/STM32H7xx|xLib/Components/USART-Ports/Adapters/STM32F4xx|xLib/Components/USART-Ports/Adapters/STM32F0xx|xLib/Components/CAN-Ports/Adapters/STM32F4xx|xLib/Components/CAN-Ports/Adapters/STM32F0xx|xLib/Components/USART-SerialPorts/Adapters/STM32H7xx|xLib/Components/USART-SerialPorts/Adapters/STM32F4xx|Components/SerialPort|Components/TcpServer/WIZspi|Components/Mqtt|Components/WiFi|xLib/Drivers|xLib/Registers/registers_stm32h7xx|xLib/Templates|Components/sfc_spi" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="xLib/Templates/Adapters/Terminal-TransferLayer"/>
 					</sourceEntries>
 				</configuration>
